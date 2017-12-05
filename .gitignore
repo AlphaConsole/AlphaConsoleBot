@@ -57,3 +57,5 @@ typings/
 # dotenv environment variables file
 .env
 
+#Ignore AC keys & passwords
+/src/keys.js
