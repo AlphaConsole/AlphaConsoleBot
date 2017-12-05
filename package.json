@@ -1,0 +1,16 @@
+{
+  "name": "alphaconsolebot",
+  "version": "1.0.0",
+  "description": "Bot for AlphaConsole discord",
+  "main": "alphaconsole.js",
+  "scripts": {
+    "test": "nodemon alphaconsole.js"
+  },
+  "author": "Hayden Meloche",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^11.2.1",
+    "nodemon": "^1.12.4",
+    "sqlite": "^2.9.0"
+  }
+}
