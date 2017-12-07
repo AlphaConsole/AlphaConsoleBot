@@ -1,1 +1,1 @@
-module.exports.TestBotToken = ''; //barbobot in ac server
+module.exports.TestBotToken = ''; //input your bot key
