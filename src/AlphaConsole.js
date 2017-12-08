@@ -30,12 +30,7 @@ client.on('ready', () => {
 //New member joins
 client.on('guildMemberAdd', (member) => {
     require('./events/newMember.js').run(client, serverInfo, member, connection);
-  });
-
-//User Banned
-client.on('guildBanAdd', (guild, user) => {
-    require('./events/banAdd.js').run(client, serverInfo, user);
-});  
+}); 
 
 //Ban Removed
 client.on('guildBanRemove', (guild, user) => {
@@ -64,14 +59,29 @@ client.on('message', async message =>
     if (message.channel.type != 'dm') {
         var args = message.content.split(/[ ]+/);
 
+        /// SUPPORT COMMANDS
+
         //Support mute command
         if (args[0].toLowerCase() == "!mute") {
-            require('./cmds/mute.js').run(client, serverInfo, sql, message ,args)
+            require('./cmds/mute.js').run(client, serverInfo, sql, message, args)
         }
 
         //Support unmute command
         if (args[0].toLowerCase() == "!unmute") {
-            require('./cmds/unmute.js').run(client, serverInfo, sql, message ,args)
+            require('./cmds/unmute.js').run(client, serverInfo, sql, message, args)
+        }
+
+
+        /// MODERATOR COMMANDS
+
+        //Moderator kick command
+        if (args[0].toLowerCase() == "!kick") {
+            require('./cmds/kick.js').run(client, serverInfo, sql, message, args)
+        }
+
+        //Support unmute command
+        if (args[0].toLowerCase() == "!ban") {
+            require('./cmds/ban.js').run(client, serverInfo, sql, message, args)
         }
 
         
