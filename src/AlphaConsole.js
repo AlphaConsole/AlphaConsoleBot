@@ -64,9 +64,14 @@ client.on('message', async message =>
     if (message.channel.type != 'dm') {
         var args = message.content.split(/[ ]+/);
 
-        //Staff mute command
+        //Support mute command
         if (args[0].toLowerCase() == "!mute") {
             require('./cmds/mute.js').run(client, serverInfo, sql, message ,args)
+        }
+
+        //Support unmute command
+        if (args[0].toLowerCase() == "!unmute") {
+            require('./cmds/unmute.js').run(client, serverInfo, sql, message ,args)
         }
 
         

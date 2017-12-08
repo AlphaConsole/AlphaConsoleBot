@@ -10,27 +10,25 @@ module.exports.run = async(client, serverInfo, sql, message ,args) => {
 
         if (args.length == 2) {
 
+            if (!hasRole(message.guild.member(message.mentions.users.first().id), "Muted")) {
+                return message.channel.send("Cannot unmute a user that isn't muted.");
+            }
+
             //Simply just add the mute role
             let MutedRole = message.guild.roles.find('name', 'Muted');
             let MutedUser = message.guild.member(message.mentions.users.first().id);
-            MutedUser.addRole(MutedRole);
+            MutedUser.removeRole(MutedRole);
 
             //Make a notice & Log it to the log-channel
             message.delete()
-            message.channel.send(`${message.guild.members.get(message.mentions.users.first().id)} has been muted.`) //Remove this line if you don't want it to be public.
+            message.channel.send(`${message.guild.members.get(message.mentions.users.first().id)} has been unmuted.`) //Remove this line if you don't want it to be public.
 
             const embedlog = new Discord.MessageEmbed()
-            .setColor([255,0,0])
-            .setTitle('=== USER MUTE ===')
-            .setDescription(`${message.guild.members.get(message.mentions.users.first().id)} has permanently been muted by ${message.member}`)
+            .setColor([0,255,0])
+            .setTitle('=== USER UNMUTE ===')
+            .setDescription(`${message.guild.members.get(message.mentions.users.first().id)} has been unmuted by ${message.member}`)
             .setTimestamp()
             message.guild.channels.get(serverInfo.modlogChannel).send(embedlog);
-
-        } else if (args.length == 3) {
-            //First add the Muted Role to the user
-            let MutedRole = message.guild.roles.find('name', 'Muted');
-            let MutedUser = message.guild.member(message.mentions.users.first().id);
-            MutedUser.addRole(MutedRole);
 
 
             //Let's first check if the user even exists in the db
@@ -42,27 +40,13 @@ module.exports.run = async(client, serverInfo, sql, message ,args) => {
                 }
             }).catch(err => console.log(err))
 
-            //Calculate the extra hours to be added
-            MutedUntil = new Date().getTime() + args[2] * 3600000; //args is the amount of hours. 3600000 transfers it to ms
-
-            //Update Database with the newest time of when to be muted to
-            sql.run(`Update Members set MutedUntil = ${MutedUntil} where DiscordID = ${message.mentions.users.first().id}`)
-                .catch(err => console.log(err));
-
-            //Make a notice & Log it to the log-channel
-            message.delete()
-            message.channel.send(`${message.guild.members.get(message.mentions.users.first().id)} has been muted for ${args[2]} hours`) //Remove this line if you don't want it to be public.
-
-            const embedlog = new Discord.MessageEmbed()
-            .setColor([255,140,0])
-            .setTitle('=== USER MUTE ===')
-            .setDescription(`${message.guild.members.get(message.mentions.users.first().id)} has been muted for ${args[2]} hours by ${message.member}`)
-            .setTimestamp()
-            message.guild.channels.get(serverInfo.modlogChannel).send(embedlog);
+            //Update Database and set his MutedUntill back to null in case he's unmuted from a temp mute
+            sql.run(`Update Members set MutedUntil = null where DiscordID = ${message.mentions.users.first().id}`)
+            .catch(err => console.log(err));
 
         } else {
             message.delete();
-            return message.channel.send('__Command wrongly build:__ \n\nPermanent mute: `!Mute @User`\nTemporary mute: `!Mute @user [Time in hours]`');
+            return message.channel.send('__Command wrongly build:__ \n\n`!Unmute @user`');
         }
     }
 };
