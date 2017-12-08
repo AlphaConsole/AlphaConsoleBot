@@ -10,8 +10,9 @@ sql.open("src/sqlite/AlphaConsole.db");
 //Server Information
 var serverInfo = {
     guildName: 'AC Beta',
+    guildId: '348214140889989140',
     logChannel: 'discord-log',
-    modlogChannel: 'mod-log'
+    modlogChannel: '352842494507089920'
   }
 
 
@@ -67,7 +68,7 @@ client.on('message', async message =>
 
         //Staff mute command
         if (args[0].toLowerCase() == "!mute") {
-            //require('./cmds/mute.js').run(client, serverInfo, sql, args)
+            require('./cmds/mute.js').run(client, serverInfo, sql, message ,args)
         }
 
 
@@ -75,13 +76,15 @@ client.on('message', async message =>
 
         //Fast testing place
         if (message.author.id.includes('149223090134450177') || message.author.id.includes('136607366408962048')) {
-            console.log('running sql..');
-            sql.get("select * from Members").then(row => {
-                console.log(row.Username)
-                console.log(row.ID);
-            });
+            console.log(new Date().getTime())
         }
     }
 })
+
+var schedule = require('node-schedule');
+
+var j = schedule.scheduleJob({second: 1}, function(){
+    require('./events/minuteCheck.js').run(client, serverInfo, sql);
+});
 
 client.login(require('./keys.js').TestBotToken);
