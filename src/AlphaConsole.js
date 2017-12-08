@@ -5,7 +5,7 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const sql = require("sqlite");
-sql.open("./sqlite/AlphaConsole.db");
+sql.open("src/sqlite/AlphaConsole.db");
 
 //Server Information
 var serverInfo = {
@@ -74,9 +74,11 @@ client.on('message', async message =>
 
 
         //Fast testing place
-        if (message.author.id.includes('149223090134450177')) {
+        if (message.author.id.includes('149223090134450177') || message.author.id.includes('136607366408962048')) {
+            console.log('running sql..');
             sql.get("select * from Members").then(row => {
-                console.log(row)
+                console.log(row.Username)
+                console.log(row.ID);
             });
         }
     }
