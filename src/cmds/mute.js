@@ -22,9 +22,7 @@ module.exports.run = async(client, serverInfo, sql, message ,args) => {
         //Let's first check if the user even exists in the db
         sql.get(`select * from Members where DiscordID = '${message.mentions.users.first().id}'`).then(row => {
             if (!row) {
-                console.log("Inserting new user...")
                 var today = new Date().getTime();
-                console.log()
                 sql.run(`Insert into Members(DiscordID, Username, JoinedDate)VALUES('${message.mentions.users.first().id}', '${mysql_real_escape_string(message.mentions.users.first().username)}', '${today}')`)
                     .catch(err => console.log(err));
             }

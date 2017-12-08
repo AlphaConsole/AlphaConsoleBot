@@ -71,13 +71,7 @@ client.on('message', async message =>
             require('./cmds/mute.js').run(client, serverInfo, sql, message ,args)
         }
 
-
-
-
-        //Fast testing place
-        if (message.author.id.includes('149223090134450177') || message.author.id.includes('136607366408962048')) {
-            console.log(new Date().getTime())
-        }
+        
     }
 })
 

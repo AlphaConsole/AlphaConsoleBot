@@ -24,32 +24,3 @@ function getRandomIntInclusive(min, max) {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-
-
-  
-function CheckUserExistence(message, connection, callback) {
-    
-    connection.query("select * from `JHZER-Members` where DiscordID = '" + message.author.id + "'", function (error, result) {
-      if (error) {
-        console.log(error);
-        message.channel.send('An error occured. <@149223090134450177> has been notified!');
-      } else {
-          if (result.length == 0) {
-          today = new Date();
-          todayMSeconds = today.getTime();
-  
-          connection.query("insert into `JHZER-Members` (DiscordID, JoinedDate, MutedUntil) VALUES ('" + message.author.id + "', '" + todayMSeconds + "', null)", function (error1) {
-            if (error1) {
-              console.log(error1);
-              message.channel.send('An error occured. <@149223090134450177> has been notified!');
-            } else {
-              CheckUserExistence(message, connection, callback);
-            }
-          })
-  
-        } else {
-          callback(result[0]);
-        }
-      }
-    });
-}
