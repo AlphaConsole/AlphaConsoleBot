@@ -11,7 +11,7 @@ sql.open("src/sqlite/AlphaConsole.db");
 var serverInfo = {
     guildName: 'AC Beta',
     guildId: '348214140889989140',
-    logChannel: 'discord-log',
+    logChannel: '352842494507089920',
     modlogChannel: '352842494507089920'
   }
 
@@ -59,9 +59,7 @@ process.on('unhandledRejection', (reason, p) => {
 
 client.on('message', async message =>
 {
-    if (message.author.bot) {
-        return;
-    }
+    if (message.author.bot) return;
 
     if (message.channel.type != 'dm') {
         var args = message.content.split(/[ ]+/);
