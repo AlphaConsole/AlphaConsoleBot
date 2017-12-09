@@ -9,9 +9,9 @@
   "author": "Hayden Meloche",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "github:hydrabolt/discord.js",
+    "discord.js": "^11.2.1",
+    "node-schedule": "^1.2.1",
     "nodemon": "^1.12.4",
-    "sqlite": "^2.9.0",
-    "node-schedule": "^1.2.1"
+    "sqlite": "^2.9.0"
   }
 }

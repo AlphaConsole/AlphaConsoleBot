@@ -16,6 +16,10 @@ var serverInfo = {
     DynamicCat: '388834196782579712'
   }
 
+//---------------------------//
+//      Bot Load             //
+//---------------------------//
+const keys = require("keys.js");
 
 
 //---------------------------//
@@ -59,6 +63,12 @@ client.on('message', async message =>
 
     if (message.channel.type != 'dm') {
         var args = message.content.split(/[ ]+/);
+
+        //Title commands
+        if (args[0].toLowerCase() == "!set" || args[0].toLowerCase() == "!override") {
+            require('./cmds/titles.js').run(client, serverInfo, message, args)
+        }
+
 
         /// SUPPORT COMMANDS
 
