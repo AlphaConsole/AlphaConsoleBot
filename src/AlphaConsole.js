@@ -12,7 +12,8 @@ var serverInfo = {
     guildName: 'AC Beta',
     guildId: '348214140889989140',
     logChannel: '352842494507089920',
-    modlogChannel: '352842494507089920'
+    modlogChannel: '352842494507089920',
+    DynamicCat: '388834196782579712'
   }
 
 
