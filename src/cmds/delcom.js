@@ -1,13 +1,22 @@
 const Discord = require('discord.js');
 
 module.exports.run = async(client, serverInfo, sql, message, args) => {
-    if (message.content.startsWith("!")) {
-        sql.get(`Select * from Commands where Command = '${mysql_real_escape_string(message.content.substring(1).toLowerCase())}'`).then(row => {
-            if (row) {
-                message.channel.send(row.Response)
-            }
+    
+    if (hasRole(message.member, "Staff"))                                                                                                  // <---   If you would like to change role perms. Change [BontControl] to your role name
+    {
+
+        var TheCommand = args[1].toLowerCase();
+        if(args[1].toLowerCase().startsWith('!'))
+        {
+            TheCommand = args[1].substring(1).toLowerCase()
+        }
+        
+        sql.run(`delete from Commands where Command = '${mysql_real_escape_string(TheCommand)}'`).then(() => {
+            message.channel.send("Command succesfully removed :wink:")
         })
+
     }
+
 }
 
 //Functions used to check if a player has the desired role
@@ -23,12 +32,6 @@ function hasRole(mem, role)
         return false;
     }
 
-}
-
-function getRandomIntInclusive(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 function mysql_real_escape_string (str) {

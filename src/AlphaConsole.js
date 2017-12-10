@@ -24,8 +24,7 @@ var serverInfo = {
 
 //Bot logs in
 client.on('ready', () => {
-    require('./events/ready.js').run(client, serverInfo, function(value) {
-    });
+    require('./events/ready.js').run(client, serverInfo, sql);
 });
 
 //New member joins
@@ -59,9 +58,27 @@ client.on('message', async message =>
 
     if (message.channel.type != 'dm') {
         var args = message.content.split(/[ ]+/);
+        require('./events/newMessage.js').run(client, serverInfo, sql, message, args)
+
+        /// STAFF COMMANDS
+        //Staff Custom Commands add
+        if (args[0].toLowerCase() == "!addcom") {
+            require('./cmds/addcom.js').run(client, serverInfo, sql, message, args)
+        }
+
+        //Staff Custom Commands edit
+        if (args[0].toLowerCase() == "!editcom") {
+            require('./cmds/editcom.js').run(client, serverInfo, sql, message, args)
+        }
+
+        //Staff Custom Commands delete
+        if (args[0].toLowerCase() == "!delcom") {
+            require('./cmds/delcom.js').run(client, serverInfo, sql, message, args)
+        }
+
+
 
         /// SUPPORT COMMANDS
-
         //Support mute command
         if (args[0].toLowerCase() == "!mute") {
             require('./cmds/mute.js').run(client, serverInfo, sql, message, args)
@@ -73,8 +90,9 @@ client.on('message', async message =>
         }
 
 
-        /// MODERATOR COMMANDS
 
+
+        /// MODERATOR COMMANDS
         //Moderator kick command
         if (args[0].toLowerCase() == "!kick") {
             require('./cmds/kick.js').run(client, serverInfo, sql, message, args)
@@ -85,7 +103,17 @@ client.on('message', async message =>
             require('./cmds/ban.js').run(client, serverInfo, sql, message, args)
         }
 
-        
+
+
+        /// ADMIN COMMANDS
+        //Admin Bot Status
+        if (args[0].toLowerCase() == "!status") {
+            require('./cmds/status.js').run(client, serverInfo, sql, message, args)
+        }
+
+        if (args[0] == "!test") {
+            require('./events/StatusUpdate.js').run(client, serverInfo, sql);
+        }
     }
 })
 
@@ -93,6 +121,14 @@ var schedule = require('node-schedule');
 
 var j = schedule.scheduleJob({second: 1}, function(){
     require('./events/minuteCheck.js').run(client, serverInfo, sql);
+});
+
+var j = schedule.scheduleJob({minute: 1}, function(){
+    require('./events/StatusUpdate.js').run(client, serverInfo, sql);
+});
+
+var j = schedule.scheduleJob({minute: 31}, function(){
+    require('./events/StatusUpdate.js').run(client, serverInfo, sql);
 });
 
 client.login(require('./keys.js').TestBotToken);

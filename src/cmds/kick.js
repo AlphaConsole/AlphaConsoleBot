@@ -1,8 +1,8 @@
 const Discord = require('discord.js');
 
 module.exports.run = async(client, serverInfo, sql, message, args) => {
-    if (hasRole(message.member, "Moderator")) {
-
+    if (hasRole(message.member, "Moderator") || hasRole(message.member, "Server Admin") || hasRole(message.member, "Developer")) {
+        
         //Check if someone is tagged
         if (message.mentions.users.first() == undefined) {
             return message.channel.send('Please tag the user to be kicked');
