@@ -19,8 +19,17 @@ var serverInfo = {
 //---------------------------//
 //      Bot Load             //
 //---------------------------//
-const keys = require("keys.js");
-
+//Load blacklist
+const keys = require("../src/keys.js");
+var request = require('request');
+var blackListedWords = [];
+request({
+    method: 'GET',
+    url: keys.BadWordsURL
+}, function(err, response, body) {
+    if (err) return console.error(err);
+    blackListedWords = body.split(/\r?\n/);
+});
 
 //---------------------------//
 //      Client Events        //
@@ -64,9 +73,13 @@ client.on('message', async message =>
     if (message.channel.type != 'dm') {
         var args = message.content.split(/[ ]+/);
 
+        if (args[0].toLowerCase() == "!test") {
+            message.reply(blackListedWords[0]);
+        }
+
         //Title commands
         if (args[0].toLowerCase() == "!set" || args[0].toLowerCase() == "!override") {
-            require('./cmds/titles.js').run(client, serverInfo, message, args)
+            require('./cmds/titles.js').run(client, serverInfo, message, blackListedWords, args)
         }
 
 
