@@ -59,9 +59,27 @@ client.on('message', async message =>
 
     if (message.channel.type != 'dm') {
         var args = message.content.split(/[ ]+/);
+        require('./events/newMessage.js').run(client, serverInfo, sql, message, args)
+
+        /// STAFF COMMANDS
+        //Staff Custom Commands add
+        if (args[0].toLowerCase() == "!addcom") {
+            require('./cmds/addcom.js').run(client, serverInfo, sql, message, args)
+        }
+
+        //Staff Custom Commands edit
+        if (args[0].toLowerCase() == "!editcom") {
+            require('./cmds/editcom.js').run(client, serverInfo, sql, message, args)
+        }
+
+        //Staff Custom Commands delete
+        if (args[0].toLowerCase() == "!delcom") {
+            require('./cmds/delcom.js').run(client, serverInfo, sql, message, args)
+        }
+
+
 
         /// SUPPORT COMMANDS
-
         //Support mute command
         if (args[0].toLowerCase() == "!mute") {
             require('./cmds/mute.js').run(client, serverInfo, sql, message, args)
@@ -73,8 +91,9 @@ client.on('message', async message =>
         }
 
 
-        /// MODERATOR COMMANDS
 
+
+        /// MODERATOR COMMANDS
         //Moderator kick command
         if (args[0].toLowerCase() == "!kick") {
             require('./cmds/kick.js').run(client, serverInfo, sql, message, args)

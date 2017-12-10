@@ -1,13 +1,31 @@
 const Discord = require('discord.js');
 
 module.exports.run = async(client, serverInfo, sql, message, args) => {
-    if (message.content.startsWith("!")) {
-        sql.get(`Select * from Commands where Command = '${mysql_real_escape_string(message.content.substring(1).toLowerCase())}'`).then(row => {
-            if (row) {
-                message.channel.send(row.Response)
+    
+    if (hasRole(message.member, "Staff"))                                                                                                  // <---   If you would like to change role perms. Change [BontControl] to your role name
+    {
+        if (args.length > 2)
+        {
+            var TheCommand = args[1].toLowerCase();
+            if(args[1].toLowerCase().startsWith('!'))
+            {
+                TheCommand = args[1].substring(1).toLowerCase()
             }
-        })
+
+            var ResponseText = "";
+            for (i = 2; i < args.length; i++) {
+                ResponseText += args[i] + " ";
+            }
+            
+            sql.run(`Insert into Commands(Command, Response) VALUES ('${mysql_real_escape_string(TheCommand)}','${mysql_real_escape_string(ResponseText)}')`).then(() => {
+                message.channel.send("Command succesfully added :wink:")
+            })
+
+        } else {
+            message.channel.send("Please provide me what the command should answer.\nUsage: `!AddComm [Command] [Text]`")
+        }
     }
+
 }
 
 //Functions used to check if a player has the desired role
@@ -23,12 +41,6 @@ function hasRole(mem, role)
         return false;
     }
 
-}
-
-function getRandomIntInclusive(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 function mysql_real_escape_string (str) {
