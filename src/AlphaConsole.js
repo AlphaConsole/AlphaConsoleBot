@@ -99,6 +99,16 @@ client.on('message', async message =>
             require('./cmds/unmute.js').run(client, serverInfo, sql, message, args)
         }
 
+        //Support warn command
+        if (args[0].toLowerCase() == "!warn") {
+            require('./cmds/warn.js').run(client, serverInfo, sql, message, args)
+        }
+
+        //Support check command
+        if (args[0].toLowerCase() == "!check") {
+            require('./cmds/check.js').run(client, serverInfo, sql, message, args)
+        }
+
 
 
 

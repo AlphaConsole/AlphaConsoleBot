@@ -26,7 +26,7 @@ module.exports.run = async(client, serverInfo, sql, message, args) => {
         BannedUser.ban({reason: TheReason});
 
         //Insert the log into the database
-        sql.run(`Insert into logs(Action, Member, Moderator, Reason) VALUES('ban', '${BannedUser.id}', '${message.author.id}', '${mysql_real_escape_string(TheReason)}')`)
+        sql.run(`Insert into logs(Action, Member, Moderator, Reason, Time) VALUES('ban', '${BannedUser.id}', '${message.author.id}', '${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}')`)
             .catch(err => console.log(err));
 
         //Make a notice & Log it to the log-channel

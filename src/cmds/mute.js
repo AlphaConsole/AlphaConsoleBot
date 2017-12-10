@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 
 module.exports.run = async(client, serverInfo, sql, message ,args) => {
-    if (hasRole(message.member, "Support")) {
+    if (hasRole(message.member, "Support") || hasRole(message.member, "Moderator") || hasRole(message.member, "Server Admin") || hasRole(message.member, "Developer")) {
 
         //Check if someone is tagged
         if (message.mentions.users.first() == undefined) {
@@ -78,7 +78,7 @@ module.exports.run = async(client, serverInfo, sql, message ,args) => {
                 message.guild.channels.get(serverInfo.modlogChannel).send(embedlog);
             }
 
-            sql.run(`Insert into logs(Action, Member, Moderator, value, Reason) VALUES('mute', '${MutedUser.id}', '${message.author.id}', ${mysql_real_escape_string(args[2])},'${mysql_real_escape_string(TheReason)}')`)
+            sql.run(`Insert into logs(Action, Member, Moderator, value, Reason, Time) VALUES('mute', '${MutedUser.id}', '${message.author.id}', ${mysql_real_escape_string(args[2])},'${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}')`)
             .catch(err => console.log(err));
 
         } else {
