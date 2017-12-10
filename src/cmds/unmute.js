@@ -5,13 +5,19 @@ module.exports.run = async(client, serverInfo, sql, message ,args) => {
 
         //Check if someone is tagged
         if (message.mentions.users.first() == undefined) {
-            return message.channel.send('Please tag the user to be muted');
+            const embed = new Discord.MessageEmbed()
+            .setColor([255,255,0])
+            .setTitle('Please tag the user to be unmuted') 
+            return message.channel.send(embed)
         }
 
         if (args.length == 2) {
 
             if (!hasRole(message.guild.member(message.mentions.users.first().id), "Muted")) {
-                return message.channel.send("Cannot unmute a user that isn't muted.");
+                const embed = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setTitle("Cannot unmute a user that isn't muted.") 
+                return message.channel.send(embed)
             }
 
             //Simply just add the mute role
@@ -21,7 +27,10 @@ module.exports.run = async(client, serverInfo, sql, message ,args) => {
 
             //Make a notice & Log it to the log-channel
             message.delete()
-            message.channel.send(`${message.guild.members.get(message.mentions.users.first().id)} has been unmuted.`) //Remove this line if you don't want it to be public.
+            const embed = new Discord.MessageEmbed()
+            .setColor([255,255,0])
+            .setTitle(`${message.guild.members.get(message.mentions.users.first().id)} has been unmuted.`) 
+            message.channel.send(embed) //Remove this line if you don't want it to be public.
 
             const embedlog = new Discord.MessageEmbed()
             .setColor([0,255,0])
@@ -46,7 +55,10 @@ module.exports.run = async(client, serverInfo, sql, message ,args) => {
 
         } else {
             message.delete();
-            return message.channel.send('__Command wrongly build:__ \n\n`!Unmute @user`');
+            const embed = new Discord.MessageEmbed()
+            .setColor([255,255,0])
+            .setTitle('__Command wrongly build:__ \n\n`!Unmute @user`') 
+            return message.channel.send(embed)
         }
     }
 };

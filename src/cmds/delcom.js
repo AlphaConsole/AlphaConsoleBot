@@ -12,7 +12,10 @@ module.exports.run = async(client, serverInfo, sql, message, args) => {
         }
         
         sql.run(`delete from Commands where Command = '${mysql_real_escape_string(TheCommand)}'`).then(() => {
-            message.channel.send("Command succesfully removed :wink:")
+            const embed = new Discord.MessageEmbed()
+            .setColor([255,255,0])
+            .setTitle("Command succesfully removed :wink:") 
+            message.channel.send(embed)
         })
 
     }

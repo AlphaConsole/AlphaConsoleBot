@@ -5,7 +5,10 @@ module.exports.run = async(client, serverInfo, sql, message, args) => {
         
         //Check if someone is tagged
         if (message.mentions.users.first() == undefined) {
-            return message.channel.send('Please tag the user to be kicked');
+            const embed = new Discord.MessageEmbed()
+            .setColor([255,255,0])
+            .setTitle('Please tag the user to be kicked') 
+            return message.channel.send(embed)
         }
 
         //Check if there is a reason
@@ -28,7 +31,10 @@ module.exports.run = async(client, serverInfo, sql, message, args) => {
 
         //Make a notice & Log it to the log-channel
         message.delete()
-        message.channel.send(`${message.guild.members.get(message.mentions.users.first().id)} has been kicked from the server.`) //Remove this line if you don't want it to be public.
+        const embed = new Discord.MessageEmbed()
+        .setColor([255,255,0])
+        .setTitle(`${message.guild.members.get(message.mentions.users.first().id)} has been kicked from the server.`) 
+        message.channel.send(embed) //Remove this line if you don't want it to be public.
 
         const embedlog = new Discord.MessageEmbed()
         .setColor([255,140,0])
