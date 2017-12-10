@@ -13,7 +13,9 @@ var serverInfo = {
     guildId: '348214140889989140',
     logChannel: '352842494507089920',
     modlogChannel: '352842494507089920',
-    DynamicCat: '388834196782579712'
+    DynamicCat: '388834196782579712',
+    BotSpam : '389241234100715520',
+    EventsRole: '389384990087053312'
   }
 
 
@@ -59,6 +61,14 @@ client.on('message', async message =>
     if (message.channel.type != 'dm') {
         var args = message.content.split(/[ ]+/);
         require('./events/newMessage.js').run(client, serverInfo, sql, message, args)
+
+        /// USER COMMANDS
+        // Bot-Spam: Self-Assign role
+        if(message.channel.id.includes(serverInfo.BotSpam)) {
+            if (args[0].toLowerCase() == "!role") {
+                require('./cmds/role.js').run(client, serverInfo, sql, message, args)
+            }
+        }
 
         /// STAFF COMMANDS
         //Staff Custom Commands add

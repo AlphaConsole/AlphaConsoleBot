@@ -5,7 +5,10 @@ module.exports.run = async(client, serverInfo, sql, message ,args) => {
 
         //Check if someone is tagged
         if (message.mentions.users.first() == undefined) {
-            return message.channel.send('Please tag the user to be muted');
+            const embed = new Discord.MessageEmbed()
+            .setColor([255,255,0])
+            .setTitle('Please tag the user to be muted') 
+            return message.channel.send(embed)
         }
 
         if (args.length > 2) {
@@ -28,7 +31,10 @@ module.exports.run = async(client, serverInfo, sql, message ,args) => {
 
                 //Make a notice & Log it to the log-channel
                 message.delete()
-                message.channel.send(`${message.guild.members.get(message.mentions.users.first().id)} has been permanently muted`) //Remove this line if you don't want it to be public.
+                const embed = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setTitle(`${message.guild.members.get(message.mentions.users.first().id)} has been permanently muted`) 
+                message.channel.send(embed) //Remove this line if you don't want it to be public.
 
                 const embedlog = new Discord.MessageEmbed()
                 .setColor([255,0,0])
@@ -58,7 +64,10 @@ module.exports.run = async(client, serverInfo, sql, message ,args) => {
 
                 //Make a notice & Log it to the log-channel
                 message.delete()
-                message.channel.send(`${message.guild.members.get(message.mentions.users.first().id)} has been muted for ${args[2]} hours`) //Remove this line if you don't want it to be public.
+                const embed = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setTitle(`${message.guild.members.get(message.mentions.users.first().id)} has been muted for ${args[2]} hours`) 
+                message.channel.send(embed) //Remove this line if you don't want it to be public.
 
                 const embedlog = new Discord.MessageEmbed()
                 .setColor([255,140,0])
@@ -74,7 +83,10 @@ module.exports.run = async(client, serverInfo, sql, message ,args) => {
 
         } else {
             message.delete();
-            return message.channel.send('__Command wrongly build:__ `!Mute @user [Time in hours] [Reason]`');
+            const embed = new Discord.MessageEmbed()
+            .setColor([255,255,0])
+            .setTitle('__Command wrongly build:__ `!Mute @user [Time in hours] [?Reason]`') 
+            return message.channel.send(embed)
         }
     }
 };

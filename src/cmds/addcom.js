@@ -18,11 +18,17 @@ module.exports.run = async(client, serverInfo, sql, message, args) => {
             }
             
             sql.run(`Insert into Commands(Command, Response) VALUES ('${mysql_real_escape_string(TheCommand)}','${mysql_real_escape_string(ResponseText)}')`).then(() => {
-                message.channel.send("Command succesfully added :wink:")
+                const embed = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setTitle("Command succesfully added :wink:")
+                message.channel.send(embed)
             })
 
         } else {
-            message.channel.send("Please provide me what the command should answer.\nUsage: `!AddComm [Command] [Text]`")
+            const embed = new Discord.MessageEmbed()
+            .setColor([255,255,0])
+            .setTitle("Please provide me what the command should answer.\nUsage: `!AddComm [Command] [Text]`")
+            message.channel.send(embed)
         }
     }
 

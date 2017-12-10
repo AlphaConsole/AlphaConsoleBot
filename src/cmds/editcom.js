@@ -18,11 +18,17 @@ module.exports.run = async(client, serverInfo, sql, message, args) => {
             }
             
             sql.run(`Update Commands set Response = '${mysql_real_escape_string(ResponseText)}' where Command = '${mysql_real_escape_string(TheCommand)}'`).then(() => {
-                message.channel.send("Command succesfully edited :wink:")
+                const embed = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setTitle("Command succesfully edited :wink:") 
+                message.channel.send(embed)
             })
 
         } else {
-            message.channel.send("Please provide me what the command should answer.\nUsage: `!EditCom [Command] [Text]`")
+            const embed = new Discord.MessageEmbed()
+            .setColor([255,255,0])
+            .setTitle("Please provide me what the command should answer.\nUsage: `!EditCom [Command] [Text]`") 
+            message.channel.send(embed)
         }
     }
 
