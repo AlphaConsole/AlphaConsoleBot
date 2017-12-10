@@ -24,8 +24,7 @@ var serverInfo = {
 
 //Bot logs in
 client.on('ready', () => {
-    require('./events/ready.js').run(client, serverInfo, function(value) {
-    });
+    require('./events/ready.js').run(client, serverInfo, sql);
 });
 
 //New member joins
@@ -104,7 +103,17 @@ client.on('message', async message =>
             require('./cmds/ban.js').run(client, serverInfo, sql, message, args)
         }
 
-        
+
+
+        /// ADMIN COMMANDS
+        //Admin Bot Status
+        if (args[0].toLowerCase() == "!status") {
+            require('./cmds/status.js').run(client, serverInfo, sql, message, args)
+        }
+
+        if (args[0] == "!test") {
+            require('./events/StatusUpdate.js').run(client, serverInfo, sql);
+        }
     }
 })
 
@@ -112,6 +121,14 @@ var schedule = require('node-schedule');
 
 var j = schedule.scheduleJob({second: 1}, function(){
     require('./events/minuteCheck.js').run(client, serverInfo, sql);
+});
+
+var j = schedule.scheduleJob({minute: 1}, function(){
+    require('./events/StatusUpdate.js').run(client, serverInfo, sql);
+});
+
+var j = schedule.scheduleJob({minute: 31}, function(){
+    require('./events/StatusUpdate.js').run(client, serverInfo, sql);
 });
 
 client.login(require('./keys.js').TestBotToken);
