@@ -7,6 +7,9 @@ const client = new Discord.Client();
 const sql = require("sqlite");
 sql.open("src/sqlite/AlphaConsole.db");
 
+//vars
+var DisabledLinksSet = new Set();
+
 //Server Information
 var serverInfo = {
     guildName: 'AC Beta',
@@ -26,7 +29,7 @@ var serverInfo = {
 
 //Bot logs in
 client.on('ready', () => {
-    require('./events/ready.js').run(client, serverInfo, sql);
+    require('./events/ready.js').run(client, serverInfo, sql, DisabledLinksSet);
 });
 
 //New member joins
@@ -73,10 +76,9 @@ client.on('message', async message =>
 {
     if (message.author.bot) return;
 
-
     if (message.channel.type != 'dm') {
         var args = message.content.split(/[ ]+/);
-        require('./events/newMessage.js').run(client, serverInfo, sql, message, args)
+        require('./events/newMessage.js').run(client, serverInfo, sql, message, args, DisabledLinksSet)
 
         /// USER COMMANDS
         // Bot-Spam: Self-Assign role
@@ -125,6 +127,11 @@ client.on('message', async message =>
             require('./cmds/check.js').run(client, serverInfo, sql, message, args)
         }
 
+        //Support check command
+        if (args[0].toLowerCase() == "!togglelinks") {
+            require('./cmds/togglelinks.js').run(client, serverInfo, sql, message, args, DisabledLinksSet)
+        }
+
 
 
 
@@ -134,7 +141,7 @@ client.on('message', async message =>
             require('./cmds/kick.js').run(client, serverInfo, sql, message, args)
         }
 
-        //Support unmute command
+        //Moderator ban command
         if (args[0].toLowerCase() == "!ban") {
             require('./cmds/ban.js').run(client, serverInfo, sql, message, args)
         }
