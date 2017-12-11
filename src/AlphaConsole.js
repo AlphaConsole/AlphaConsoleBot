@@ -74,7 +74,7 @@ client.on('message', async message =>
         var args = message.content.split(/[ ]+/);
 
         if (args[0].toLowerCase() == "!test") {
-            message.reply(blackListedWords[0]);
+           
         }
 
         //Title commands
