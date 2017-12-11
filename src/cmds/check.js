@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 
 module.exports.run = async(client, serverInfo, sql, message ,args) => {
-    if(hasRole(message.member, 'Support') || hasRole(message.member, "Moderator") || hasRole(message.member, "Server Admin") || hasRole(message.member, "Developer")) {
+    if(hasRole(message.member, 'Support') || hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
         if (message.mentions.users.first() == undefined) {
             var DiscordID = args[1];
         } else {

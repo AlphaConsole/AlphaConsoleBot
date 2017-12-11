@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 
 module.exports.run = async(client, serverInfo, sql, message, args) => {
     
-    if (hasRole(message.member, "Server Admin") || hasRole(message.member, "Developer"))                                                                                                  // <---   If you would like to change role perms. Change [BontControl] to your role name
+    if (hasRole(message.member, "Admin") || hasRole(message.member, "Developer"))                                                                                                  // <---   If you would like to change role perms. Change [BontControl] to your role name
     {
         if (args.length == 1) {
             sql.all("Select * from Statuses").then(rows => {
