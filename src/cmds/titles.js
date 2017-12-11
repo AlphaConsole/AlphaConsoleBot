@@ -35,21 +35,30 @@ function setTitle(client, serverInfo, message, blackListedWords, args) {
 }
 
 function setColour(client, serverInfo, message, blackListedWords, args) {
-    setUsersColour(message.member, args[2], message);
-
+    var success = setUsersColour(message.member, args[2], message);
+    message.delete().catch(console.error);
+    
 }
 
 function overrideTitle(client, serverInfo, message, blackListedWords, args) {
     if (hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
         var user = message.mentions.users.first();
         var userTitle = createTitle(message, args, 3); //make title
-        setUsersTitle(user, userTitle, message);
+        if(setUsersTitle(user, userTitle, message)) {
+            message.author.send(`User ${args[2]} updated sucessfully.`);
+        }
     }
     message.delete().catch(console.error);
 }
 
 function overideColour(client, serverInfo, message, blackListedWords, args) {
-
+    if (hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
+        var user = message.mentions.users.first();
+        if (setUsersColour(message.member, args[2], message)) {
+            message.author.send(`User ${args[2]} updated successfully.`);
+        }
+    }
+    message.delete().catch(console.error);
 }
 
 //---------------------------//
@@ -89,6 +98,7 @@ function setUsersTitle(user, userTitle, message) {
  */
 function setUsersColour(user, userColour, message) {
     if (isValidColour(user, userColour)) {
+        var success = false;
         var request = require('request');
         var url = keys.SetTitleURL;
         url += '?DiscordID=' + user.id + '&key=' + keys.Password + "&color=" + userColour;
@@ -99,6 +109,7 @@ function setUsersColour(user, userColour, message) {
             if (err) user.send('Their was error updating your colour. Please' +
                 ' pm an admin this error: \n' + err);
             if (body.toLowerCase().includes('done')) {
+                success = true;
                 user.send('Your colour has been updated to: `' + userColour + '`');
             } else if (body.toLowerCase().includes('the user does not exist')) {
                 user.send('Hi, in order to use our custom title service you must authorize your discord account. \n'
@@ -110,6 +121,7 @@ function setUsersColour(user, userColour, message) {
             + '\nSubscribe to our twitch for access to more colours! \nhttps://www.twitch.tv/alphaconsole')
     }
     message.delete().catch(console.error);
+    return success;
 }
 
 /**
