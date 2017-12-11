@@ -14,7 +14,15 @@ module.exports.run = async(client, serverInfo, sql, message, args) => {
 
             var ResponseText = "";
             for (i = 2; i < args.length; i++) {
-                ResponseText += args[i] + " ";
+                if (args[i] == "@everyone") {
+                    ResponseText += "`@everyone` ";
+                } else if (args[i] == "@here") {
+                    ResponseText += "`@here` ";
+                } else if (message.mentions.roles.has(args[i].substring(3, 21))) {
+                    ResponseText += '**' + message.mentions.roles.get(args[i].substring(3, 21)).name + '** '
+                } else {
+                    ResponseText += args[i] + " ";
+                }
             }
             
             sql.run(`Insert into Commands(Command, Response) VALUES ('${mysql_real_escape_string(TheCommand)}','${mysql_real_escape_string(ResponseText)}')`).then(() => {

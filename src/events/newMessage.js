@@ -9,20 +9,32 @@ module.exports.run = async(client, serverInfo, sql, message, args) => {
                     if (!row) {
                         sql.run(`Insert into Members(DiscordID, Username, JoinedDate)VALUES('${message.author.id}', '${mysql_real_escape_string(message.author.username)}', '${new Date().getTime()}')`)
                             .catch(err => console.log(err));
+                            sql.get(`select * from Members where DiscordID = '${message.author.id}'`).then(row => {
+                                if (row.ccCooldown < new Date().getTime()) {
+                                    message.channel.send(command.Response)
+                                    sql.run(`update Members set ccCooldown = '${new Date().getTime() + 5000}' where DiscordID = '${message.author.id}'`);
+                                }
+                            });
+                    } else {
+                        if (row.ccCooldown < new Date().getTime()) {
+                            message.channel.send(command.Response)
+                            sql.run(`update Members set ccCooldown = '${new Date().getTime() + 5000}' where DiscordID = '${message.author.id}'`);
+                        }
                     }
                 }).catch(err => console.log(err))
-
-                sql.get(`select * from Members where DiscordID = '${message.author.id}'`).then(row => {
-                    if (row.ccCooldown < new Date().getTime()) {
-                        message.channel.send(command.Response)
-                        sql.run(`update Members set ccCooldown = '${new Date().getTime() + 5000}' where DiscordID = '${message.author.id}'`);
-                    }
-                });
 
                 
             }
         })
     }
+
+    message.mentions.users.forEach(user => {
+        if (user.id == "174300512441729024") {
+            message.react(":pingcole:389583285656748033")
+        } else if (user.id == "236911139529687040") {
+            message.react(":pingsock:389550360924127233")
+        }
+    });
 }
 
 //Functions used to check if a player has the desired role

@@ -73,10 +73,6 @@ client.on('message', async message =>
 {
     if (message.author.bot) return;
 
-    if (message.content.includes('236911139529687040')) {
-
-        message.react(":pingsock:389550360924127233")
-    }
 
     if (message.channel.type != 'dm') {
         var args = message.content.split(/[ ]+/);
@@ -151,9 +147,6 @@ client.on('message', async message =>
             require('./cmds/status.js').run(client, serverInfo, sql, message, args)
         }
 
-        if (args[0] == "!test") {
-            require('./events/StatusUpdate.js').run(client, serverInfo, sql);
-        }
     }
 })
 
