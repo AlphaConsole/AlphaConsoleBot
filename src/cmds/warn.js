@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 
 module.exports.run = async(client, serverInfo, sql, message ,args) => {
-    if(hasRole(message.member, 'Support') || hasRole(message.member, "Moderator") || hasRole(message.member, "Server Admin") || hasRole(message.member, "Developer")) {
+    if(hasRole(message.member, 'Support') || hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
         if (message.mentions.users.first() == undefined) {
             const embedChannel = new Discord.MessageEmbed()
             .setColor([255,255,0])
@@ -16,9 +16,11 @@ module.exports.run = async(client, serverInfo, sql, message ,args) => {
                     sql.run(`Insert into Members(DiscordID, Username, JoinedDate)VALUES('${message.mentions.users.first().id}', '${mysql_real_escape_string(message.mentions.users.first().username)}', '${today}')`)
                         .catch(err => console.log(err));
                 }
-
-                WarnUser(client, serverInfo, sql, message, row, args);
             }).catch(err => console.log(err))
+
+            sql.get(`select * from Members where DiscordID = '${message.mentions.users.first().id}'`).then(row => {
+                WarnUser(client, serverInfo, sql, message, row, args);
+            });
         }
     }  
 }
@@ -85,7 +87,7 @@ function WarnUser(client, serverInfo, sql, message, row, args) {
         const embedLog = new Discord.MessageEmbed()
         .setColor([0,255,0])
         .setTitle('=== WARNING 1 ===')
-        .setDescription('New warning of <@' + user.id + '> by <@' + message.author.id + '>')
+        .setDescription('New warning of <@' + user.id + '> (' + user.id + ') by <@' + message.author.id + '>')
         .addField("Reason", TheReason)
         client.guilds.get(serverInfo.guildId).channels.get(serverInfo.modlogChannel).send(embedLog);
 
@@ -110,7 +112,7 @@ function WarnUser(client, serverInfo, sql, message, row, args) {
         const embedLog = new Discord.MessageEmbed()
         .setColor([255,177,0])
         .setTitle('=== WARNING 2 ===')
-        .setDescription('New warning of <@' + user.id + '> by <@' + message.author.id + '>')
+        .setDescription('New warning of <@' + user.id + '> (' + user.id + ') by <@' + message.author.id + '>')
         .addField("Reason", TheReason)
         client.guilds.get(serverInfo.guildId).channels.get(serverInfo.modlogChannel).send(embedLog);
         
@@ -139,7 +141,7 @@ function WarnUser(client, serverInfo, sql, message, row, args) {
         const embedLog = new Discord.MessageEmbed()
         .setColor([255,0,0])
         .setTitle('=== WARNING 3 ===')
-        .setDescription('New warning of <@' + user.id + '> by <@' + message.author.id + '>')
+        .setDescription('New warning of <@' + user.id + '> (' + user.id + ') by <@' + message.author.id + '>')
         .addField("Reason", TheReason)
         client.guilds.get(serverInfo.guildId).channels.get(serverInfo.modlogChannel).send(embedLog);
         

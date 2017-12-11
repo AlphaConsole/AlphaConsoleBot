@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 
 module.exports.run = async(client, serverInfo, sql, message, args) => {
-    if (hasRole(message.member, "Moderator") || hasRole(message.member, "Server Admin") || hasRole(message.member, "Developer")) {
+    if (hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
 
         //Check if someone is tagged
         if (message.mentions.users.first() == undefined) {
@@ -33,13 +33,13 @@ module.exports.run = async(client, serverInfo, sql, message, args) => {
         message.delete()
         const embed = new Discord.MessageEmbed()
         .setColor([255,255,0])
-        .setTitle(`${message.guild.members.get(message.mentions.users.first().id)} has been banned from the server.`) 
+        .setTitle(`${message.mentions.users.first().tag} has been banned from the server.`) 
         message.channel.send(embed) //Remove this line if you don't want it to be public.
 
         const embedlog = new Discord.MessageEmbed()
         .setColor([255,0,0])
         .setTitle('=== USER BAN ===')
-        .setDescription(`${message.guild.members.get(message.mentions.users.first().id)} has been banned by ${message.member}`)
+        .setDescription(`${message.guild.members.get(message.mentions.users.first().id)} (${message.mentions.users.first().id}) has been banned by ${message.member}`)
         .setTimestamp()
         .addField('Reason', TheReason)
         message.guild.channels.get(serverInfo.modlogChannel).send(embedlog);

@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 
 module.exports.run = async(client, serverInfo, sql, message ,args) => {
-    if (hasRole(message.member, "Support") || hasRole(message.member, "Moderator") || hasRole(message.member, "Server Admin") || hasRole(message.member, "Developer")) {
+    if (hasRole(message.member, "Support") || hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
 
         //Check if someone is tagged
         if (message.mentions.users.first() == undefined) {
@@ -33,13 +33,13 @@ module.exports.run = async(client, serverInfo, sql, message ,args) => {
                 message.delete()
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
-                .setTitle(`${message.guild.members.get(message.mentions.users.first().id)} has been permanently muted`) 
+                .setTitle(`${message.mentions.users.first().tag} has been permanently muted`) 
                 message.channel.send(embed) //Remove this line if you don't want it to be public.
 
                 const embedlog = new Discord.MessageEmbed()
                 .setColor([255,0,0])
                 .setTitle('=== USER MUTE ===')
-                .setDescription(`${message.guild.members.get(message.mentions.users.first().id)} has been permanently muted by ${message.member}`)
+                .setDescription(`${message.guild.members.get(message.mentions.users.first().id)} (${message.mentions.users.first().id}) has been permanently muted by ${message.member}`)
                 .setTimestamp()
                 .addField("Reason", TheReason)
                 message.guild.channels.get(serverInfo.modlogChannel).send(embedlog);
@@ -66,16 +66,18 @@ module.exports.run = async(client, serverInfo, sql, message ,args) => {
                 message.delete()
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
-                .setTitle(`${message.guild.members.get(message.mentions.users.first().id)} has been muted for ${args[2]} hours`) 
+                .setTitle(`${message.mentions.users.first().tag} has been muted for ${args[2]} hours`) 
                 message.channel.send(embed) //Remove this line if you don't want it to be public.
 
                 const embedlog = new Discord.MessageEmbed()
                 .setColor([255,140,0])
                 .setTitle('=== USER MUTE ===')
-                .setDescription(`${message.guild.members.get(message.mentions.users.first().id)} has been muted for ${args[2]} hours by ${message.member}`)
+                .setDescription(`${message.guild.members.get(message.mentions.users.first().id)} (${message.mentions.users.first().id}) has been muted for ${args[2]} hours by ${message.member}`)
                 .setTimestamp()
                 .addField("Reason", TheReason)
                 message.guild.channels.get(serverInfo.modlogChannel).send(embedlog);
+
+                console.log()
             }
 
             sql.run(`Insert into logs(Action, Member, Moderator, value, Reason, Time) VALUES('mute', '${MutedUser.id}', '${message.author.id}', ${mysql_real_escape_string(args[2])},'${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}')`)

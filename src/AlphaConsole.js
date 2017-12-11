@@ -11,13 +11,13 @@ sql.open("src/sqlite/AlphaConsole.db");
 var serverInfo = {
     guildName: 'AC Beta',
     guildId: '348214140889989140',
-    logChannel: '352842494507089920',
-    modlogChannel: '352842494507089920',
+    aclogChannel: '389536034041495562',
+    serverlogChannel: '389536059177828374',
+    modlogChannel: '389536131089432596',
     DynamicCat: '388834196782579712',
     BotSpam : '389241234100715520',
     EventsRole: '389384990087053312'
   }
-
 
 
 //---------------------------//
@@ -31,17 +31,32 @@ client.on('ready', () => {
 
 //New member joins
 client.on('guildMemberAdd', (member) => {
-    require('./events/newMember.js').run(client, serverInfo, member, connection);
+    require('./events/newMember.js').run(client, serverInfo, member);
 }); 
 
-//Ban Removed
-client.on('guildBanRemove', (guild, user) => {
-    require('./events/banRemove.js').run(client, serverInfo, user);
-  }); 
+//User Left / kicked
+client.on('guildMemberRemove', (member) => {
+    require('./events/guildMemberRemove.js').run(client, serverInfo, member);
+}); 
 
 //Voice users update
 client.on('voiceStateUpdate', (oldMember, newMember) => {
     require('./events/voiceChannelUpdate.js').run(client, serverInfo, oldMember, newMember);
+});
+
+//User Info changed
+client.on('guildMemberUpdate', (oldMember, newMember) => {
+    require('./events/guildMemberUpdate.js').run(client, serverInfo, oldMember, newMember);
+});
+
+//Personal Info changed
+client.on('userUpdate', (oldMember, newMember) => {
+    require('./events/userUpdate.js').run(client, serverInfo, oldMember, newMember);
+});
+
+//User Info changed
+client.on('messageDelete', (message) => {
+    require('./events/messageDelete.js').run(client, serverInfo, message);
 });
 
 //Outputs unhandles promises
@@ -57,6 +72,7 @@ process.on('unhandledRejection', (reason, p) => {
 client.on('message', async message =>
 {
     if (message.author.bot) return;
+
 
     if (message.channel.type != 'dm') {
         var args = message.content.split(/[ ]+/);
@@ -131,9 +147,6 @@ client.on('message', async message =>
             require('./cmds/status.js').run(client, serverInfo, sql, message, args)
         }
 
-        if (args[0] == "!test") {
-            require('./events/StatusUpdate.js').run(client, serverInfo, sql);
-        }
     }
 })
 
