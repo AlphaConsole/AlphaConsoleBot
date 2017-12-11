@@ -28,13 +28,14 @@ function setTitle(client, serverInfo, message, blackListedWords, args) {
         } else {
             //DM user and say invalid.
             message.member.send("Your custom title was not set because it contained a blacklisted phrase. \n"
-            + "AlphaConsole does not allow faking of real titles. If you continue to try and bypass the blacklist system, it could result in loss of access to our custom titles.");
+                + "AlphaConsole does not allow faking of real titles. If you continue to try and bypass the blacklist system, it could result in loss of access to our custom titles.");
         }
     }
     message.delete().catch(console.error);
 }
 
 function setColour(client, serverInfo, message, blackListedWords, args) {
+    setUsersColour(message.member, args[2], message);
 
 }
 
@@ -43,7 +44,7 @@ function overrideTitle(client, serverInfo, message, blackListedWords, args) {
         var user = message.mentions.users.first();
         var userTitle = createTitle(message, args, 3); //make title
         setUsersTitle(user, userTitle, message);
-    } 
+    }
     message.delete().catch(console.error);
 }
 
@@ -55,31 +56,67 @@ function overideColour(client, serverInfo, message, blackListedWords, args) {
 //      Helper Functions     //
 //---------------------------//
 
+/**
+ * This function is to update a users title
+ * @param {user object} user 
+ * @param {string} userTitle 
+ * @param {message object} message 
+ */
 function setUsersTitle(user, userTitle, message) {
     var request = require('request');
     var url = keys.SetTitleURL;
-    url+= '?DiscordID=' + user.id + '&key=' + keys.Password + "&title=" + userTitle;
+    url += '?DiscordID=' + user.id + '&key=' + keys.Password + "&title=" + userTitle;
     request({
         method: 'GET',
         url: url
-    }, function(err, response, body) {
-        if (err) user.send('Their was an error updating your title. Please' + 
-        ' pm an admin this error: \n' + err);
+    }, function (err, response, body) {
+        if (err) user.send('Their was an error updating your title. Please' +
+            ' pm an admin this error: \n' + err);
         if (body.toLowerCase().includes('done')) {
             user.send('Your title has been updated to: `' + userTitle + '`');
-            if (user != message.author) message.author.send('You have successfully updated ' + user.username + '\'s title');
         } else if (body.toLowerCase().includes('the user does not exist')) {
             user.send('Hi, in order to use our custom title service you must authorize your discord account. \n'
-        + "Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.")
+                + "Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.")
         }
     });
 }
 
 /**
+ * This function is to update a users color
+ * @param {user object} user 
+ * @param {string} userTitle 
+ * @param {message object} message 
+ */
+function setUsersColour(user, userColour, message) {
+    if (isValidColour(user, userColour)) {
+        var request = require('request');
+        var url = keys.SetTitleURL;
+        url += '?DiscordID=' + user.id + '&key=' + keys.Password + "&color=" + userColour;
+        request({
+            method: 'GET',
+            url: url
+        }, function (err, response, body) {
+            if (err) user.send('Their was error updating your colour. Please' +
+                ' pm an admin this error: \n' + err);
+            if (body.toLowerCase().includes('done')) {
+                user.send('Your colour has been updated to: `' + userColour + '`');
+            } else if (body.toLowerCase().includes('the user does not exist')) {
+                user.send('Hi, in order to use our custom title service you must authorize your discord account. \n'
+                    + "Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.")
+            }
+        });
+    } else {
+        message.author.send('Hi, you have either chosen an invalid colour or a colour you do not have access to.'
+            + '\nSubscribe to our twitch for access to more colours! \nhttps://www.twitch.tv/alphaconsole')
+    }
+    message.delete().catch(console.error);
+}
+
+/**
  * Checks if titles are valid
- * @param {*} message 
- * @param {*} blackListedWords 
- * @param {*} userTitle 
+ * @param {message object} message 
+ * @param {list} blackListedWords 
+ * @param {string} userTitle 
  */
 function isValidTitle(message, blackListedWords, userTitle) {
     var userTitleBad = false;
@@ -104,12 +141,46 @@ function isValidTitle(message, blackListedWords, userTitle) {
     return userTitleBad;
 }
 
+function isValidColour(user, colour) {
+    switch (colour) {
+        case '0':
+        case '1':
+            return true;
+            break;
+        case '2':
+            if (hasRole(user, 'Twitch Subs') || hasRole(user, 'Legacy')) {
+                return true;
+            } else {
+                return false;
+            }
+            break;
+        case '3':
+        case '4':
+        case '5':
+            return true;
+            break;
+        case '6':
+            if (hasRole(user, 'Twitch Subs') || hasRole(user, 'Legacy')) {
+                return true;
+            } else {
+                return false;
+            }
+            break;
+        case '7':
+            return true;
+            break;
+        default:
+            return false;
+            break;
+    }
+}
+
 /**
  * Checks if the title has bad words taking into consideratriion exempt words
- * @param {*} message 
- * @param {*} blackListedWords 
- * @param {*} userTitle 
- * @param {*} exemptWords 
+ * @param {message object} message 
+ * @param {list} blackListedWords 
+ * @param {string} userTitle 
+ * @param {string} exemptWords 
  */
 function inBlacklist(message, blackListedWords, userTitle, exemptWords) {
     var userTitleBad = false;
@@ -138,12 +209,10 @@ function createTitle(message, args, indexStart) {
 }
 
 function pluck(array) {
-    return array.map(function(item) { return item["name"]; });
+    return array.map(function (item) { return item["name"]; });
 }
-function hasRole(mem, role)
-{
-    if (pluck(mem.roles).includes(role))
-    {
+function hasRole(mem, role) {
+    if (pluck(mem.roles).includes(role)) {
         return true;
     } else {
         return false;
