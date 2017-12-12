@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 
 
-module.exports.run = async(client, serverInfo, sql, DisabledLinksSet) => {
+module.exports.run = async(client, serverInfo, sql, DisabledLinksSet, AutoResponds) => {
     console.log('AlphaConsole Bot logged in and ready.');
     sql.get(`select * from Statuses where Active = 1`).then(row => {
         if (row) {
@@ -12,6 +12,12 @@ module.exports.run = async(client, serverInfo, sql, DisabledLinksSet) => {
     sql.all("Select * from DisabledLinks").then(rows => {
         rows.forEach(row => {
             DisabledLinksSet.add(row.ChannelID)
+        });
+    })
+
+    sql.all("Select * from AutoResponds").then(rows => {
+        rows.forEach(row => {
+            AutoResponds.set(row.Word, row.Response);
         });
     })
 

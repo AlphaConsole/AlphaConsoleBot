@@ -1,6 +1,8 @@
 const Discord = require('discord.js');
 
-module.exports.run = async(client, serverInfo, sql, message, args, DisabledLinksSet) => {
+module.exports.run = async(client, serverInfo, sql, message, args, DisabledLinksSet, AutoResponds) => {
+
+    // Custom Commands
     if (message.content.startsWith("!")) {
         sql.get(`Select * from Commands where Command = '${mysql_real_escape_string(message.content.substring(1).toLowerCase())}'`).then(command => {
             if (command) {
@@ -28,6 +30,7 @@ module.exports.run = async(client, serverInfo, sql, message, args, DisabledLinks
         })
     }
 
+    // !ToggleLinks Functionality
     var messageAllowed = true;
 
     if(!hasRole(message.member, 'staff') && !hasRole(message.member, "Moderator") && !hasRole(message.member, "Admin") && !hasRole(message.member, "Developer") && !hasRole(message.member, "Community Helper")) {      
@@ -46,6 +49,7 @@ module.exports.run = async(client, serverInfo, sql, message, args, DisabledLinks
         }
     }
 
+    // #Showcase & #Suggestion channels
     if (message.channel.id == serverInfo.suggestionsChannel || message.channel.id == serverInfo.showcaseChannel) {
         //Let's first check if the user even exists in the db
         sql.get(`select * from Members where DiscordID = '${message.author.id}'`).then(row => {
@@ -101,6 +105,26 @@ module.exports.run = async(client, serverInfo, sql, message, args, DisabledLinks
         });
     }
 
+    // Auto Responder checker
+    if (!hasRole(message.member, "Moderator") && !hasRole(message.member, "Admin") && !hasRole(message.member, "Developer")) {        
+        for (var [key, value] of AutoResponds) {
+
+            var argsKey = key.toLowerCase().split(/[ ]+/);
+            counter = 0;
+
+            for (let i = 0; i < argsKey.length; i++) {
+                if (message.content.toLowerCase().includes(argsKey[i].toLowerCase().trim())) {
+                    counter++;
+                }                    
+            }
+
+            if (counter == argsKey.length) {
+                message.channel.send(`${message.author}, ${value}`);
+            }
+        }
+    }
+
+    // Add reaction when bot is mentioned
     message.mentions.users.forEach(user => {
         if (user.id == "236911139529687040") {
             message.react(":pingsock:389550360924127233")
