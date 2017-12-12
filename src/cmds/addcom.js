@@ -20,6 +20,8 @@ module.exports.run = async(client, serverInfo, sql, message, args) => {
                     ResponseText += "`@here` ";
                 } else if (message.mentions.roles.has(args[i].substring(3, 21))) {
                     ResponseText += '**' + message.mentions.roles.get(args[i].substring(3, 21)).name + '** '
+                } else if (message.mentions.users.has(args[i].substring(2, 20))) {
+                    ResponseText += '**' + message.mentions.users.get(args[i].substring(2, 20)).tag + '** '
                 } else {
                     ResponseText += args[i] + " ";
                 }
