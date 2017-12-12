@@ -9,6 +9,7 @@ sql.open("src/sqlite/AlphaConsole.db");
 
 //vars
 var DisabledLinksSet = new Set();
+var AutoResponds = new Map();
 
 //Server Information
 var serverInfo = {
@@ -45,7 +46,7 @@ request({
 
 //Bot logs in
 client.on('ready', () => {
-    require('./events/ready.js').run(client, serverInfo, sql, DisabledLinksSet);
+    require('./events/ready.js').run(client, serverInfo, sql, DisabledLinksSet, AutoResponds);
 });
 
 //New member joins
@@ -99,7 +100,7 @@ client.on('message', async message =>
 
     if (message.channel.type != 'dm') {
         var args = message.content.split(/[ ]+/);
-        require('./events/newMessage.js').run(client, serverInfo, sql, message, args, DisabledLinksSet)
+        require('./events/newMessage.js').run(client, serverInfo, sql, message, args, DisabledLinksSet, AutoResponds)
 
         /// USER COMMANDS
         // Bot-Spam: Self-Assign role
@@ -107,10 +108,6 @@ client.on('message', async message =>
             if (args[0].toLowerCase() == "!role") {
                 require('./cmds/role.js').run(client, serverInfo, sql, message, args)
             }
-        }
-
-        if (args[0].toLowerCase() == "!test") {
-           
         }
 
         //Title commands
@@ -175,6 +172,11 @@ client.on('message', async message =>
         //Moderator ban command
         if (args[0].toLowerCase() == "!ban") {
             require('./cmds/ban.js').run(client, serverInfo, sql, message, args)
+        }
+
+        //Moderator auto respond command
+        if (args[0].toLowerCase() == "!auto") {
+            require('./cmds/auto.js').run(client, serverInfo, sql, message, args, AutoResponds)
         }
 
 
