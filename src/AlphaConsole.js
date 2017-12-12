@@ -18,8 +18,10 @@ var serverInfo = {
     serverlogChannel: '389536059177828374',
     modlogChannel: '389536131089432596',
     DynamicCat: '388834196782579712',
-    BotSpam : '389241234100715520',
-    EventsRole: '389384990087053312'
+    BotSpam: '389241234100715520',
+    EventsRole: '389384990087053312',
+    suggestionsChannel: '389870221906804737',
+    showcaseChannel: '349637406393237514'
   }
 
 
@@ -60,6 +62,11 @@ client.on('userUpdate', (oldMember, newMember) => {
 //User Info changed
 client.on('messageDelete', (message) => {
     require('./events/messageDelete.js').run(client, serverInfo, message);
+});
+
+//React has been added
+client.on('messageReactionAdd', (reaction, user) => {
+    require('./events/messageReactionAdd.js').run(client, serverInfo, reaction, user);
 });
 
 //Outputs unhandles promises

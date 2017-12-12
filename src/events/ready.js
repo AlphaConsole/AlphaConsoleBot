@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 
 
-module.exports.run = async(client, channels, sql, DisabledLinksSet) => {
+module.exports.run = async(client, serverInfo, sql, DisabledLinksSet) => {
     console.log('AlphaConsole Bot logged in and ready.');
     //client.user.setActivity("@ alphaconsole.net", {type: "WATCHING"});
 
@@ -16,4 +16,7 @@ module.exports.run = async(client, channels, sql, DisabledLinksSet) => {
             DisabledLinksSet.add(row.ChannelID)
         });
     })
+
+    client.guilds.get(serverInfo.guildId).channels.get(serverInfo.suggestionsChannel).messages.fetch();
+    client.guilds.get(serverInfo.guildId).channels.get(serverInfo.showcaseChannel).messages.fetch();
 }
