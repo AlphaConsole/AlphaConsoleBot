@@ -9,7 +9,7 @@
   "author": "Hayden Meloche",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^11.2.1",
+    "discord.js": "github:hydrabolt/discord.js",
     "node-schedule": "^1.2.1",
     "nodemon": "^1.12.4",
     "request": "^2.83.0",
