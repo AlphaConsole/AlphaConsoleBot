@@ -1,11 +1,14 @@
 const Discord = require('discord.js');
 
 module.exports.run = async(client, serverInfo, sql, message, args) => {
-    if (hasRole(message.member, "Moderator")) {
+    if (hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
 
         //Check if someone is tagged
         if (message.mentions.users.first() == undefined) {
-            return message.channel.send('Please tag the user to be banned');
+            const embed = new Discord.MessageEmbed()
+            .setColor([255,255,0])
+            .setTitle('Please tag the user to be banned')
+            return message.channel.send(embed)
         }
 
         //Check if there is a reason
@@ -23,17 +26,20 @@ module.exports.run = async(client, serverInfo, sql, message, args) => {
         BannedUser.ban({reason: TheReason});
 
         //Insert the log into the database
-        sql.run(`Insert into logs(Action, Member, Moderator, Reason) VALUES('ban', '${BannedUser.id}', '${message.author.id}', '${mysql_real_escape_string(TheReason)}')`)
+        sql.run(`Insert into logs(Action, Member, Moderator, Reason, Time) VALUES('ban', '${BannedUser.id}', '${message.author.id}', '${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}')`)
             .catch(err => console.log(err));
 
         //Make a notice & Log it to the log-channel
         message.delete()
-        message.channel.send(`${message.guild.members.get(message.mentions.users.first().id)} has been banned from the server.`) //Remove this line if you don't want it to be public.
+        const embed = new Discord.MessageEmbed()
+        .setColor([255,255,0])
+        .setTitle(`${message.mentions.users.first().tag} has been banned from the server.`) 
+        message.channel.send(embed) //Remove this line if you don't want it to be public.
 
         const embedlog = new Discord.MessageEmbed()
         .setColor([255,0,0])
         .setTitle('=== USER BAN ===')
-        .setDescription(`${message.guild.members.get(message.mentions.users.first().id)} has been banned by ${message.member}`)
+        .setDescription(`${message.guild.members.get(message.mentions.users.first().id)} (${message.mentions.users.first().id}) has been banned by ${message.member}`)
         .setTimestamp()
         .addField('Reason', TheReason)
         message.guild.channels.get(serverInfo.modlogChannel).send(embedlog);
