@@ -51,10 +51,10 @@ function overrideTitle(client, serverInfo, message, blackListedWords, args) {
     message.delete().catch(console.error);
 }
 
-function overideColour(client, serverInfo, message, blackListedWords, args) {
+function overrideColour(client, serverInfo, message, blackListedWords, args) {
     if (hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
         var user = message.mentions.users.first();
-        if (setUsersColour(message.member, args[2], message)) {
+        if (setUsersColour(message.member, args[3], message)) {
             message.author.send(`User ${args[2]} updated successfully.`);
         }
     }
@@ -120,7 +120,6 @@ function setUsersColour(user, userColour, message) {
         message.author.send('Hi, you have either chosen an invalid colour or a colour you do not have access to.'
             + '\nSubscribe to our twitch for access to more colours! \nhttps://www.twitch.tv/alphaconsole')
     }
-    message.delete().catch(console.error);
     return success;
 }
 
@@ -160,7 +159,7 @@ function isValidColour(user, colour) {
             return true;
             break;
         case '2':
-            if (hasRole(user, 'Twitch Subs') || hasRole(user, 'Legacy')) {
+            if (hasRole(user, 'Twitch Subs') || hasRole(user, 'Legacy') || isStaff(user)) {
                 return true;
             } else {
                 return false;
@@ -172,7 +171,7 @@ function isValidColour(user, colour) {
             return true;
             break;
         case '6':
-            if (hasRole(user, 'Twitch Subs') || hasRole(user, 'Legacy')) {
+            if (hasRole(user, 'Twitch Subs') || hasRole(user, 'Legacy') || isStaff(user)) {
                 return true;
             } else {
                 return false;
@@ -184,6 +183,18 @@ function isValidColour(user, colour) {
         default:
             return false;
             break;
+    }
+}
+
+/**
+ * Returns true if user is part of staff
+ * @param {user} user 
+ */
+function isStaff(user) {
+    if (hasRole(user, "Developer") ||hasRole(user, "Admin") || hasRole(user, "Moderator") || hasRole(user, "Support")) {
+        return true;
+    } else {
+        return false;
     }
 }
 
