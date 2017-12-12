@@ -46,10 +46,63 @@ module.exports.run = async(client, serverInfo, sql, message, args, DisabledLinks
         }
     }
 
+    if (message.channel.id == serverInfo.suggestionsChannel || message.channel.id == serverInfo.showcaseChannel) {
+        //Let's first check if the user even exists in the db
+        sql.get(`select * from Members where DiscordID = '${message.author.id}'`).then(row => {
+            if (!row) {
+                var today = new Date().getTime();
+                sql.run(`Insert into Members(DiscordID, Username, JoinedDate)VALUES('${message.author.id}', '${mysql_real_escape_string(message.author.username)}', '${today}')`)
+                    .catch(err => console.log(err));
+            }
+        }).catch(err => console.log(err))
+
+        sql.get(`select * from Members where DiscordID = '${message.author.id}'`).then(row => {
+            if(message.channel.id == serverInfo.suggestionsChannel) {
+                if (row.Suggestion < new Date().getTime()) {
+                    message.react('👍').then(() => {
+                        message.react('👎').then(() => {
+                            message.react('❌')
+                        })
+                    })
+
+                    sql.run(`update Members set Suggestion = '${new Date().getTime() + 300000}' where DiscordID = '${message.author.id}'`)
+                } else {
+                    message.delete()
+                    const embed = new Discord.MessageEmbed()
+                    .setColor([255,255,0])
+                    .setTitle("Your suggestion has been removed since you can only send in clips once every 5 minutes!") 
+                    message.author.send(embed);
+                }
+            } else if(message.channel.id == serverInfo.showcaseChannel) {
+                if (row.Showcase < new Date().getTime()) {
+                    if (message.content.length == 0) {
+                        message.react('👍').then(() => {
+                            message.react('👎').then(() => {
+                                message.react('❌')
+                            })
+                        })
+                        sql.run(`update Members set Showcase = '${new Date().getTime() + 300000}' where DiscordID = '${message.author.id}'`)                        
+                    } else {
+                        message.delete();
+                        const embed = new Discord.MessageEmbed()
+                        .setColor([255,255,0])
+                        .setTitle('Only images allowed in Showcase channel. No extra text!') 
+                        message.author.send(embed);
+                    }
+
+                } else {
+                    message.delete()
+                    const embed = new Discord.MessageEmbed()
+                    .setColor([255,255,0])
+                    .setTitle("Your Showcase has been removed since you can only send in clips once every 5 minutes!") 
+                    message.author.send(embed);
+                }
+            }
+        });
+    }
+
     message.mentions.users.forEach(user => {
-        if (user.id == "174300512441729024") {
-            message.react(":pingcole:389583285656748033")
-        } else if (user.id == "236911139529687040") {
+        if (user.id == "236911139529687040") {
             message.react(":pingsock:389550360924127233")
         }
     });
