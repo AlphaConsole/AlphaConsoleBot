@@ -11,11 +11,8 @@ module.exports.run = async(client, serverInfo, sql, message, args) => {
                     StatusMSG = ""
                     rows.forEach(row => {
                         StatusMSG += row.ID + ": " + row.StatusType + " " + row.StatusText;
-                        if (row.Active == 1) {
-                            StatusMSG += " [ACTIVE]\n"
-                        } else {
-                            StatusMSG += "\n"
-                        }
+                        if (row.Active == 1) StatusMSG += " [ACTIVE]";
+                        StatusMSG += "\n"
                     });
                 } else {
                     StatusMSG = "No statuses found.";
@@ -23,44 +20,41 @@ module.exports.run = async(client, serverInfo, sql, message, args) => {
 
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
-                .setTitle("=== Bot Statuses ===")
+                .setAuthor("Bot Statuses", serverInfo.logo)
                 .setDescription(StatusMSG)
                 message.channel.send(embed);
                 
             })
-        } else if (args[1].toLowerCase() == "add") {
-            if (args[2].toLowerCase() == 'watching') {
-                StatusType = "WATCHING";
-            } else if (args[2].toLowerCase() == 'playing') {
-                StatusType = "PLAYING";
-            } else if (args[2].toLowerCase() == 'streaming') {
-                StatusType = "STREAMING";
-            } else if (args[2].toLowerCase() == 'listening') {
-                StatusType = "LISTENING";
-            } else {
+        } else if (args[1].toLowerCase() == "add" && args.length > 2) {
+            if (args[2].toLowerCase() == 'watching') StatusType = "WATCHING"
+            else if (args[2].toLowerCase() == 'playing') StatusType = "PLAYING"
+            else if (args[2].toLowerCase() == 'streaming') StatusType = "STREAMING"
+            else if (args[2].toLowerCase() == 'listening') StatusType = "LISTENING"
+            else {
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
-                .setTitle("Status type not found!")
+                .setAuthor("Status type not found!", serverInfo.logo)
                 .setDescription("Supported types: Watching, Playing, Streaming & Listening.")
                 return message.channel.send(embed)
             }
 
-            StatusText = ""
-            for (let i = 3; i < args.length; i++) {
+            var StatusText = '';
+            for (i = 3; i < args.length; i++) {
                 StatusText += args[i] + " ";
-            }
+            }        
+
 
             sql.run(`Insert into Statuses(StatusType, StatusText) VALUES ('${mysql_real_escape_string(StatusType)}', '${mysql_real_escape_string(StatusText)}')`).then(() => {
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
-                .setTitle("Status added to the list.")
+                .setAuthor("Status added to the list.", serverInfo.logo)
                 message.channel.send(embed)
             })
         } else if (args[1].toLowerCase() == "remove") {
             sql.run(`delete from Statuses where ID = '${mysql_real_escape_string(args[2])}'`).then(() => {
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
-                .setTitle("Status removed from the list.")
+                .setAuthor("Status removed from the list.", serverInfo.logo)
                 message.channel.send(embed)
             })
 
@@ -68,7 +62,7 @@ module.exports.run = async(client, serverInfo, sql, message, args) => {
             sql.run(`truncate Statuses`).then(() => {
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
-                .setTitle("Status list reset.")
+                .setAuthor("Status list reset.", serverInfo.logo)
                 message.channel.send(embed)
             })
 

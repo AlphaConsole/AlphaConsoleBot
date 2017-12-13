@@ -23,4 +23,6 @@ module.exports.run = async(client, serverInfo, sql, DisabledLinksSet, AutoRespon
 
     client.guilds.get(serverInfo.guildId).channels.get(serverInfo.suggestionsChannel).messages.fetch();
     client.guilds.get(serverInfo.guildId).channels.get(serverInfo.showcaseChannel).messages.fetch();
+
+    serverInfo.logo = client.guilds.get(serverInfo.guildId).iconURL({format:"png"});
 }

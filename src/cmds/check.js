@@ -13,21 +13,22 @@ module.exports.run = async(client, serverInfo, sql, message ,args) => {
 
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
-                .setTitle(`== User check on ${message.guild.members.get(DiscordID).user.username} ==`) 
-                .addField("Warnings", row.Warnings)
+                .setAuthor(`User check on ${message.guild.members.get(DiscordID).user.username}`, serverInfo.logo) 
 
                 if (row.Warnings != 0) {
                     var Reasons = "";
                     console.log("Checking reasons..")
 
-                    sql.all(`Select * from WarnLogs where Member = '${DiscordID}' order by Time ASC`).then(rows => {
+                    sql.all(`Select * from logs where Member = '${DiscordID}' and Action = 'warn' order by Time ASC`).then(rows => {
                         rows.forEach(row => {
                             Reasons += row.ID + ". " + row.Reason + "\n";
                         });
+                        embed.addField("Warnings", rows.length)
                         embed.addField("Reasons", Reasons)
                         message.channel.send(embed);
                     })
                 } else {
+                    embed.addField("Warnings", row.Warnings)
                     message.channel.send(embed);
                 }
 
@@ -35,7 +36,7 @@ module.exports.run = async(client, serverInfo, sql, message ,args) => {
             } else {
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
-                .setTitle('No user found in the database') 
+                .setAuthor('No user found in the database', serverInfo.logo) 
                 message.channel.send(embed);
             }
         })

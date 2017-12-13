@@ -160,6 +160,16 @@ client.on('message', async message =>
             require('./cmds/togglelinks.js').run(client, serverInfo, sql, message, args, DisabledLinksSet)
         }
 
+        //Support check command
+        if (args[0].toLowerCase() == "!case") {
+            require('./cmds/case.js').run(client, serverInfo, sql, message, args)
+        }
+
+        //Support check command
+        if (args[0].toLowerCase() == "!cases") {
+            require('./cmds/cases.js').run(client, serverInfo, sql, message, args)
+        }
+
 
 
 

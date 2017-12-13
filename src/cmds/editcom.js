@@ -14,20 +14,30 @@ module.exports.run = async(client, serverInfo, sql, message, args) => {
 
             var ResponseText = "";
             for (i = 2; i < args.length; i++) {
-                ResponseText += args[i] + " ";
+                if (args[i] == "@everyone") {
+                    ResponseText += "`@everyone` ";
+                } else if (args[i] == "@here") {
+                    ResponseText += "`@here` ";
+                } else if (message.mentions.roles.has(args[i].substring(3, 21))) {
+                    ResponseText += '**' + message.mentions.roles.get(args[i].substring(3, 21)).name + '** '
+                } else if (message.mentions.users.has(args[i].substring(2, 20))) {
+                    ResponseText += '**' + message.mentions.users.get(args[i].substring(2, 20)).tag + '** '
+                } else {
+                    ResponseText += args[i] + " ";
+                }
             }
             
             sql.run(`Update Commands set Response = '${mysql_real_escape_string(ResponseText)}' where Command = '${mysql_real_escape_string(TheCommand)}'`).then(() => {
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
-                .setTitle("Command succesfully edited :wink:") 
+                .setAuthor("Command succesfully edited :wink:", serverInfo.logo) 
                 message.channel.send(embed)
             })
 
         } else {
             const embed = new Discord.MessageEmbed()
             .setColor([255,255,0])
-            .setTitle("Please provide me what the command should answer.\nUsage: `!EditCom [Command] [Text]`") 
+            .setAuthor("Please provide me what the command should answer.\nUsage: `!EditCom [Command] [Text]`", serverInfo.logo) 
             message.channel.send(embed)
         }
     }
