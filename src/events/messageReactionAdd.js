@@ -7,13 +7,13 @@ module.exports.run = async(client, serverInfo, reaction, user) => {
             reaction.message.delete();
             const embed = new Discord.MessageEmbed()
             .setColor([255,255,0])
-            .setTitle(`Your suggestion was deleted by **${user.username}**`)
+            .setAuthor(`Your suggestion was deleted by ${user.username}`, serverInfo.logo)
             .setDescription("It was not a valid suggestion, it has already been suggested, or it was in violation of the information listed at the top of our suggestions channel.\n Please read this information carefully if you intend to submit another suggestion in the future.") 
             reaction.message.author.send(embed);
 
             const embedLog = new Discord.MessageEmbed()
             .setColor([255,255,0])
-            .setTitle(`=== SUGGESTION / SHOWCASE DELETED ===`)
+            .setAuthor(`SUGGESTION / SHOWCASE DELETED`, serverInfo.logo)
             .addField(`Suggested by `, `${reaction.message.member} (${reaction.message.author.id})`)
 
             if (reaction.message.content.length != 0) {

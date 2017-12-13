@@ -11,7 +11,7 @@ module.exports.run = async(client, serverInfo, sql, message ,args, DisabledLinks
 
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
-                .setTitle("Links are now allowed in this channel") 
+                .setAuthor("Links are now allowed in this channel", serverInfo.logo) 
                 message.channel.send(embed)
             } else {
                 sql.run(`Insert into DisabledLinks(ChannelID) VALUES ('${message.channel.id}')`)
@@ -20,7 +20,7 @@ module.exports.run = async(client, serverInfo, sql, message ,args, DisabledLinks
 
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
-                .setTitle("Links are no longer allowed in this channel") 
+                .setAuthor("Links are no longer allowed in this channel", serverInfo.logo) 
                 message.channel.send(embed)
             }
         })

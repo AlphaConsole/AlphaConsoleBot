@@ -6,10 +6,11 @@ module.exports.run = async(client, serverInfo, sql, message, args) => {
     {
         if (args.length > 2)
         {
-            var TheCommand = args[1].toLowerCase();
             if(args[1].toLowerCase().startsWith('!'))
             {
-                TheCommand = args[1].substring(1).toLowerCase()
+                var TheCommand = args[1].substring(1).toLowerCase()
+            } else {
+                var TheCommand = args[1].toLowerCase();
             }
 
             var ResponseText = "";
@@ -30,14 +31,14 @@ module.exports.run = async(client, serverInfo, sql, message, args) => {
             sql.run(`Insert into Commands(Command, Response) VALUES ('${mysql_real_escape_string(TheCommand)}','${mysql_real_escape_string(ResponseText)}')`).then(() => {
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
-                .setTitle("Command succesfully added :wink:")
+                .setAuthor("Command succesfully added :wink:", serverInfo.logo)
                 message.channel.send(embed)
             })
 
         } else {
             const embed = new Discord.MessageEmbed()
             .setColor([255,255,0])
-            .setTitle("Please provide me what the command should answer.\nUsage: `!AddComm [Command] [Text]`")
+            .setAuthor("Please provide me what the command should answer.\nUsage: `!AddComm [Command] [Text]`", serverInfo.logo)
             message.channel.send(embed)
         }
     }

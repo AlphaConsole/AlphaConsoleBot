@@ -7,11 +7,18 @@ module.exports.run = async(client, serverInfo, sql, message ,args) => {
         if (message.mentions.users.first() == undefined) {
             const embed = new Discord.MessageEmbed()
             .setColor([255,255,0])
-            .setTitle('Please tag the user to be muted') 
+            .setAuthor('Please tag the user to be muted', serverInfo.logo) 
             return message.channel.send(embed)
         }
 
         if (args.length > 2) {
+
+            if (!isNumber(args[2])) {
+                const embed = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setAuthor('Those hours are not known. Please use 0 for permament mute', serverInfo.logo) 
+                return message.channel.send(embed)
+            }
             //First add the Muted Role to the user
             let MutedRole = message.guild.roles.find('name', 'Muted');
             let MutedUser = message.guild.member(message.mentions.users.first().id);
@@ -21,28 +28,40 @@ module.exports.run = async(client, serverInfo, sql, message ,args) => {
             if (args.length == 3) {
                 var TheReason = "No reason provided";
             } else {
-                var TheReason = ""
-                for (let i = 2; i < args.length; i++) {
-                    TheReason += args[i] + " "; 
+                var TheReason = '';
+                for (i = 3; i < args.length; i++) {
+                    TheReason += args[i] + " ";
                 }
             }
 
+            
             if (args[2] == 0) {
 
                 //Make a notice & Log it to the log-channel
                 message.delete()
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
-                .setTitle(`${message.mentions.users.first().tag} has been permanently muted`) 
+                .setAuthor(`${message.mentions.users.first().tag} has been permanently muted`, serverInfo.logo) 
                 message.channel.send(embed) //Remove this line if you don't want it to be public.
 
-                const embedlog = new Discord.MessageEmbed()
-                .setColor([255,0,0])
-                .setTitle('=== USER MUTE ===')
-                .setDescription(`${message.guild.members.get(message.mentions.users.first().id)} (${message.mentions.users.first().id}) has been permanently muted by ${message.member}`)
-                .setTimestamp()
-                .addField("Reason", TheReason)
-                message.guild.channels.get(serverInfo.modlogChannel).send(embedlog);
+                sql.run(`Insert into logs(Action, Member, Moderator, value, Reason, Time, ChannelID) VALUES('mute', '${MutedUser.id}', '${message.author.id}', ${mysql_real_escape_string(args[2])},'${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}', '${message.channel.id}')`)
+                .then(() => {
+                    var CaseID = "Error";
+                    sql.get(`select * from logs where Member = '${message.mentions.users.first().id}' order by ID desc`).then(roww => {
+                        if (roww) CaseID = roww.ID
+    
+                        const embedlog = new Discord.MessageEmbed()
+                        .setColor([255,255,0])
+                        .setAuthor(`Case ${CaseID} | User Mute`, serverInfo.logo)
+                        .setDescription(`${message.guild.members.get(message.mentions.users.first().id)} (${message.mentions.users.first().id}) has been permanently muted by ${message.member}`)
+                        .setTimestamp()
+                        .addField("Reason", TheReason)
+                        message.guild.channels.get(serverInfo.modlogChannel).send(embedlog).then(msg => {
+                            sql.run(`update logs set MessageID = '${msg.id}' where ID = '${CaseID}'`)
+                        })
+                    });
+                })
+                .catch(err => console.log(err))
 
             } else {
 
@@ -66,28 +85,36 @@ module.exports.run = async(client, serverInfo, sql, message ,args) => {
                 message.delete()
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
-                .setTitle(`${message.mentions.users.first().tag} has been muted for ${args[2]} hours`) 
+                .setAuthor(`${message.mentions.users.first().tag} has been muted for ${args[2]} hours`, serverInfo.logo) 
                 message.channel.send(embed) //Remove this line if you don't want it to be public.
 
-                const embedlog = new Discord.MessageEmbed()
-                .setColor([255,140,0])
-                .setTitle('=== USER MUTE ===')
-                .setDescription(`${message.guild.members.get(message.mentions.users.first().id)} (${message.mentions.users.first().id}) has been muted for ${args[2]} hours by ${message.member}`)
-                .setTimestamp()
-                .addField("Reason", TheReason)
-                message.guild.channels.get(serverInfo.modlogChannel).send(embedlog);
-
-                console.log()
+                sql.run(`Insert into logs(Action, Member, Moderator, value, Reason, Time, ChannelID) VALUES('mute', '${MutedUser.id}', '${message.author.id}', ${mysql_real_escape_string(args[2])},'${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}', '${message.channel.id}')`)
+                .then(() => {
+                    var CaseID = "Error";
+                    sql.get(`select * from logs where Member = '${MutedUser.id}' order by ID desc`).then(roww => {
+                        if (roww) CaseID = roww.ID
+    
+                        const embedlog = new Discord.MessageEmbed()
+                        .setColor([255,255,0])
+                        .setAuthor(`Case ${CaseID} | User Mute`, serverInfo.logo)
+                        .setDescription(`${message.guild.members.get(message.mentions.users.first().id)} (${message.mentions.users.first().id}) has been muted for ${args[2]} hours by ${message.member}`)
+                        .setTimestamp()
+                        .addField("Reason", TheReason)
+                        message.guild.channels.get(serverInfo.modlogChannel).send(embedlog).then(msg => {
+                            sql.run(`update logs set MessageID = '${msg.id}' where ID = '${CaseID}'`)
+                        })
+                    });
+                })
+                .catch(err => console.log(err));
             }
 
-            sql.run(`Insert into logs(Action, Member, Moderator, value, Reason, Time) VALUES('mute', '${MutedUser.id}', '${message.author.id}', ${mysql_real_escape_string(args[2])},'${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}')`)
-            .catch(err => console.log(err));
+
 
         } else {
             message.delete();
             const embed = new Discord.MessageEmbed()
             .setColor([255,255,0])
-            .setTitle('__Command wrongly build:__ `!Mute @user [Time in hours] [?Reason]`') 
+            .setAuthor('__Command wrongly build:__ `!Mute @user [Time in hours] [?Reason]`', serverInfo.logo) 
             return message.channel.send(embed)
         }
     }
@@ -126,8 +153,14 @@ function mysql_real_escape_string (str) {
             case "'":
             case "\\":
             case "%":
-                return "\\"+char; // prepends a backslash to backslash, percent,
+                return char+char; // prepends a backslash to backslash, percent,
                                   // and double/single quotes
         }
     });
+}
+
+
+//Simple function to check if they are numbers
+function isNumber(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
 }

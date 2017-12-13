@@ -7,7 +7,7 @@ module.exports.run = async(client, serverInfo, sql, message ,args) => {
         if (message.mentions.users.first() == undefined) {
             const embed = new Discord.MessageEmbed()
             .setColor([255,255,0])
-            .setTitle('Please tag the user to be unmuted') 
+            .setAuthor('Please tag the user to be unmuted', serverInfo.logo) 
             return message.channel.send(embed)
         }
 
@@ -16,7 +16,7 @@ module.exports.run = async(client, serverInfo, sql, message ,args) => {
             if (!hasRole(message.guild.member(message.mentions.users.first().id), "Muted")) {
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
-                .setTitle("Cannot unmute a user that isn't muted.") 
+                .setAuthor("Cannot unmute a user that isn't muted.", serverInfo.logo) 
                 return message.channel.send(embed)
             }
 
@@ -29,12 +29,12 @@ module.exports.run = async(client, serverInfo, sql, message ,args) => {
             message.delete()
             const embed = new Discord.MessageEmbed()
             .setColor([255,255,0])
-            .setTitle(`${message.mentions.users.first().tag} has been unmuted.`) 
+            .setAuthor(`${message.mentions.users.first().tag} has been unmuted.`, serverInfo.logo) 
             message.channel.send(embed) //Remove this line if you don't want it to be public.
 
             const embedlog = new Discord.MessageEmbed()
-            .setColor([0,255,0])
-            .setTitle('=== USER UNMUTE ===')
+            .setColor([255,255,0])
+            .setAuthor('=== USER UNMUTE ===', serverInfo.logo)
             .setDescription(`${message.guild.members.get(message.mentions.users.first().id)} (${message.mentions.users.first().id}) has been unmuted by ${message.member}`)
             .setTimestamp()
             message.guild.channels.get(serverInfo.modlogChannel).send(embedlog);
@@ -57,7 +57,7 @@ module.exports.run = async(client, serverInfo, sql, message ,args) => {
             message.delete();
             const embed = new Discord.MessageEmbed()
             .setColor([255,255,0])
-            .setTitle('__Command wrongly build:__ \n\n`!Unmute @user`') 
+            .setAuthor('__Command wrongly build:__ \n\n`!Unmute @user`', serverInfo.logo) 
             return message.channel.send(embed)
         }
     }

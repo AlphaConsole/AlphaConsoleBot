@@ -17,7 +17,7 @@ module.exports.run = async(client, serverInfo, sql, message, args, AutoResponds)
 
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
-                .setTitle("=== Bot AutoResponds ===")
+                .setAuthor("Bot AutoResponds", serverInfo.logo)
                 .setDescription(StatusMSG)
                 message.channel.send(embed);
                 
@@ -32,7 +32,7 @@ module.exports.run = async(client, serverInfo, sql, message, args, AutoResponds)
 
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
-                .setTitle('Auto Response message added.')
+                .setAuthor('Auto Response message added.', serverInfo.logo)
                 message.channel.send(embed) 
 
                 AutoResponds.clear();
@@ -45,7 +45,7 @@ module.exports.run = async(client, serverInfo, sql, message, args, AutoResponds)
             } else {
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
-                .setTitle('Auto Response message was not added.')
+                .setAuthor('Auto Response message was not added.', serverInfo.logo)
                 .setDescription("I can't find the `:` to seperate the words to mention and what to respond")
                 message.channel.send(embed)
             }         
@@ -56,7 +56,7 @@ module.exports.run = async(client, serverInfo, sql, message, args, AutoResponds)
                 
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
-                .setTitle('Auto Response message removed.')
+                .setAuthor('Auto Response message removed.', serverInfo.logo)
                 message.channel.send(embed) 
 
                 AutoResponds.clear();
@@ -68,7 +68,7 @@ module.exports.run = async(client, serverInfo, sql, message, args, AutoResponds)
             } else {
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
-                .setTitle('Please provide the ID of the auto respond message.')
+                .setAuthor('Please provide the ID of the auto respond message.', serverInfo.logo)
                 message.channel.send(embed) 
             }
                    

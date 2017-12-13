@@ -5,7 +5,7 @@ module.exports.run = async(client, serverInfo, sql, message ,args) => {
         if (message.mentions.users.first() == undefined) {
             const embedChannel = new Discord.MessageEmbed()
             .setColor([255,255,0])
-            .setTitle('Please tag the user to be warned') 
+            .setAuthor('Please tag the user to be warned', serverInfo.logo) 
             return message.channel.send(embedChannel)
         } else {
 
@@ -54,103 +54,121 @@ function WarnUser(client, serverInfo, sql, message, row, args) {
 
     var user = message.mentions.users.first();
 
-    if (args.length == 2) {
-        var TheReason = "No reason provided"
-    } else {
-        var TheReason = ""
-        
-        for (let i = 2; i < args.length; i++) {
+    if (args.length == 2) var TheReason = "No reason provided"
+    else {
+        var TheReason = '';
+        for (i = 2; i < args.length; i++) {
             TheReason += args[i] + " ";
-        }
+        }        
+
     }
 
-    sql.run(`Insert Into Warnlogs(Member, Moderator, Reason, Time) VALUES('${user.id}', '${message.author.id}', '${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}')`)
-    const embedChannel = new Discord.MessageEmbed()
-    .setColor([255,255,0])
-    .setTitle(`${user.username} has been warned!`) 
-    message.channel.send(embedChannel)
 
-    if (row.Warnings == 0) {
-        const embed = new Discord.MessageEmbed()
+    sql.run(`Insert Into logs(Action, Member, Moderator, Reason, Time, ChannelID) VALUES('warn', '${user.id}', '${message.author.id}', '${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}', '${message.channel.id}')`)
+    .then(() => {
+        const embedChannel = new Discord.MessageEmbed()
         .setColor([255,255,0])
-        .setTitle("You have received a warning. Next warning will result in a temporary mute!") 
-        user.send(embed)
+        .setAuthor(`${user.tag} has been warned!`, serverInfo.logo) 
+        message.channel.send(embedChannel)
 
-        message.channel.messages.fetch({limit:100}).then(messages => {
-            messages.forEach(themessage => {
-                if (themessage.author.id == user.id) {
-                    themessage.delete();
-                }
-            });
-        });
-
-        const embedLog = new Discord.MessageEmbed()
-        .setColor([0,255,0])
-        .setTitle('=== WARNING 1 ===')
-        .setDescription('New warning of <@' + user.id + '> (' + user.id + ') by <@' + message.author.id + '>')
-        .addField("Reason", TheReason)
-        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.modlogChannel).send(embedLog);
-
-        sql.run(`update Members set Warnings = '1' where DiscordID = '${user.id}'`);
-
-
-    } else if (row.Warnings == 1) {
-
-        const embed = new Discord.MessageEmbed()
-        .setColor([255,255,0])
-        .setTitle("You have received a second warning! You'll now be muted for 15 minutes, you are warned!") 
-        user.send(embed)
-
-        message.channel.messages.fetch({limit:100}).then(messages => {
-            messages.forEach(themessage => {
-                if (themessage.author.id == user.id) {
-                    themessage.delete();
-                }
-            });      
-        });
-
-        const embedLog = new Discord.MessageEmbed()
-        .setColor([255,177,0])
-        .setTitle('=== WARNING 2 ===')
-        .setDescription('New warning of <@' + user.id + '> (' + user.id + ') by <@' + message.author.id + '>')
-        .addField("Reason", TheReason)
-        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.modlogChannel).send(embedLog);
+        var CaseID = "Error";
+        sql.get(`select * from logs where Member = '${user.id}' order by ID desc`).then(roww => {
+            if (roww) CaseID = roww.ID
+    
+            if (row.Warnings == 0) {
+                const embed = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setAuthor("You have received a warning. Next warning will result in a temporary mute!", serverInfo.logo) 
+                user.send(embed)
         
-        timeextra = new Date().getTime({limit:100}) + 1000 * 60 * 15;
-        sql.run(`update Members set Warnings = '2', MutedUntil = '${timeextra}' where DiscordID = '${user.id}'`);
-
-        let TheRole = message.guild.roles.find('name', 'Muted');
-        let TheUser = message.guild.member(message.mentions.users.first().id);
-        TheUser.addRole(TheRole);
-
-    } else if (row.Warnings > 1) {
-
-        const embed = new Discord.MessageEmbed()
-        .setColor([255,255,0])
-        .setTitle("You have received another warning! You'll now be muted, and the staff will look into your behaviour for further actions.") 
-        user.send(embed)
-
-        message.channel.messages.fetch({limit:100}).then(messages => {
-            messages.forEach(themessage => {
-                if (themessage.author.id == user.id) {
-                    themessage.delete();
-                }
-            });      
-        });
-
-        const embedLog = new Discord.MessageEmbed()
-        .setColor([255,0,0])
-        .setTitle('=== WARNING 3 ===')
-        .setDescription('New warning of <@' + user.id + '> (' + user.id + ') by <@' + message.author.id + '>')
-        .addField("Reason", TheReason)
-        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.modlogChannel).send(embedLog);
+                message.channel.messages.fetch({limit:100}).then(messages => {
+                    messages.forEach(themessage => {
+                        if (themessage.author.id == user.id) {
+                            themessage.delete();
+                        }
+                    });
+                });
         
-        sql.run(`update Members set Warnings = '3' where DiscordID = '${user.id}'`);
+                const embedLog = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setAuthor(`Case ${CaseID} | Warn`, serverInfo.logo)
+                .setTitle('==> WARNING 1')
+                .setDescription('New warning of <@' + user.id + '> (' + user.id + ') by <@' + message.author.id + '>')
+                .addField("Reason", TheReason)
+                client.guilds.get(serverInfo.guildId).channels.get(serverInfo.modlogChannel).send(embedLog).then(msg => {
+                    sql.run(`update logs set MessageID = '${msg.id}' where ID = '${CaseID}'`)
+                })
+        
+                sql.run(`update Members set Warnings = '1' where DiscordID = '${user.id}'`);
+        
+        
+            } else if (row.Warnings == 1) {
+        
+                const embed = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setAuthor("You have received a second warning! You'll now be muted for 15 minutes, you are warned!", serverInfo.logo) 
+                user.send(embed)
+        
+                message.channel.messages.fetch({limit:100}).then(messages => {
+                    messages.forEach(themessage => {
+                        if (themessage.author.id == user.id) {
+                            themessage.delete();
+                        }
+                    });      
+                });
+        
+                const embedLog = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setAuthor(`Case ${CaseID} | Warn`, serverInfo.logo)
+                .setTitle('==> WARNING 2')
+                .setDescription('New warning of <@' + user.id + '> (' + user.id + ') by <@' + message.author.id + '>')
+                .addField("Reason", TheReason)
+                client.guilds.get(serverInfo.guildId).channels.get(serverInfo.modlogChannel).send(embedLog).then(msg => {
+                    sql.run(`update logs set MessageID = '${msg.id}' where ID = ${CaseID}`)
+                })
+                
+                timeextra = new Date().getTime({limit:100}) + 1000 * 60 * 15;
+                sql.run(`update Members set Warnings = '2', MutedUntil = '${timeextra}' where DiscordID = '${user.id}'`);
+        
+                let TheRole = message.guild.roles.find('name', 'Muted');
+                let TheUser = message.guild.member(message.mentions.users.first().id);
+                TheUser.addRole(TheRole);
+        
+            } else if (row.Warnings > 1) {
+        
+                const embed = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setAuthor("You have received another warning! You'll now be muted, and the staff will look into your behaviour for further actions.", serverInfo.logo) 
+                user.send(embed)
+        
+                message.channel.messages.fetch({limit:100}).then(messages => {
+                    messages.forEach(themessage => {
+                        if (themessage.author.id == user.id) {
+                            themessage.delete();
+                        }
+                    });      
+                });
+        
+                const embedLog = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setAuthor(`Case ${CaseID} | Warn`, serverInfo.logo)
+                .setTitle('==> WARNING 3')
+                .setDescription('New warning of <@' + user.id + '> (' + user.id + ') by <@' + message.author.id + '>')
+                .addField("Reason", TheReason)
+                client.guilds.get(serverInfo.guildId).channels.get(serverInfo.modlogChannel).send(embedLog).then(msg => {
+                    sql.run(`update logs set MessageID = '${msg.id}' where ID = ${CaseID}`)
+                })
+                
+                sql.run(`update Members set Warnings = '3' where DiscordID = '${user.id}'`);
+        
+                let TheRole = message.guild.roles.find('name', 'Muted');
+                let TheUser = message.guild.member(message.mentions.users.first().id);
+                TheUser.addRole(TheRole);
+            }    
+        })
+    
 
-        let TheRole = message.guild.roles.find('name', 'Muted');
-        let TheUser = message.guild.member(message.mentions.users.first().id);
-        TheUser.addRole(TheRole);
-    }
+    })
   }
   
 

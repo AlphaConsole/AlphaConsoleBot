@@ -74,7 +74,7 @@ module.exports.run = async(client, serverInfo, sql, message, args, DisabledLinks
                     message.delete()
                     const embed = new Discord.MessageEmbed()
                     .setColor([255,255,0])
-                    .setTitle("Your suggestion has been removed since you can only send in clips once every 5 minutes!") 
+                    .setAuthor("Your suggestion has been removed since you can only send in clips once every 5 minutes!", serverInfo.logo) 
                     message.author.send(embed);
                 }
             } else if(message.channel.id == serverInfo.showcaseChannel) {
@@ -90,7 +90,7 @@ module.exports.run = async(client, serverInfo, sql, message, args, DisabledLinks
                         message.delete();
                         const embed = new Discord.MessageEmbed()
                         .setColor([255,255,0])
-                        .setTitle('Only images allowed in Showcase channel. No extra text!') 
+                        .setAuthor('Only images allowed in Showcase channel. No extra text!', serverInfo.logo) 
                         message.author.send(embed);
                     }
 
@@ -98,7 +98,7 @@ module.exports.run = async(client, serverInfo, sql, message, args, DisabledLinks
                     message.delete()
                     const embed = new Discord.MessageEmbed()
                     .setColor([255,255,0])
-                    .setTitle("Your Showcase has been removed since you can only send in clips once every 5 minutes!") 
+                    .setAuthor("Your Showcase has been removed since you can only send in clips once every 5 minutes!", serverInfo.logo) 
                     message.author.send(embed);
                 }
             }
