@@ -1,4 +1,8 @@
-module.exports.run = async(client, serverInfo, oldMember, newMember) => {
+module.exports = {
+  title: "Dynamic Channels",
+  description: "Once a user joins the voice channel it’ll create a new one. This way you have unlimited channels but you only see the active ones",
+  
+  run: async(client, serverInfo, oldMember, newMember) => {
     if (newMember.voiceChannel) {
         if(newMember.voiceChannel.parentID == serverInfo.DynamicCat) {
           if(newMember.voiceChannel.members.array().length == 1) {
@@ -43,4 +47,5 @@ module.exports.run = async(client, serverInfo, oldMember, newMember) => {
           }
         }
       }
+    }
 }

@@ -10,6 +10,8 @@ sql.open("src/sqlite/AlphaConsole.db");
 //vars
 var DisabledLinksSet = new Set();
 var AutoResponds = new Map();
+var Commands = [];
+var Events = [];
 
 //Server Information
 var serverInfo = {
@@ -46,7 +48,7 @@ request({
 
 //Bot logs in
 client.on('ready', () => {
-    require('./events/ready.js').run(client, serverInfo, sql, DisabledLinksSet, AutoResponds);
+    require('./events/ready.js').run(client, serverInfo, sql, DisabledLinksSet, AutoResponds, Commands, Events);
 });
 
 //New member joins
@@ -113,6 +115,14 @@ client.on('message', async message =>
         //Title commands
         if (args[0].toLowerCase() == "!set" || args[0].toLowerCase() == "!override") {
             require('./cmds/titles.js').run(client, serverInfo, message, blackListedWords, args)
+        }
+
+        if (args[0].toLowerCase() == "!help" || args[0].toLowerCase() == "!h") {
+            require('./cmds/help.js').run(client, serverInfo, message, args, Commands)
+        }
+
+        if (args[0].toLowerCase() == "!events") {
+            require('./cmds/events.js').run(client, serverInfo, message, args, Events)
         }
 
         /// SUPPORT COMMANDS

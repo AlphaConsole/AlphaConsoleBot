@@ -1,58 +1,65 @@
 const Discord = require('discord.js');
 
-module.exports.run = async(client, serverInfo, sql, message, args) => {
-    if (hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
-        
-        //Check if someone is tagged
-        if (message.mentions.users.first() == undefined) {
+module.exports = {
+    title: "kick",
+    perms: "Moderator",
+    commands: ["!Kick <@tag> <?Reason>"],
+    description: ["Kicks the person with the given reason"],
+    
+    run: async(client, serverInfo, sql, message, args) => {
+        if (hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
+            
+            //Check if someone is tagged
+            if (message.mentions.users.first() == undefined) {
+                const embed = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setTitle('Please tag the user to be kicked') 
+                return message.channel.send(embed)
+            }
+
+            //Check if there is a reason
+            if (args.length == 2) {
+                var TheReason = "No reason provided";
+            } else {
+                var TheReason = '';
+                for (i = 2; i < args.length; i++) {
+                    TheReason += args[i] + " ";
+                }        
+            }
+
+            //Let's start kicking the user
+            let KickedUser = message.guild.member(message.mentions.users.first().id);
+            KickedUser.kick(TheReason);
+
+            //Insert the log into the database
+            sql.run(`Insert into logs(Action, Member, Moderator, Reason, Time, ChannelID) VALUES('kick', '${KickedUser.id}', '${message.author.id}', '${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}', '${message.channel.id}')`)
+                .then(() => {
+                    var CaseID = "Error";
+                    sql.get(`select * from logs where Member = '${user.id}' order by ID desc`).then(roww => {
+                        if (roww) CaseID = roww.ID
+            
+                        const embedlog = new Discord.MessageEmbed()
+                        .setColor([255,255,0])
+                        .setAuthor(`Case ${CaseID} | User Kick`, serverInfo.logo)
+                        .setDescription(`${message.guild.members.get(message.mentions.users.first().id)} (${message.mentions.users.first().id}) has been kicked by ${message.member}`)
+                        .setTimestamp()
+                        .addField('Reason', TheReason)
+                        message.guild.channels.get(serverInfo.modlogChannel).send(embedlog).then(msg => {
+                            sql.run(`update logs set MessageID = '${msg.id}' where ID = '${CaseID}'`)
+                        })
+                    });        
+                })
+                .catch(err => console.log(err));
+
+            //Make a notice & Log it to the log-channel
+            message.delete()
             const embed = new Discord.MessageEmbed()
             .setColor([255,255,0])
-            .setTitle('Please tag the user to be kicked') 
-            return message.channel.send(embed)
+            .setAuthor(`${message.mentions.users.first().tag} has been kicked from the server.`, serverInfo.logo) 
+            message.channel.send(embed) //Remove this line if you don't want it to be public.
+
+
         }
-
-        //Check if there is a reason
-        if (args.length == 2) {
-            var TheReason = "No reason provided";
-        } else {
-            var TheReason = '';
-            for (i = 2; i < args.length; i++) {
-                TheReason += args[i] + " ";
-            }        
-        }
-
-        //Let's start kicking the user
-        let KickedUser = message.guild.member(message.mentions.users.first().id);
-        KickedUser.kick(TheReason);
-
-        //Insert the log into the database
-        sql.run(`Insert into logs(Action, Member, Moderator, Reason, Time, ChannelID) VALUES('kick', '${KickedUser.id}', '${message.author.id}', '${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}', '${message.channel.id}')`)
-            .then(() => {
-                var CaseID = "Error";
-                sql.get(`select * from logs where Member = '${user.id}' order by ID desc`).then(roww => {
-                    if (roww) CaseID = roww.ID
-        
-                    const embedlog = new Discord.MessageEmbed()
-                    .setColor([255,255,0])
-                    .setAuthor(`Case ${CaseID} | User Kick`, serverInfo.logo)
-                    .setDescription(`${message.guild.members.get(message.mentions.users.first().id)} (${message.mentions.users.first().id}) has been kicked by ${message.member}`)
-                    .setTimestamp()
-                    .addField('Reason', TheReason)
-                    message.guild.channels.get(serverInfo.modlogChannel).send(embedlog).then(msg => {
-                        sql.run(`update logs set MessageID = '${msg.id}' where ID = '${CaseID}'`)
-                    })
-                });        
-            })
-            .catch(err => console.log(err));
-
-        //Make a notice & Log it to the log-channel
-        message.delete()
-        const embed = new Discord.MessageEmbed()
-        .setColor([255,255,0])
-        .setAuthor(`${message.mentions.users.first().tag} has been kicked from the server.`, serverInfo.logo) 
-        message.channel.send(embed) //Remove this line if you don't want it to be public.
-
-
     }
     
 };

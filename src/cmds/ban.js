@@ -1,62 +1,68 @@
 const Discord = require('discord.js');
 
-module.exports.run = async(client, serverInfo, sql, message, args) => {
-    if (hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
+module.exports = {
+    title: "ban",
+    perms: "Moderator",
+    commands: ["!Ban <@tag> <?Reason>"],
+    description: ["Bans the person with the given reason"],
 
-        //Check if someone is tagged
-        if (message.mentions.users.first() == undefined) {
+    run: async(client, serverInfo, sql, message, args) => {
+        if (hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
+
+            //Check if someone is tagged
+            if (message.mentions.users.first() == undefined) {
+                const embed = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setTitle('Please tag the user to be banned')
+                return message.channel.send(embed)
+            }
+
+            //Check if there is a reason
+            if (args.length == 2) {
+                var TheReason = "No reason provided";
+            } else {
+                var TheReason = '';
+                for (i = 2; i < args.length; i++) {
+                    TheReason += args[i] + " ";
+                }        
+            }
+
+            //Let's start banning the user
+            let BannedUser = message.guild.member(message.mentions.users.first().id);
+            BannedUser.ban({reason: TheReason});
+
+            //Insert the log into the database
+            sql.run(`Insert into logs(Action, Member, Moderator, Reason, Time, ChannelID) VALUES('ban', '${BannedUser.id}', '${message.author.id}', '${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}', '${message.channel.id}')`)
+                .then(() => {
+                    var CaseID = "Error";
+                    sql.get(`select * from logs where Member = '${user.id}' order by ID desc`).then(roww => {
+                        if (roww) CaseID = roww.ID
+            
+                        const embedlog = new Discord.MessageEmbed()
+                        .setColor([255,255,0])
+                        .setAuthor(`Case ${CaseID} | User Ban`, serverInfo.logo)
+                        .setDescription(`${message.guild.members.get(message.mentions.users.first().id)} (${message.mentions.users.first().id}) has been banned by ${message.member}`)
+                        .setTimestamp()
+                        .addField('Reason', TheReason)
+                        message.guild.channels.get(serverInfo.modlogChannel).send(embedlog).then(msg => {
+                            sql.run(`update logs set MessageID = '${msg.id}' where ID = '${CaseID}'`)
+                        })
+                    });        
+                })
+                .catch(err => console.log(err));
+
+            //Make a notice & Log it to the log-channel
+            message.delete()
             const embed = new Discord.MessageEmbed()
             .setColor([255,255,0])
-            .setTitle('Please tag the user to be banned')
-            return message.channel.send(embed)
+            .setAuthor(`${message.mentions.users.first().tag} has been banned from the server.`, serverInfo.logo) 
+            message.channel.send(embed) //Remove this line if you don't want it to be public.
+
+
+
+
         }
-
-        //Check if there is a reason
-        if (args.length == 2) {
-            var TheReason = "No reason provided";
-        } else {
-            var TheReason = '';
-            for (i = 2; i < args.length; i++) {
-                TheReason += args[i] + " ";
-            }        
-        }
-
-        //Let's start banning the user
-        let BannedUser = message.guild.member(message.mentions.users.first().id);
-        BannedUser.ban({reason: TheReason});
-
-        //Insert the log into the database
-        sql.run(`Insert into logs(Action, Member, Moderator, Reason, Time, ChannelID) VALUES('ban', '${BannedUser.id}', '${message.author.id}', '${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}', '${message.channel.id}')`)
-            .then(() => {
-                var CaseID = "Error";
-                sql.get(`select * from logs where Member = '${user.id}' order by ID desc`).then(roww => {
-                    if (roww) CaseID = roww.ID
-        
-                    const embedlog = new Discord.MessageEmbed()
-                    .setColor([255,255,0])
-                    .setAuthor(`Case ${CaseID} | User Ban`, serverInfo.logo)
-                    .setDescription(`${message.guild.members.get(message.mentions.users.first().id)} (${message.mentions.users.first().id}) has been banned by ${message.member}`)
-                    .setTimestamp()
-                    .addField('Reason', TheReason)
-                    message.guild.channels.get(serverInfo.modlogChannel).send(embedlog).then(msg => {
-                        sql.run(`update logs set MessageID = '${msg.id}' where ID = '${CaseID}'`)
-                    })
-                });        
-            })
-            .catch(err => console.log(err));
-
-        //Make a notice & Log it to the log-channel
-        message.delete()
-        const embed = new Discord.MessageEmbed()
-        .setColor([255,255,0])
-        .setAuthor(`${message.mentions.users.first().tag} has been banned from the server.`, serverInfo.logo) 
-        message.channel.send(embed) //Remove this line if you don't want it to be public.
-
-
-
-
     }
-    
 };
 
 //Functions used to check if a player has the desired role

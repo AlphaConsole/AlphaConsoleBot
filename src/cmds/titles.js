@@ -1,19 +1,25 @@
 const Discord = require('discord.js');
 const keys = require("../keys.js");
 
-module.exports.run = async (client, serverInfo, message, blackListedWords, args) => {
-    switch (args[1]) {
-        case "title":
-            (args[0].toLowerCase() == "!set" ? setTitle(client, serverInfo, message, blackListedWords, args) : overrideTitle(client, serverInfo, message, blackListedWords, args));
-            break;
-        case "color":
-        case "colour":
-            (args[0].toLowerCase() == "!set" ? setColour(client, serverInfo, message, blackListedWords, args) : overrideColour(client, serverInfo, message, blackListedWords, args));
-            break;
-        default:
-            break;
+module.exports = {
+    title: "titles",
+    perms: "everyone",
+    commands: ["!set Title <Title Name>", "!set Color <Color Number>"],
+    description: ["Use this to set your in game title", "Use this to set your in game title color"],
+    
+    run: async (client, serverInfo, message, blackListedWords, args) => {
+        switch (args[1]) {
+            case "title":
+                (args[0].toLowerCase() == "!set" ? setTitle(client, serverInfo, message, blackListedWords, args) : overrideTitle(client, serverInfo, message, blackListedWords, args));
+                break;
+            case "color":
+            case "colour":
+                (args[0].toLowerCase() == "!set" ? setColour(client, serverInfo, message, blackListedWords, args) : overrideColour(client, serverInfo, message, blackListedWords, args));
+                break;
+            default:
+                break;
+        }
     }
-
 }
 
 function setTitle(client, serverInfo, message, blackListedWords, args) {

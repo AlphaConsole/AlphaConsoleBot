@@ -1,81 +1,95 @@
 const Discord = require('discord.js');
 
-module.exports.run = async(client, serverInfo, sql, message, args, AutoResponds) => {
-    if (hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
+module.exports = {
+    title: "auto",
+    perms: "Moderator",
+    commands: [
+        "!Auto",
+        "!Auto Add <Words to trigger>:<Response from the bot>",
+        "!Auto Remove <ID>"
+    ],
+    description: [
+        "Checks all the auto responses registered in the bot",
+        "Adds an auto response to the bot",
+        "Remove an auto response. ID findable in `!Auto` command"
+    ],
 
-        if (args.length == 1) {
-            sql.all("Select * from AutoResponds").then(rows => {
-                
-                if(rows.length != 0) {
-                    StatusMSG = ""
-                    rows.forEach(row => {
-                        StatusMSG += row.ID + ": " + row.Word + " -> " + row.Response + "\n";
-                    });
+    run: async(client, serverInfo, sql, message, args, AutoResponds) => {
+        if (hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
+
+            if (args.length == 1) {
+                sql.all("Select * from AutoResponds").then(rows => {
+                    
+                    if(rows.length != 0) {
+                        StatusMSG = ""
+                        rows.forEach(row => {
+                            StatusMSG += row.ID + ": " + row.Word + " -> " + row.Response + "\n";
+                        });
+                    } else {
+                        StatusMSG = "No statuses found.";
+                    }
+
+                    const embed = new Discord.MessageEmbed()
+                    .setColor([255,255,0])
+                    .setAuthor("Bot AutoResponds", serverInfo.logo)
+                    .setDescription(StatusMSG)
+                    message.channel.send(embed);
+                    
+                })
+            } else if (args[1] == "add") {
+                if (message.content.includes(':')) {
+                    messageSplit = TrimColon(message.content.substring(10)).split(":");
+                    words = messageSplit[0].trim()
+                    response = messageSplit[1].trim()
+                    
+                    sql.run(`insert into AutoResponds(Word, Response) VALUES ('${words}', '${response}')`)
+
+                    const embed = new Discord.MessageEmbed()
+                    .setColor([255,255,0])
+                    .setAuthor('Auto Response message added.', serverInfo.logo)
+                    message.channel.send(embed) 
+
+                    AutoResponds.clear();
+                    sql.all("Select * from AutoResponds").then(rows => {
+                        rows.forEach(row => {
+                            AutoResponds.set(row.Word, row.Response);
+                        });
+                    })
+
                 } else {
-                    StatusMSG = "No statuses found.";
-                }
-
-                const embed = new Discord.MessageEmbed()
-                .setColor([255,255,0])
-                .setAuthor("Bot AutoResponds", serverInfo.logo)
-                .setDescription(StatusMSG)
-                message.channel.send(embed);
-                
-            })
-        } else if (args[1] == "add") {
-            if (message.content.includes(':')) {
-                messageSplit = TrimColon(message.content.substring(10)).split(":");
-                words = messageSplit[0].trim()
-                response = messageSplit[1].trim()
-                
-                sql.run(`insert into AutoResponds(Word, Response) VALUES ('${words}', '${response}')`)
-
-                const embed = new Discord.MessageEmbed()
-                .setColor([255,255,0])
-                .setAuthor('Auto Response message added.', serverInfo.logo)
-                message.channel.send(embed) 
-
-                AutoResponds.clear();
-                sql.all("Select * from AutoResponds").then(rows => {
-                    rows.forEach(row => {
-                        AutoResponds.set(row.Word, row.Response);
-                    });
-                })
-
-            } else {
-                const embed = new Discord.MessageEmbed()
-                .setColor([255,255,0])
-                .setAuthor('Auto Response message was not added.', serverInfo.logo)
-                .setDescription("I can't find the `:` to seperate the words to mention and what to respond")
-                message.channel.send(embed)
-            }         
-        } else if (args[1] == "remove") {
- 
-            if (args.length == 3) {
-                sql.run(`delete from AutoResponds where ID = '${args[2]}'`)
-                
-                const embed = new Discord.MessageEmbed()
-                .setColor([255,255,0])
-                .setAuthor('Auto Response message removed.', serverInfo.logo)
-                message.channel.send(embed) 
-
-                AutoResponds.clear();
-                sql.all("Select * from AutoResponds").then(rows => {
-                    rows.forEach(row => {
-                        AutoResponds.set(row.Word, row.Response);
-                    });
-                })
-            } else {
-                const embed = new Discord.MessageEmbed()
-                .setColor([255,255,0])
-                .setAuthor('Please provide the ID of the auto respond message.', serverInfo.logo)
-                message.channel.send(embed) 
-            }
-                   
-        }
-
-    }
+                    const embed = new Discord.MessageEmbed()
+                    .setColor([255,255,0])
+                    .setAuthor('Auto Response message was not added.', serverInfo.logo)
+                    .setDescription("I can't find the `:` to seperate the words to mention and what to respond")
+                    message.channel.send(embed)
+                }         
+            } else if (args[1] == "remove") {
     
+                if (args.length == 3) {
+                    sql.run(`delete from AutoResponds where ID = '${args[2]}'`)
+                    
+                    const embed = new Discord.MessageEmbed()
+                    .setColor([255,255,0])
+                    .setAuthor('Auto Response message removed.', serverInfo.logo)
+                    message.channel.send(embed) 
+
+                    AutoResponds.clear();
+                    sql.all("Select * from AutoResponds").then(rows => {
+                        rows.forEach(row => {
+                            AutoResponds.set(row.Word, row.Response);
+                        });
+                    })
+                } else {
+                    const embed = new Discord.MessageEmbed()
+                    .setColor([255,255,0])
+                    .setAuthor('Please provide the ID of the auto respond message.', serverInfo.logo)
+                    message.channel.send(embed) 
+                }
+                    
+            }
+
+        }
+    }
 };
 
 //Functions used to check if a player has the desired role
