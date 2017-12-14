@@ -42,7 +42,7 @@ module.exports = {
                 }
             }).catch(err => console.log(err))
 
-            sql.run(`update Members set Roles = '${newRolesID.substring(2)}' where DiscordID = '${newMember.user.id}'`);
+            sql.run(`update Members set Roles = '${newRolesID.substring(1)}' where DiscordID = '${newMember.user.id}'`);
 
             if (oldMember.roles.size == 1) {
                 client.guilds.get(serverInfo.guildId).channels.get(serverInfo.serverlogChannel).send(":man_with_gua_pi_mao: `["+ new Date().toTimeString().split(' ')[0] +"]` **" + newMember.user.tag + "**'s roles have changed. Old: '' | New: `" + newRoles.substring(2) + "`")                

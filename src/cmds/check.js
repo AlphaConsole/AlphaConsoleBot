@@ -23,7 +23,6 @@ module.exports = {
 
                     if (row.Warnings != 0) {
                         var Reasons = "";
-                        console.log("Checking reasons..")
 
                         sql.all(`Select * from logs where Member = '${DiscordID}' and Action = 'warn' order by Time ASC`).then(rows => {
                             rows.forEach(row => {

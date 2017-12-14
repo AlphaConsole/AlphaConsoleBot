@@ -7,7 +7,7 @@ module.exports = {
     run: async(client, serverInfo, member, sql) => {
         client.guilds.get(serverInfo.guildId).channels.get(serverInfo.serverlogChannel).send(":white_check_mark: `["+ new Date().toTimeString().split(' ')[0] +"]` **" + member.user.tag + "** joined the guild. Total members: **" + numberWithSpaces(client.guilds.get(serverInfo.guildId).members.size) + "**");
 
-        //Let's first check if the user even exists in the db
+        //Let's check if the user exists in the db. If so add his roles to him
         sql.get(`select * from Members where DiscordID = '${member.user.id}'`).then(row => {
             if (!row) {
                 var today = new Date().getTime();
