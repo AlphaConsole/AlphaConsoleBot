@@ -1,31 +1,38 @@
 const Discord = require('discord.js');
 
-module.exports.run = async(client, serverInfo, sql, message, args) => {
+module.exports = {
+    title: "delcom",
+    perms: "Staff",
+    commands: ["!delcom <CommandName>"],
+    description: ["Removes the custom command"],
     
-    if (hasRole(message.member, "Staff"))                                                                                                  // <---   If you would like to change role perms. Change [BontControl] to your role name
-    {
-
-        var TheCommand = args[1].toLowerCase();
-        if(args[1].toLowerCase().startsWith('!'))
+    run: async(client, serverInfo, sql, message, args) => {
+    
+        if (hasRole(message.member, "Admin") || hasRole(message.member, "Developer") || hasRole(message.member, "Moderator") || hasRole(message.member, "Support") || hasRole(message.member, "Staff"))                                                                                                  // <---   If you would like to change role perms. Change [BontControl] to your role name
         {
-            TheCommand = args[1].substring(1).toLowerCase()
+
+            var TheCommand = args[1].toLowerCase();
+            if(args[1].toLowerCase().startsWith('!'))
+            {
+                TheCommand = args[1].substring(1).toLowerCase()
+            }
+            
+            sql.run(`delete from Commands where Command = '${mysql_real_escape_string(TheCommand)}'`).then(() => {
+                const embed = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setAuthor("Command succesfully removed :wink:", serverInfo.logo) 
+                message.channel.send(embed)
+
+                const embedlog = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setAuthor('Command deleted', serverInfo.logo)
+                .addField("Command", TheCommand)
+                .addField("Deketed by", `**${message.member.user.tag}** (${message.member})`)
+                .setTimestamp()
+                client.guilds.get(serverInfo.guildId).channels.get(serverInfo.aclogChannel).send(embedlog);
+            })
+
         }
-        
-        sql.run(`delete from Commands where Command = '${mysql_real_escape_string(TheCommand)}'`).then(() => {
-            const embed = new Discord.MessageEmbed()
-            .setColor([255,255,0])
-            .setAuthor("Command succesfully removed :wink:", serverInfo.logo) 
-            message.channel.send(embed)
-
-            const embedlog = new Discord.MessageEmbed()
-            .setColor([255,255,0])
-            .setAuthor('Command deleted', serverInfo.logo)
-            .addField("Command", TheCommand)
-            .addField("Deketed by", `**${message.member.user.tag}** (${message.member})`)
-            .setTimestamp()
-            client.guilds.get(serverInfo.guildId).channels.get(serverInfo.aclogChannel).send(embedlog);
-        })
-
     }
 
 }

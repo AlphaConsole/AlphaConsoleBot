@@ -1,16 +1,21 @@
 const Discord = require('discord.js');
 
-module.exports.run = async(client, serverInfo, member) => {
-    client.guilds.get(serverInfo.guildId).channels.get(serverInfo.serverlogChannel).send(":white_check_mark: `["+ new Date().toTimeString().split(' ')[0] +"]` **" + member.user.tag + "** joined the guild. Total members: **" + numberWithSpaces(client.guilds.get(serverInfo.guildId).members.size) + "**");
+module.exports = {
+    title: "newMember",
+    description: "Logs whenever a new members joins",
+    
+    run: async(client, serverInfo, member) => {
+        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.serverlogChannel).send(":white_check_mark: `["+ new Date().toTimeString().split(' ')[0] +"]` **" + member.user.tag + "** joined the guild. Total members: **" + numberWithSpaces(client.guilds.get(serverInfo.guildId).members.size) + "**");
 
-    //Let's first check if the user even exists in the db
-    sql.get(`select * from Members where DiscordID = '${member.user.id}'`).then(row => {
-        if (!row) {
-            var today = new Date().getTime();
-            sql.run(`Insert into Members(DiscordID, Username, JoinedDate)VALUES('${member.user.id}', '${mysql_real_escape_string(member.user.username)}', '${today}')`)
-                .catch(err => console.log(err));
-        }
-    }).catch(err => console.log(err))
+        //Let's first check if the user even exists in the db
+        sql.get(`select * from Members where DiscordID = '${member.user.id}'`).then(row => {
+            if (!row) {
+                var today = new Date().getTime();
+                sql.run(`Insert into Members(DiscordID, Username, JoinedDate)VALUES('${member.user.id}', '${mysql_real_escape_string(member.user.username)}', '${today}')`)
+                    .catch(err => console.log(err));
+            }
+        }).catch(err => console.log(err))
+    }
 };
 
 

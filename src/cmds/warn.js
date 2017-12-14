@@ -1,28 +1,35 @@
 const Discord = require('discord.js');
 
-module.exports.run = async(client, serverInfo, sql, message ,args) => {
-    if(hasRole(message.member, 'Support') || hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
-        if (message.mentions.users.first() == undefined) {
-            const embedChannel = new Discord.MessageEmbed()
-            .setColor([255,255,0])
-            .setAuthor('Please tag the user to be warned', serverInfo.logo) 
-            return message.channel.send(embedChannel)
-        } else {
+module.exports = {
+    title: "warn",
+    perms: "Support",
+    commands: ["!Warn <@tag> <?Reason>"],
+    description: ["Adds a warning to the user and in case it’s the second warning or higher he gets muted"],
+    
+    run: async(client, serverInfo, sql, message ,args) => {
+        if(hasRole(message.member, 'Support') || hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
+            if (message.mentions.users.first() == undefined) {
+                const embedChannel = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setAuthor('Please tag the user to be warned', serverInfo.logo) 
+                return message.channel.send(embedChannel)
+            } else {
 
-            //Let's first check if the user even exists in the db
-            sql.get(`select * from Members where DiscordID = '${message.mentions.users.first().id}'`).then(row => {
-                if (!row) {
-                    var today = new Date().getTime();
-                    sql.run(`Insert into Members(DiscordID, Username, JoinedDate)VALUES('${message.mentions.users.first().id}', '${mysql_real_escape_string(message.mentions.users.first().username)}', '${today}')`)
-                        .catch(err => console.log(err));
-                }
-            }).catch(err => console.log(err))
+                //Let's first check if the user even exists in the db
+                sql.get(`select * from Members where DiscordID = '${message.mentions.users.first().id}'`).then(row => {
+                    if (!row) {
+                        var today = new Date().getTime();
+                        sql.run(`Insert into Members(DiscordID, Username, JoinedDate)VALUES('${message.mentions.users.first().id}', '${mysql_real_escape_string(message.mentions.users.first().username)}', '${today}')`)
+                            .catch(err => console.log(err));
+                    }
+                }).catch(err => console.log(err))
 
-            sql.get(`select * from Members where DiscordID = '${message.mentions.users.first().id}'`).then(row => {
-                WarnUser(client, serverInfo, sql, message, row, args);
-            });
-        }
-    }  
+                sql.get(`select * from Members where DiscordID = '${message.mentions.users.first().id}'`).then(row => {
+                    WarnUser(client, serverInfo, sql, message, row, args);
+                });
+            }
+        }  
+    }
 }
 
 

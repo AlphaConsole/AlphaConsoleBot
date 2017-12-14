@@ -1,54 +1,61 @@
 const Discord = require('discord.js');
 
-module.exports.run = async(client, serverInfo, sql, message, args) => {
-    
-    if (hasRole(message.member, "Staff"))                                                                                                  // <---   If you would like to change role perms. Change [BontControl] to your role name
-    {
-        if (args.length > 2)
-        {
-            if(args[1].toLowerCase().startsWith('!'))
-            {
-                var TheCommand = args[1].substring(1).toLowerCase()
-            } else {
-                var TheCommand = args[1].toLowerCase();
-            }
+module.exports = {
+    title: "addcom",
+    perms: "Staff",
+    commands: ["!addcom <CommandName> <Response of the bot>"],
+    description: ["Makes a custom command"],
 
-            var ResponseText = "";
-            for (i = 2; i < args.length; i++) {
-                if (args[i] == "@everyone") {
-                    ResponseText += "`@everyone` ";
-                } else if (args[i] == "@here") {
-                    ResponseText += "`@here` ";
-                } else if (message.mentions.roles.has(args[i].substring(3, 21))) {
-                    ResponseText += '**' + message.mentions.roles.get(args[i].substring(3, 21)).name + '** '
-                } else if (message.mentions.users.has(args[i].substring(2, 20))) {
-                    ResponseText += '**' + message.mentions.users.get(args[i].substring(2, 20)).tag + '** '
+    run: async(client, serverInfo, sql, message, args) => {
+        
+        if (hasRole(message.member, "Admin") || hasRole(message.member, "Developer") || hasRole(message.member, "Moderator") || hasRole(message.member, "Support") || hasRole(message.member, "Staff"))                                                                                                  // <---   If you would like to change role perms. Change [BontControl] to your role name
+        {
+            if (args.length > 2)
+            {
+                if(args[1].toLowerCase().startsWith('!'))
+                {
+                    var TheCommand = args[1].substring(1).toLowerCase()
                 } else {
-                    ResponseText += args[i] + " ";
+                    var TheCommand = args[1].toLowerCase();
                 }
-            }
-            
-            sql.run(`Insert into Commands(Command, Response) VALUES ('${mysql_real_escape_string(TheCommand)}','${mysql_real_escape_string(ResponseText)}')`).then(() => {
+
+                var ResponseText = "";
+                for (i = 2; i < args.length; i++) {
+                    if (args[i] == "@everyone") {
+                        ResponseText += "`@everyone` ";
+                    } else if (args[i] == "@here") {
+                        ResponseText += "`@here` ";
+                    } else if (message.mentions.roles.has(args[i].substring(3, 21))) {
+                        ResponseText += '**' + message.mentions.roles.get(args[i].substring(3, 21)).name + '** '
+                    } else if (message.mentions.users.has(args[i].substring(2, 20))) {
+                        ResponseText += '**' + message.mentions.users.get(args[i].substring(2, 20)).tag + '** '
+                    } else {
+                        ResponseText += args[i] + " ";
+                    }
+                }
+                
+                sql.run(`Insert into Commands(Command, Response) VALUES ('${mysql_real_escape_string(TheCommand)}','${mysql_real_escape_string(ResponseText)}')`).then(() => {
+                    const embed = new Discord.MessageEmbed()
+                    .setColor([255,255,0])
+                    .setAuthor("Command succesfully added :wink:", serverInfo.logo)
+                    message.channel.send(embed)
+
+                    const embedlog = new Discord.MessageEmbed()
+                    .setColor([255,255,0])
+                    .setAuthor('Command added', serverInfo.logo)
+                    .addField("Command", TheCommand)
+                    .addField("Response", ResponseText)
+                    .addField("Added by", `**${message.member.user.tag}** (${message.member})`)
+                    .setTimestamp()
+                    client.guilds.get(serverInfo.guildId).channels.get(serverInfo.aclogChannel).send(embedlog);
+                })
+
+            } else {
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
-                .setAuthor("Command succesfully added :wink:", serverInfo.logo)
+                .setAuthor("Please provide me what the command should answer.\nUsage: `!AddComm [Command] [Text]`", serverInfo.logo)
                 message.channel.send(embed)
-
-                const embedlog = new Discord.MessageEmbed()
-                .setColor([255,255,0])
-                .setAuthor('Command added', serverInfo.logo)
-                .addField("Command", TheCommand)
-                .addField("Response", ResponseText)
-                .addField("Added by", `**${message.member.user.tag}** (${message.member})`)
-                .setTimestamp()
-                client.guilds.get(serverInfo.guildId).channels.get(serverInfo.aclogChannel).send(embedlog);
-            })
-
-        } else {
-            const embed = new Discord.MessageEmbed()
-            .setColor([255,255,0])
-            .setAuthor("Please provide me what the command should answer.\nUsage: `!AddComm [Command] [Text]`", serverInfo.logo)
-            message.channel.send(embed)
+            }
         }
     }
 
