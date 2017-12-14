@@ -156,11 +156,6 @@ client.on('message', async message =>
         }
 
         //Support check command
-        if (args[0].toLowerCase() == "!togglelinks") {
-            require('./cmds/togglelinks.js').run(client, serverInfo, sql, message, args, DisabledLinksSet)
-        }
-
-        //Support check command
         if (args[0].toLowerCase() == "!case") {
             require('./cmds/case.js').run(client, serverInfo, sql, message, args)
         }
@@ -187,6 +182,11 @@ client.on('message', async message =>
         //Moderator auto respond command
         if (args[0].toLowerCase() == "!auto") {
             require('./cmds/auto.js').run(client, serverInfo, sql, message, args, AutoResponds)
+        }
+
+        //Moderator togglelinks command
+        if (args[0].toLowerCase() == "!togglelinks") {
+            require('./cmds/togglelinks.js').run(client, serverInfo, sql, message, args, DisabledLinksSet)
         }
 
 

@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 
 module.exports.run = async(client, serverInfo, sql, message ,args, DisabledLinksSet) => {
-    if(hasRole(message.member, 'Support') || hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
+    if (hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
         
         sql.get(`Select * from DisabledLinks where ChannelID = ${message.channel.id}`).then(row => {
             if (row) {
@@ -13,6 +13,14 @@ module.exports.run = async(client, serverInfo, sql, message ,args, DisabledLinks
                 .setColor([255,255,0])
                 .setAuthor("Links are now allowed in this channel", serverInfo.logo) 
                 message.channel.send(embed)
+
+                const embedlog = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setAuthor('Togglelinks', serverInfo.logo)
+                .addField("Links enabled at", `**${message.channel.name}** (${message.channel})`)
+                .addField("by", `**${message.member.user.tag}** (${message.member})`)
+                .setTimestamp()
+                client.guilds.get(serverInfo.guildId).channels.get(serverInfo.aclogChannel).send(embedlog);
             } else {
                 sql.run(`Insert into DisabledLinks(ChannelID) VALUES ('${message.channel.id}')`)
 
@@ -22,6 +30,14 @@ module.exports.run = async(client, serverInfo, sql, message ,args, DisabledLinks
                 .setColor([255,255,0])
                 .setAuthor("Links are no longer allowed in this channel", serverInfo.logo) 
                 message.channel.send(embed)
+
+                const embedlog = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setAuthor('Togglelinks', serverInfo.logo)
+                .addField("Links disabled at", `**${message.channel.name}** (${message.channel})`)
+                .addField("by", `**${message.member.user.tag}** (${message.member})`)
+                .setTimestamp()
+                client.guilds.get(serverInfo.guildId).channels.get(serverInfo.aclogChannel).send(embedlog);
             }
         })
 

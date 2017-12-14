@@ -33,6 +33,15 @@ module.exports.run = async(client, serverInfo, sql, message, args) => {
                 .setColor([255,255,0])
                 .setAuthor("Command succesfully added :wink:", serverInfo.logo)
                 message.channel.send(embed)
+
+                const embedlog = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setAuthor('Command added', serverInfo.logo)
+                .addField("Command", TheCommand)
+                .addField("Response", ResponseText)
+                .addField("Added by", `**${message.member.user.tag}** (${message.member})`)
+                .setTimestamp()
+                client.guilds.get(serverInfo.guildId).channels.get(serverInfo.aclogChannel).send(embedlog);
             })
 
         } else {
