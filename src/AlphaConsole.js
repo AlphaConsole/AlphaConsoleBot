@@ -9,6 +9,7 @@ sql.open("src/sqlite/AlphaConsole.db");
 
 //vars
 var AllowedLinksSet = new Set();
+var SwearWordsSet = new Set();
 var AutoResponds = new Map();
 var Commands = [];
 var Events = [];
@@ -48,7 +49,7 @@ request({
 
 //Bot logs in
 client.on('ready', () => {
-    require('./events/ready.js').run(client, serverInfo, sql, AllowedLinksSet, AutoResponds, Commands, Events);
+    require('./events/ready.js').run(client, serverInfo, sql, AllowedLinksSet, AutoResponds, Commands, Events, SwearWordsSet);
 });
 
 //New member joins
@@ -102,7 +103,7 @@ client.on('message', async message =>
 
     if (message.channel.type != 'dm') {
         var args = message.content.split(/[ ]+/);
-        require('./events/newMessage.js').run(client, serverInfo, sql, message, args, AllowedLinksSet, AutoResponds)
+        require('./events/newMessage.js').run(client, serverInfo, sql, message, args, AllowedLinksSet, AutoResponds, SwearWordsSet)
 
         /// USER COMMANDS
         // Bot-Spam: Self-Assign role
@@ -192,6 +193,11 @@ client.on('message', async message =>
         //Moderator auto respond command
         if (args[0].toLowerCase() == "!auto") {
             require('./cmds/auto.js').run(client, serverInfo, sql, message, args, AutoResponds)
+        }
+
+        //Moderator swear words command
+        if (args[0].toLowerCase() == "!swearwords") {
+            require('./cmds/swearwords.js').run(client, serverInfo, sql, message, args, SwearWordsSet)
         }
 
         //Moderator togglelinks command

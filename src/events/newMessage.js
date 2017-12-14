@@ -4,7 +4,7 @@ module.exports = {
     title: "newMessage",
     description: "Checks for custom commands, auto responds and links on a new message",
     
-    run: async(client, serverInfo, sql, message, args, AllowedLinksSet, AutoResponds) => {
+    run: async(client, serverInfo, sql, message, args, AllowedLinksSet, AutoResponds, SwearWordsSet) => {
 
         // Custom Commands
         if (message.content.startsWith("!")) {
@@ -34,7 +34,7 @@ module.exports = {
             })
         }
 
-        // !ToggleLinks Functionality
+        // !ToggleLinks Functionality && check for swear words
         var messageAllowed = true;
 
         if(!hasRole(message.member, 'staff') && !hasRole(message.member, "Moderator") && !hasRole(message.member, "Admin") && !hasRole(message.member, "Developer") && !hasRole(message.member, "Community Helper")) {      
@@ -49,6 +49,13 @@ module.exports = {
 
                 if (messageAllowed == false) {
                     message.delete();
+                }
+            }
+
+            console.log(SwearWordsSet)
+            for (let word of SwearWordsSet) {   
+                if (message.content.toLowerCase().includes(word.toLowerCase())) {
+                    return message.delete();
                 }
             }
         }
@@ -119,7 +126,7 @@ module.exports = {
                 for (let i = 0; i < argsKey.length; i++) {
                     if (message.content.toLowerCase().includes(argsKey[i].toLowerCase().trim())) {
                         counter++;
-                    }                    
+                    }
                 }
 
                 if (counter == argsKey.length) {
@@ -128,7 +135,7 @@ module.exports = {
             }
 
             if (message.content.includes('discord.gg/') || message.content.includes('discordapp.com/invite/')) {
-                message.delete();
+                return message.delete();
             }
         }
 
