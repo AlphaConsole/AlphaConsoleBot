@@ -8,7 +8,8 @@ const sql = require("sqlite");
 sql.open("src/sqlite/AlphaConsole.db");
 
 //vars
-var DisabledLinksSet = new Set();
+var AllowedLinksSet = new Set();
+var SwearWordsSet = new Set();
 var AutoResponds = new Map();
 var Commands = [];
 var Events = [];
@@ -48,12 +49,12 @@ request({
 
 //Bot logs in
 client.on('ready', () => {
-    require('./events/ready.js').run(client, serverInfo, sql, DisabledLinksSet, AutoResponds, Commands, Events);
+    require('./events/ready.js').run(client, serverInfo, sql, AllowedLinksSet, AutoResponds, Commands, Events, SwearWordsSet);
 });
 
 //New member joins
 client.on('guildMemberAdd', (member) => {
-    require('./events/newMember.js').run(client, serverInfo, member);
+    require('./events/newMember.js').run(client, serverInfo, member, sql);
 }); 
 
 //User Left / kicked
@@ -68,7 +69,7 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 
 //User Info changed
 client.on('guildMemberUpdate', (oldMember, newMember) => {
-    require('./events/guildMemberUpdate.js').run(client, serverInfo, oldMember, newMember);
+    require('./events/guildMemberUpdate.js').run(client, serverInfo, oldMember, newMember, sql);
 });
 
 //Personal Info changed
@@ -102,7 +103,7 @@ client.on('message', async message =>
 
     if (message.channel.type != 'dm') {
         var args = message.content.split(/[ ]+/);
-        require('./events/newMessage.js').run(client, serverInfo, sql, message, args, DisabledLinksSet, AutoResponds)
+        require('./events/newMessage.js').run(client, serverInfo, sql, message, args, AllowedLinksSet, AutoResponds, SwearWordsSet)
 
         /// USER COMMANDS
         // Bot-Spam: Self-Assign role
@@ -194,9 +195,14 @@ client.on('message', async message =>
             require('./cmds/auto.js').run(client, serverInfo, sql, message, args, AutoResponds)
         }
 
+        //Moderator swear words command
+        if (args[0].toLowerCase() == "!swearwords") {
+            require('./cmds/swearwords.js').run(client, serverInfo, sql, message, args, SwearWordsSet)
+        }
+
         //Moderator togglelinks command
         if (args[0].toLowerCase() == "!togglelinks") {
-            require('./cmds/togglelinks.js').run(client, serverInfo, sql, message, args, DisabledLinksSet)
+            require('./cmds/togglelinks.js').run(client, serverInfo, sql, message, args, AllowedLinksSet)
         }
 
 

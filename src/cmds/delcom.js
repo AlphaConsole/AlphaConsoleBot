@@ -27,7 +27,7 @@ module.exports = {
                 .setColor([255,255,0])
                 .setAuthor('Command deleted', serverInfo.logo)
                 .addField("Command", TheCommand)
-                .addField("Deketed by", `**${message.member.user.tag}** (${message.member})`)
+                .addField("Deleted by", `**${message.member.user.tag}** (${message.member})`)
                 .setTimestamp()
                 client.guilds.get(serverInfo.guildId).channels.get(serverInfo.aclogChannel).send(embedlog);
             })

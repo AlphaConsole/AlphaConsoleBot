@@ -6,7 +6,7 @@ module.exports = {
     title: "ready",
     description: "Activated whenever the bot starts",
     
-    run: async(client, serverInfo, sql, DisabledLinksSet, AutoResponds, Commands, Events) => {
+    run: async(client, serverInfo, sql, AllowedLinksSet, AutoResponds, Commands, Events, SwearWordsSet) => {
         console.log('AlphaConsole Bot logged in and ready.');
         sql.get(`select * from Statuses where Active = 1`).then(row => {
             if (row) {
@@ -16,7 +16,13 @@ module.exports = {
 
         sql.all("Select * from DisabledLinks").then(rows => {
             rows.forEach(row => {
-                DisabledLinksSet.add(row.ChannelID)
+                AllowedLinksSet.add(row.ChannelID)
+            });
+        })
+
+        sql.all("Select * from SwearWords").then(rows => {
+            rows.forEach(row => {
+                SwearWordsSet.add(row.Word)
             });
         })
 

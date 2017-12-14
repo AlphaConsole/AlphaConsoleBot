@@ -4,15 +4,22 @@ module.exports = {
     title: "newMember",
     description: "Logs whenever a new members joins",
     
-    run: async(client, serverInfo, member) => {
+    run: async(client, serverInfo, member, sql) => {
         client.guilds.get(serverInfo.guildId).channels.get(serverInfo.serverlogChannel).send(":white_check_mark: `["+ new Date().toTimeString().split(' ')[0] +"]` **" + member.user.tag + "** joined the guild. Total members: **" + numberWithSpaces(client.guilds.get(serverInfo.guildId).members.size) + "**");
 
-        //Let's first check if the user even exists in the db
+        //Let's check if the user exists in the db. If so add his roles to him
         sql.get(`select * from Members where DiscordID = '${member.user.id}'`).then(row => {
             if (!row) {
                 var today = new Date().getTime();
                 sql.run(`Insert into Members(DiscordID, Username, JoinedDate)VALUES('${member.user.id}', '${mysql_real_escape_string(member.user.username)}', '${today}')`)
                     .catch(err => console.log(err));
+            } else {
+                var RoleIDs = row.Roles.split(/[ ]+/);
+
+                for (let i = 0; i < RoleIDs.length; i++) {
+                    member.addRole(RoleIDs[i])
+                    .catch(err => console.log(err))
+                }
             }
         }).catch(err => console.log(err))
     }

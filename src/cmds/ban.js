@@ -35,7 +35,7 @@ module.exports = {
             sql.run(`Insert into logs(Action, Member, Moderator, Reason, Time, ChannelID) VALUES('ban', '${BannedUser.id}', '${message.author.id}', '${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}', '${message.channel.id}')`)
                 .then(() => {
                     var CaseID = "Error";
-                    sql.get(`select * from logs where Member = '${user.id}' order by ID desc`).then(roww => {
+                    sql.get(`select * from logs where Member = '${BannedUser.id}' order by ID desc`).then(roww => {
                         if (roww) CaseID = roww.ID
             
                         const embedlog = new Discord.MessageEmbed()

@@ -23,7 +23,6 @@ module.exports = {
                 sql.get(`Select * from logs where ID = '${CaseID}'`).then(row => {
 
                     if (row) {
-                        console.log(row)
                         const embed = new Discord.MessageEmbed()
                         .setColor([255,255,0])
                         .setAuthor(`Case check`, serverInfo.logo)
@@ -44,7 +43,6 @@ module.exports = {
                         embed.addField("Case by", `<@${row.Moderator}>`, true)
                         embed.addField("At channel", `<#${row.ChannelID}>`, true)
 
-                        console.log(new Date().getTime())
                         var date = new Date(parseInt(row.Time)).toUTCString();
                         embed.setFooter(`Time of case: ${date}`)
                         message.channel.send(embed)
