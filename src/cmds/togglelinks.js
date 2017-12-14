@@ -6,18 +6,18 @@ module.exports = {
     commands: ["!ToggleLinks"],
     description: ["Enables / Disables links in the current channel (Channel bounded)"],
     
-    run: async(client, serverInfo, sql, message ,args, DisabledLinksSet) => {
+    run: async(client, serverInfo, sql, message ,args, AllowedLinksSet) => {
         if (hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
             
             sql.get(`Select * from DisabledLinks where ChannelID = ${message.channel.id}`).then(row => {
                 if (row) {
                     sql.run(`Delete from DisabledLinks where ChannelID = ${message.channel.id}`)
 
-                    DisabledLinksSet.delete(message.channel.id)
+                    AllowedLinksSet.delete(message.channel.id)
 
                     const embed = new Discord.MessageEmbed()
                     .setColor([255,255,0])
-                    .setAuthor("Links are now allowed in this channel", serverInfo.logo) 
+                    .setAuthor("Links are no longer allowed in this channel", serverInfo.logo) 
                     message.channel.send(embed)
 
                     const embedlog = new Discord.MessageEmbed()
@@ -30,11 +30,11 @@ module.exports = {
                 } else {
                     sql.run(`Insert into DisabledLinks(ChannelID) VALUES ('${message.channel.id}')`)
 
-                    DisabledLinksSet.add(message.channel.id)
+                    AllowedLinksSet.add(message.channel.id)
 
                     const embed = new Discord.MessageEmbed()
                     .setColor([255,255,0])
-                    .setAuthor("Links are no longer allowed in this channel", serverInfo.logo) 
+                    .setAuthor("Links are now allowed in this channel", serverInfo.logo) 
                     message.channel.send(embed)
 
                     const embedlog = new Discord.MessageEmbed()

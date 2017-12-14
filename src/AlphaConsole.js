@@ -8,7 +8,7 @@ const sql = require("sqlite");
 sql.open("src/sqlite/AlphaConsole.db");
 
 //vars
-var DisabledLinksSet = new Set();
+var AllowedLinksSet = new Set();
 var AutoResponds = new Map();
 var Commands = [];
 var Events = [];
@@ -48,7 +48,7 @@ request({
 
 //Bot logs in
 client.on('ready', () => {
-    require('./events/ready.js').run(client, serverInfo, sql, DisabledLinksSet, AutoResponds, Commands, Events);
+    require('./events/ready.js').run(client, serverInfo, sql, AllowedLinksSet, AutoResponds, Commands, Events);
 });
 
 //New member joins
@@ -102,7 +102,7 @@ client.on('message', async message =>
 
     if (message.channel.type != 'dm') {
         var args = message.content.split(/[ ]+/);
-        require('./events/newMessage.js').run(client, serverInfo, sql, message, args, DisabledLinksSet, AutoResponds)
+        require('./events/newMessage.js').run(client, serverInfo, sql, message, args, AllowedLinksSet, AutoResponds)
 
         /// USER COMMANDS
         // Bot-Spam: Self-Assign role
@@ -196,7 +196,7 @@ client.on('message', async message =>
 
         //Moderator togglelinks command
         if (args[0].toLowerCase() == "!togglelinks") {
-            require('./cmds/togglelinks.js').run(client, serverInfo, sql, message, args, DisabledLinksSet)
+            require('./cmds/togglelinks.js').run(client, serverInfo, sql, message, args, AllowedLinksSet)
         }
 
 

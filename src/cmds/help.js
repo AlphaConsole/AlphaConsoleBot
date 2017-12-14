@@ -29,7 +29,7 @@ module.exports = {
             .addField("Everyone commands", everyone)
             .setFooter("Do: !help <command> for more info")
             if (hasRole(message.member, "Admin") || hasRole(message.member, "Developer") || hasRole(message.member, "Moderator") || hasRole(message.member, "Support") || hasRole(message.member, "Staff")) embed.addField("Staff commands", staff)            
-            if (hasRole(message.member, "Admin") || hasRole(message.member, "Developer") || hasRole(message.member, "Moderator") || hasRole(message.member, "Staff")) embed.addField("Support commands", support)
+            if (hasRole(message.member, "Admin") || hasRole(message.member, "Developer") || hasRole(message.member, "Moderator") || hasRole(message.member, "Support")) embed.addField("Support commands", support)
             if (hasRole(message.member, "Admin") || hasRole(message.member, "Developer") || hasRole(message.member, "Moderator")) embed.addField("Moderator commands", moderator);
             if (hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) embed.addField("Admin commands", admin);
             message.channel.send(embed)

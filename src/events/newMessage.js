@@ -4,7 +4,7 @@ module.exports = {
     title: "newMessage",
     description: "Checks for custom commands, auto responds and links on a new message",
     
-    run: async(client, serverInfo, sql, message, args, DisabledLinksSet, AutoResponds) => {
+    run: async(client, serverInfo, sql, message, args, AllowedLinksSet, AutoResponds) => {
 
         // Custom Commands
         if (message.content.startsWith("!")) {
@@ -38,7 +38,7 @@ module.exports = {
         var messageAllowed = true;
 
         if(!hasRole(message.member, 'staff') && !hasRole(message.member, "Moderator") && !hasRole(message.member, "Admin") && !hasRole(message.member, "Developer") && !hasRole(message.member, "Community Helper")) {      
-            if (DisabledLinksSet.has(message.channel.id)) {
+            if (!AllowedLinksSet.has(message.channel.id)) {
                 args.forEach(word => {
                     if(new RegExp("([a-zA-Z0-9]+://)?([a-zA-Z0-9_]+:[a-zA-Z0-9_]+@)?([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})(:[0-9]+)?(/.*)?").test(word)) {
                         if (!word.includes("imgur.com") && !word.includes("reddit.com") && !word.includes("gyazo.com") && !word.includes("prntscr.com")) {
