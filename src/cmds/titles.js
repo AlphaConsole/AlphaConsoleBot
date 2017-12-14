@@ -16,7 +16,11 @@ module.exports = {
             case "colour":
                 (args[0].toLowerCase() == "!set" ? setColour(client, serverInfo, message, blackListedWords, args) : overrideColour(client, serverInfo, message, blackListedWords, args));
                 break;
+            case "special":
+                setSpecialTitle(client, serverInfo, message, blackListedWords, args);
+                break;
             default:
+                message.delete().catch(console.error);
                 break;
         }
     }
@@ -63,6 +67,25 @@ function overrideColour(client, serverInfo, message, blackListedWords, args) {
         if (setUsersColour(message.member, args[3], message)) {
             message.author.send(`User ${args[2]} updated successfully.`);
         }
+    }
+    message.delete().catch(console.error);
+}
+
+function setSpecialTitle(client, serverInfo, message, blackListedWords, args) {
+    if (isNaN(args[2])) {
+        message.author.send('Hi, it looks like you tried to use `!set special` wrong. Please use n\ ' +
+    'an ID at the end. n\Example `!set special 1`');
+    } else {
+        sql.get(`select * from SpepcialTitles where ID = '${args[2]}}'`).then(row => {
+            if (!row) {
+                const roles = row.roles.split(',');
+                if (hasRoleFromList(roles, message.user)) {
+                    setUsersTitle(message.user, row.Title);
+                } else {
+                    message.author.send('Sorry, you do not have permission to the title you have choosen.');
+                }
+            }
+        }).catch(err => console.log(err))
     }
     message.delete().catch(console.error);
 }
@@ -235,6 +258,13 @@ function createTitle(message, args, indexStart) {
         title += args[word] + ' ';
     }
     return title.trim();
+}
+
+function hasRoleFromList(listOfRoles, user) {
+    listOfRoles.forEach(role => {
+        if (hasRole(user, role)) return true;
+    });
+    return false;
 }
 
 function pluck(array) {

@@ -2,7 +2,7 @@
   "name": "alphaconsolebot",
   "version": "1.0.0",
   "description": "Bot for AlphaConsole discord",
-  "main": "alphaconsole.js",
+  "main": "src/alphaconsole.js",
   "scripts": {
     "test": "nodemon src/alphaconsole.js"
   },
