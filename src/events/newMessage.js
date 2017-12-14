@@ -109,7 +109,7 @@ module.exports = {
             });
         }
 
-        // Auto Responder checker
+        // Auto Responder checker && Invite Guard
         if (!hasRole(message.member, "Moderator") && !hasRole(message.member, "Admin") && !hasRole(message.member, "Developer")) {        
             for (var [key, value] of AutoResponds) {
 
@@ -125,6 +125,10 @@ module.exports = {
                 if (counter == argsKey.length) {
                     message.channel.send(`${message.author}, ${value}`);
                 }
+            }
+
+            if (message.content.includes('discord.gg/') || message.content.includes('discordapp.com/invite/')) {
+                message.delete();
             }
         }
 
