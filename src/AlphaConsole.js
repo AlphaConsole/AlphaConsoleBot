@@ -53,7 +53,7 @@ client.on('ready', () => {
 
 //New member joins
 client.on('guildMemberAdd', (member) => {
-    require('./events/newMember.js').run(client, serverInfo, member);
+    require('./events/newMember.js').run(client, serverInfo, member, sql);
 }); 
 
 //User Left / kicked
@@ -68,7 +68,7 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 
 //User Info changed
 client.on('guildMemberUpdate', (oldMember, newMember) => {
-    require('./events/guildMemberUpdate.js').run(client, serverInfo, oldMember, newMember);
+    require('./events/guildMemberUpdate.js').run(client, serverInfo, oldMember, newMember, sql);
 });
 
 //Personal Info changed
