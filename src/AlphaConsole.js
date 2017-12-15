@@ -115,7 +115,7 @@ client.on('message', async message =>
 
         //Title commands
         if (args[0].toLowerCase() == "!set" || args[0].toLowerCase() == "!override") {
-            require('./cmds/titles.js').run(client, serverInfo, message, blackListedWords, args)
+            require('./cmds/titles.js').run(client, serverInfo, message, blackListedWords, args, sql)
         }
 
         if (args[0].toLowerCase() == "!help" || args[0].toLowerCase() == "!h") {

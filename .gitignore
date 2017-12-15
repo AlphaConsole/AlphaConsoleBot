@@ -58,4 +58,4 @@ typings/
 .env
 
 #Ignore AC keys & passwords
-/src/keys.js
+src/keys.js

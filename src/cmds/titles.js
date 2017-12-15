@@ -1,13 +1,14 @@
 const Discord = require('discord.js');
 const keys = require("../keys.js");
 
+
 module.exports = {
     title: "titles",
     perms: "everyone",
     commands: ["!set Title <Title Name>", "!set Color <Color Number>"],
     description: ["Use this to set your in game title", "Use this to set your in game title color"],
     
-    run: async (client, serverInfo, message, blackListedWords, args) => {
+    run: async (client, serverInfo, message, blackListedWords, args, sql) => {
         switch (args[1]) {
             case "title":
                 (args[0].toLowerCase() == "!set" ? setTitle(client, serverInfo, message, blackListedWords, args) : overrideTitle(client, serverInfo, message, blackListedWords, args));
@@ -16,7 +17,11 @@ module.exports = {
             case "colour":
                 (args[0].toLowerCase() == "!set" ? setColour(client, serverInfo, message, blackListedWords, args) : overrideColour(client, serverInfo, message, blackListedWords, args));
                 break;
+            case "special":
+                setSpecialTitle(client, serverInfo, message, blackListedWords, args, sql);
+                break;
             default:
+                message.delete().catch(console.error);
                 break;
         }
     }
@@ -63,6 +68,27 @@ function overrideColour(client, serverInfo, message, blackListedWords, args) {
         if (setUsersColour(message.member, args[3], message)) {
             message.author.send(`User ${args[2]} updated successfully.`);
         }
+    }
+    message.delete().catch(console.error);
+}
+
+function setSpecialTitle(client, serverInfo, message, blackListedWords, args, sql) {
+    if (isNaN(args[2])) {
+        message.author.send('Hi, it looks like you tried to use `!set special` wrong. Please use ' +
+    'an ID at the end. Example `!set special 1`');
+    } else {
+        console.log(args[2]);
+        sql.get(`Select * from SpecialTitles where ID = '${args[2]}'`).then(row => {
+            if (row) {
+                if (hasRole(message.member, row.PermittedRoles)) {
+                    setUsersTitle(message.author, row.Title);
+                } else {
+                    message.author.send('Sorry, you do not have permission to the title you have choosen.');
+                }
+            } else {
+                message.author.send('You have choosen an ID that is not available. Try again!');
+            }
+        }).catch(err => console.log(err))
     }
     message.delete().catch(console.error);
 }
@@ -235,6 +261,13 @@ function createTitle(message, args, indexStart) {
         title += args[word] + ' ';
     }
     return title.trim();
+}
+
+function hasRoleFromList(listOfRoles, user) {
+    listOfRoles.forEach(role => {
+        if (hasRole(user, role)) return true;
+    });
+    return false;
 }
 
 function pluck(array) {
