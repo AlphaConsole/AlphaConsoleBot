@@ -86,7 +86,7 @@ function setSpecialTitle(client, serverInfo, message, blackListedWords, args, sq
                     message.author.send('Sorry, you do not have permission to the title you have choosen.');
                 }
             } else {
-                console.log('nothing returned');
+                message.author.send('You have choosen an ID that is not available. Try again!');
             }
         }).catch(err => console.log(err))
     }
