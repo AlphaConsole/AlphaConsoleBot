@@ -1,13 +1,14 @@
 const Discord = require('discord.js');
 const keys = require("../keys.js");
 
+
 module.exports = {
     title: "titles",
     perms: "everyone",
     commands: ["!set Title <Title Name>", "!set Color <Color Number>"],
     description: ["Use this to set your in game title", "Use this to set your in game title color"],
     
-    run: async (client, serverInfo, message, blackListedWords, args) => {
+    run: async (client, serverInfo, message, blackListedWords, args, sql) => {
         switch (args[1]) {
             case "title":
                 (args[0].toLowerCase() == "!set" ? setTitle(client, serverInfo, message, blackListedWords, args) : overrideTitle(client, serverInfo, message, blackListedWords, args));
@@ -17,7 +18,7 @@ module.exports = {
                 (args[0].toLowerCase() == "!set" ? setColour(client, serverInfo, message, blackListedWords, args) : overrideColour(client, serverInfo, message, blackListedWords, args));
                 break;
             case "special":
-                setSpecialTitle(client, serverInfo, message, blackListedWords, args);
+                setSpecialTitle(client, serverInfo, message, blackListedWords, args, sql);
                 break;
             default:
                 message.delete().catch(console.error);
@@ -71,19 +72,21 @@ function overrideColour(client, serverInfo, message, blackListedWords, args) {
     message.delete().catch(console.error);
 }
 
-function setSpecialTitle(client, serverInfo, message, blackListedWords, args) {
+function setSpecialTitle(client, serverInfo, message, blackListedWords, args, sql) {
     if (isNaN(args[2])) {
-        message.author.send('Hi, it looks like you tried to use `!set special` wrong. Please use n\ ' +
-    'an ID at the end. n\Example `!set special 1`');
+        message.author.send('Hi, it looks like you tried to use `!set special` wrong. Please use ' +
+    'an ID at the end. Example `!set special 1`');
     } else {
-        sql.get(`select * from SpepcialTitles where ID = '${args[2]}}'`).then(row => {
-            if (!row) {
-                const roles = row.roles.split(',');
-                if (hasRoleFromList(roles, message.user)) {
-                    setUsersTitle(message.user, row.Title);
+        console.log(args[2]);
+        sql.get(`Select * from SpecialTitles where ID = '${args[2]}'`).then(row => {
+            if (row) {
+                if (hasRole(message.member, row.PermittedRoles)) {
+                    setUsersTitle(message.author, row.Title);
                 } else {
                     message.author.send('Sorry, you do not have permission to the title you have choosen.');
                 }
+            } else {
+                console.log('nothing returned');
             }
         }).catch(err => console.log(err))
     }
