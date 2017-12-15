@@ -1,0 +1,239 @@
+const Discord = require('discord.js');
+const keys = require("../keys.js");
+
+module.exports = {
+    title: "checkdb",
+    perms: "Support+",
+    commands: ["!checkdb <@tag>"],
+    description: ["Returns the users current status in the database"],
+    
+    run: async(client, serverInfo, message, args) => {
+        if (isStaff(message.member)) {
+            var request = require('request');
+            var url = keys.CheckdbURL;
+            url += message.mentions.users.first().id;
+            request({
+                method: 'GET',
+                url: url
+            }, function (err, response, body) {
+                var result = "";
+                if (err) message.author.send('Their was an error. Send root this -> ' + err);
+                console.log(body);
+                if (body.toLowerCase().includes('not signed up for db')) {
+                    result = `${message.mentions.users.first().username} was **not** found in the database.`;
+                    const embed = new Discord.MessageEmbed()
+                    .setColor([255,255,0])
+                    .setAuthor('Database Check', serverInfo.logo)
+                    .addField("User", message.mentions.users.first())
+                    .addField("Database Result", `${result}`)
+                    message.channel.send(embed)
+                } else if (body.toLowerCase().includes('no title set')) {
+                    result = `${message.mentions.users.first().username} was found in the database. But no title has been set`;
+                    const embed = new Discord.MessageEmbed()
+                    .setColor([255,255,0])
+                    .setAuthor('Database Check', serverInfo.logo)
+                    .addField("User", message.mentions.users.first())
+                    .addField("Database Result", `${result}`)
+                    message.channel.send(embed)
+                } else {
+                    var info = body.split(' ');
+                    var color = info[-1];
+                    for (let index = 0; index < info.length-1; index++) {
+                        result += info[index] + " ";
+                    }
+                    const embed = new Discord.MessageEmbed()
+                    .setColor([255,255,0])
+                    .setAuthor('Database Check', serverInfo.logo)
+                    .addField("User", message.mentions.users.first())
+                    .addField("Database Result", `${result}`)
+                    message.channel.send(embed);
+                }
+            });
+        } else {
+            message.delete().catch(console.error);
+        }
+    }
+}
+
+/**
+ * Returns true if user is part of staff
+ * @param {user} user 
+ */
+function isStaff(user) {
+    if (hasRole(user, "Developer") ||hasRole(user, "Admin") || hasRole(user, "Moderator") || hasRole(user, "Support")) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+//Functions used to check if a player has the desired role
+function pluck(array) {
+    return array.map(function(item) { return item["name"]; });
+}
+function hasRole(mem, role)
+{
+    if (pluck(mem.roles).includes(role))
+    {
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
+function getRandomIntInclusive(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+
+
+function WarnUser(client, serverInfo, sql, message, row, args) {
+
+    var user = message.mentions.users.first();
+
+    if (args.length == 2) var TheReason = "No reason provided"
+    else {
+        var TheReason = '';
+        for (i = 2; i < args.length; i++) {
+            TheReason += args[i] + " ";
+        }        
+
+    }
+
+
+    sql.run(`Insert Into logs(Action, Member, Moderator, Reason, Time, ChannelID) VALUES('warn', '${user.id}', '${message.author.id}', '${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}', '${message.channel.id}')`)
+    .then(() => {
+        const embedChannel = new Discord.MessageEmbed()
+        .setColor([255,255,0])
+        .setAuthor(`${user.tag} has been warned!`, serverInfo.logo) 
+        message.channel.send(embedChannel)
+
+        var CaseID = "Error";
+        sql.get(`select * from logs where Member = '${user.id}' order by ID desc`).then(roww => {
+            if (roww) CaseID = roww.ID
+    
+            if (row.Warnings == 0) {
+                const embed = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setAuthor("You have received a warning. Next warning will result in a temporary mute!", serverInfo.logo) 
+                user.send(embed)
+        
+                message.channel.messages.fetch({limit:100}).then(messages => {
+                    messages.forEach(themessage => {
+                        if (themessage.author.id == user.id) {
+                            themessage.delete();
+                        }
+                    });
+                });
+        
+                const embedLog = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setAuthor(`Case ${CaseID} | Warn`, serverInfo.logo)
+                .setTitle('==> WARNING 1')
+                .setDescription('New warning of <@' + user.id + '> (' + user.id + ') by <@' + message.author.id + '>')
+                .addField("Reason", TheReason)
+                client.guilds.get(serverInfo.guildId).channels.get(serverInfo.modlogChannel).send(embedLog).then(msg => {
+                    sql.run(`update logs set MessageID = '${msg.id}' where ID = '${CaseID}'`)
+                })
+        
+                sql.run(`update Members set Warnings = '1' where DiscordID = '${user.id}'`);
+        
+        
+            } else if (row.Warnings == 1) {
+        
+                const embed = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setAuthor("You have received a second warning! You'll now be muted for 15 minutes, you are warned!", serverInfo.logo) 
+                user.send(embed)
+        
+                message.channel.messages.fetch({limit:100}).then(messages => {
+                    messages.forEach(themessage => {
+                        if (themessage.author.id == user.id) {
+                            themessage.delete();
+                        }
+                    });      
+                });
+        
+                const embedLog = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setAuthor(`Case ${CaseID} | Warn`, serverInfo.logo)
+                .setTitle('==> WARNING 2')
+                .setDescription('New warning of <@' + user.id + '> (' + user.id + ') by <@' + message.author.id + '>')
+                .addField("Reason", TheReason)
+                client.guilds.get(serverInfo.guildId).channels.get(serverInfo.modlogChannel).send(embedLog).then(msg => {
+                    sql.run(`update logs set MessageID = '${msg.id}' where ID = ${CaseID}`)
+                })
+                
+                timeextra = new Date().getTime({limit:100}) + 1000 * 60 * 15;
+                sql.run(`update Members set Warnings = '2', MutedUntil = '${timeextra}' where DiscordID = '${user.id}'`);
+        
+                let TheRole = message.guild.roles.find('name', 'Muted');
+                let TheUser = message.guild.member(message.mentions.users.first().id);
+                TheUser.addRole(TheRole);
+        
+            } else if (row.Warnings > 1) {
+        
+                const embed = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setAuthor("You have received another warning! You'll now be muted, and the staff will look into your behaviour for further actions.", serverInfo.logo) 
+                user.send(embed)
+        
+                message.channel.messages.fetch({limit:100}).then(messages => {
+                    messages.forEach(themessage => {
+                        if (themessage.author.id == user.id) {
+                            themessage.delete();
+                        }
+                    });      
+                });
+        
+                const embedLog = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setAuthor(`Case ${CaseID} | Warn`, serverInfo.logo)
+                .setTitle('==> WARNING 3')
+                .setDescription('New warning of <@' + user.id + '> (' + user.id + ') by <@' + message.author.id + '>')
+                .addField("Reason", TheReason)
+                client.guilds.get(serverInfo.guildId).channels.get(serverInfo.modlogChannel).send(embedLog).then(msg => {
+                    sql.run(`update logs set MessageID = '${msg.id}' where ID = ${CaseID}`)
+                })
+                
+                sql.run(`update Members set Warnings = '3' where DiscordID = '${user.id}'`);
+        
+                let TheRole = message.guild.roles.find('name', 'Muted');
+                let TheUser = message.guild.member(message.mentions.users.first().id);
+                TheUser.addRole(TheRole);
+            }    
+        })
+    
+
+    })
+  }
+  
+
+
+function mysql_real_escape_string (str) {
+    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
+        switch (char) {
+            case "\0":
+                return "\\0";
+            case "\x08":
+                return "\\b";
+            case "\x09":
+                return "\\t";
+            case "\x1a":
+                return "\\z";
+            case "\n":
+                return "\\n";
+            case "\r":
+                return "\\r";
+            case "\"":
+            case "'":
+            case "\\":
+            case "%":
+                return char+char; // prepends a backslash to backslash, percent,
+                                  // and double/single quotes
+        }
+    });
+}

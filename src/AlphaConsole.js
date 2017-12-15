@@ -127,6 +127,10 @@ client.on('message', async message =>
         }
 
         /// SUPPORT COMMANDS
+        if (args[0].toLowerCase() == "!checkdb") {
+            require('./cmds/checkdb.js').run(client, serverInfo, message, args)
+        }
+
         /// STAFF COMMANDS
         //Staff Custom Commands add
         if (args[0].toLowerCase() == "!addcom") {
