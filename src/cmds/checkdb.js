@@ -18,14 +18,13 @@ module.exports = {
             }, function (err, response, body) {
                 var result = "";
                 if (err) message.author.send('Their was an error. Send root this -> ' + err);
-                console.log(body);
                 if (body.toLowerCase().includes('not signed up for db')) {
                     result = `${message.mentions.users.first().username} was **not** found in the database.`;
                     const embed = new Discord.MessageEmbed()
                     .setColor([255,255,0])
                     .setAuthor('Database Check', serverInfo.logo)
                     .addField("User", message.mentions.users.first())
-                    .addField("Database Result", `${result}`)
+                    .addField("Error", `${result}`)
                     message.channel.send(embed)
                 } else if (body.toLowerCase().includes('no title set')) {
                     result = `${message.mentions.users.first().username} was found in the database. But no title has been set`;
@@ -33,11 +32,11 @@ module.exports = {
                     .setColor([255,255,0])
                     .setAuthor('Database Check', serverInfo.logo)
                     .addField("User", message.mentions.users.first())
-                    .addField("Database Result", `${result}`)
+                    .addField("Error", `${result}`)
                     message.channel.send(embed)
                 } else {
                     var info = body.split(' ');
-                    var color = info[-1];
+                    var colour = info[info.length-1];
                     for (let index = 0; index < info.length-1; index++) {
                         result += info[index] + " ";
                     }
@@ -45,7 +44,8 @@ module.exports = {
                     .setColor([255,255,0])
                     .setAuthor('Database Check', serverInfo.logo)
                     .addField("User", message.mentions.users.first())
-                    .addField("Database Result", `${result}`)
+                    .addField("Title", `${result}`)
+                    .addField("Colour", colour);
                     message.channel.send(embed);
                 }
             });
