@@ -25,7 +25,8 @@ var serverInfo = {
     BotSpam: '389241234100715520',
     EventsRole: '389384990087053312',
     suggestionsChannel: '389870221906804737',
-    showcaseChannel: '349637406393237514'
+    showcaseChannel: '349637406393237514',
+    betaSteamIDS: '391345364919123968'
   }
 
 //---------------------------//
@@ -59,7 +60,7 @@ client.on('guildMemberAdd', (member) => {
 
 //User Left / kicked
 client.on('guildMemberRemove', (member) => {
-    require('./events/guildMemberRemove.js').run(client, serverInfo, member);
+    require('./events/guildMemberRemove.js').run(client, serverInfo, member, sql);
 }); 
 
 //Voice users update

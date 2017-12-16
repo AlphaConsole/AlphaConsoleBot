@@ -76,16 +76,25 @@ module.exports = {
                         if (!row) {
                             var today = new Date().getTime();
                             sql.run(`Insert into Members(DiscordID, Username, JoinedDate)VALUES('${message.mentions.users.first().id}', '${mysql_real_escape_string(message.mentions.users.first().username)}', '${today}')`)
+                                .then(() => {
+                                    //Calculate the extra hours to be added
+                                    MutedUntil = new Date().getTime() + args[2] * 3600000; //args is the amount of hours. 3600000 transfers it to ms
+
+                                    //Update Database with the newest time of when to be muted to
+                                    sql.run(`Update Members set MutedUntil = ${MutedUntil} where DiscordID = ${message.mentions.users.first().id}`)
+                                        .catch(err => console.log(err));
+                                })
                                 .catch(err => console.log(err));
+                        } else {
+                            //Calculate the extra hours to be added
+                            MutedUntil = new Date().getTime() + args[2] * 3600000; //args is the amount of hours. 3600000 transfers it to ms
+
+                            //Update Database with the newest time of when to be muted to
+                            sql.run(`Update Members set MutedUntil = ${MutedUntil} where DiscordID = ${message.mentions.users.first().id}`)
+                                .catch(err => console.log(err));
+
                         }
                     }).catch(err => console.log(err))
-
-                    //Calculate the extra hours to be added
-                    MutedUntil = new Date().getTime() + args[2] * 3600000; //args is the amount of hours. 3600000 transfers it to ms
-
-                    //Update Database with the newest time of when to be muted to
-                    sql.run(`Update Members set MutedUntil = ${MutedUntil} where DiscordID = ${message.mentions.users.first().id}`)
-                        .catch(err => console.log(err));
 
                     //Make a notice & Log it to the log-channel
                     message.delete()

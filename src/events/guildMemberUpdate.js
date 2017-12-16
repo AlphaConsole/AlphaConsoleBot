@@ -38,11 +38,14 @@ module.exports = {
                 if (!row) {
                     var today = new Date().getTime();
                     sql.run(`Insert into Members(DiscordID, Username, JoinedDate)VALUES('${newMember.user.id}', '${mysql_real_escape_string(newMember.user.username)}', '${today}')`)
+                        .then(() => {
+                            sql.run(`update Members set Roles = '${newRolesID.substring(1)}' where DiscordID = '${newMember.user.id}'`);          
+                        })
                         .catch(err => console.log(err));
+                } else {
+                    sql.run(`update Members set Roles = '${newRolesID.substring(1)}' where DiscordID = '${newMember.user.id}'`);                    
                 }
             }).catch(err => console.log(err))
-
-            sql.run(`update Members set Roles = '${newRolesID.substring(1)}' where DiscordID = '${newMember.user.id}'`);
 
             if (oldMember.roles.size == 1) {
                 client.guilds.get(serverInfo.guildId).channels.get(serverInfo.serverlogChannel).send(":man_with_gua_pi_mao: `["+ new Date().toTimeString().split(' ')[0] +"]` **" + newMember.user.tag + "**'s roles have changed. Old: '' | New: `" + newRoles.substring(2) + "`")                
@@ -54,3 +57,30 @@ module.exports = {
         }
     }
 };
+
+
+
+function mysql_real_escape_string (str) {
+    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
+        switch (char) {
+            case "\0":
+                return "\\0";
+            case "\x08":
+                return "\\b";
+            case "\x09":
+                return "\\t";
+            case "\x1a":
+                return "\\z";
+            case "\n":
+                return "\\n";
+            case "\r":
+                return "\\r";
+            case "\"":
+            case "'":
+            case "\\":
+            case "%":
+                return char+char; // prepends a backslash to backslash, percent,
+                                  // and double/single quotes
+        }
+    });
+}
