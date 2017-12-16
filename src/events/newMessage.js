@@ -67,53 +67,98 @@ module.exports = {
                 if (!row) {
                     var today = new Date().getTime();
                     sql.run(`Insert into Members(DiscordID, Username, JoinedDate)VALUES('${message.author.id}', '${mysql_real_escape_string(message.author.username)}', '${today}')`)
+                        .then(() => {
+                            sql.get(`select * from Members where DiscordID = '${message.author.id}'`).then(row => {
+                                if(message.channel.id == serverInfo.suggestionsChannel) {
+                                    if (row.Suggestion < new Date().getTime()) {
+                                        message.react('👍').then(() => {
+                                            message.react('👎').then(() => {
+                                                message.react('❌')
+                                            })
+                                        })
+                
+                                        sql.run(`update Members set Suggestion = '${new Date().getTime() + 300000}' where DiscordID = '${message.author.id}'`)
+                                    } else {
+                                        message.delete()
+                                        const embed = new Discord.MessageEmbed()
+                                        .setColor([255,255,0])
+                                        .setAuthor("Your suggestion has been removed since you can only send in once every 5 minutes!", serverInfo.logo) 
+                                        message.author.send(embed);
+                                    }
+                                } else if(message.channel.id == serverInfo.showcaseChannel) {
+                                    if (row.Showcase < new Date().getTime()) {
+                                        if (message.content.length == 0) {
+                                            message.react('👍').then(() => {
+                                                message.react('👎').then(() => {
+                                                    message.react('❌')
+                                                })
+                                            })
+                                            sql.run(`update Members set Showcase = '${new Date().getTime() + 300000}' where DiscordID = '${message.author.id}'`)                        
+                                        } else {
+                                            message.delete();
+                                            const embed = new Discord.MessageEmbed()
+                                            .setColor([255,255,0])
+                                            .setAuthor('Only images allowed in Showcase channel. No extra text!', serverInfo.logo) 
+                                            message.author.send(embed);
+                                        }
+                
+                                    } else {
+                                        message.delete()
+                                        const embed = new Discord.MessageEmbed()
+                                        .setColor([255,255,0])
+                                        .setAuthor("Your Showcase has been removed since you can only send in once every 5 minutes!", serverInfo.logo) 
+                                        message.author.send(embed);
+                                    }
+                                }
+                            });
+                        })
                         .catch(err => console.log(err));
+                } else {
+                    sql.get(`select * from Members where DiscordID = '${message.author.id}'`).then(row => {
+                        if(message.channel.id == serverInfo.suggestionsChannel) {
+                            if (row.Suggestion < new Date().getTime()) {
+                                message.react('👍').then(() => {
+                                    message.react('👎').then(() => {
+                                        message.react('❌')
+                                    })
+                                })
+        
+                                sql.run(`update Members set Suggestion = '${new Date().getTime() + 300000}' where DiscordID = '${message.author.id}'`)
+                            } else {
+                                message.delete()
+                                const embed = new Discord.MessageEmbed()
+                                .setColor([255,255,0])
+                                .setAuthor("Your suggestion has been removed since you can only send in clips once every 5 minutes!", serverInfo.logo) 
+                                message.author.send(embed);
+                            }
+                        } else if(message.channel.id == serverInfo.showcaseChannel) {
+                            if (row.Showcase < new Date().getTime()) {
+                                if (message.content.length == 0) {
+                                    message.react('👍').then(() => {
+                                        message.react('👎').then(() => {
+                                            message.react('❌')
+                                        })
+                                    })
+                                    sql.run(`update Members set Showcase = '${new Date().getTime() + 300000}' where DiscordID = '${message.author.id}'`)                        
+                                } else {
+                                    message.delete();
+                                    const embed = new Discord.MessageEmbed()
+                                    .setColor([255,255,0])
+                                    .setAuthor('Only images allowed in Showcase channel. No extra text!', serverInfo.logo) 
+                                    message.author.send(embed);
+                                }
+        
+                            } else {
+                                message.delete()
+                                const embed = new Discord.MessageEmbed()
+                                .setColor([255,255,0])
+                                .setAuthor("Your Showcase has been removed since you can only send in clips once every 5 minutes!", serverInfo.logo) 
+                                message.author.send(embed);
+                            }
+                        }
+                    });
                 }
             }).catch(err => console.log(err))
-
-            sql.get(`select * from Members where DiscordID = '${message.author.id}'`).then(row => {
-                if(message.channel.id == serverInfo.suggestionsChannel) {
-                    if (row.Suggestion < new Date().getTime()) {
-                        message.react('👍').then(() => {
-                            message.react('👎').then(() => {
-                                message.react('❌')
-                            })
-                        })
-
-                        sql.run(`update Members set Suggestion = '${new Date().getTime() + 300000}' where DiscordID = '${message.author.id}'`)
-                    } else {
-                        message.delete()
-                        const embed = new Discord.MessageEmbed()
-                        .setColor([255,255,0])
-                        .setAuthor("Your suggestion has been removed since you can only send in clips once every 5 minutes!", serverInfo.logo) 
-                        message.author.send(embed);
-                    }
-                } else if(message.channel.id == serverInfo.showcaseChannel) {
-                    if (row.Showcase < new Date().getTime()) {
-                        if (message.content.length == 0) {
-                            message.react('👍').then(() => {
-                                message.react('👎').then(() => {
-                                    message.react('❌')
-                                })
-                            })
-                            sql.run(`update Members set Showcase = '${new Date().getTime() + 300000}' where DiscordID = '${message.author.id}'`)                        
-                        } else {
-                            message.delete();
-                            const embed = new Discord.MessageEmbed()
-                            .setColor([255,255,0])
-                            .setAuthor('Only images allowed in Showcase channel. No extra text!', serverInfo.logo) 
-                            message.author.send(embed);
-                        }
-
-                    } else {
-                        message.delete()
-                        const embed = new Discord.MessageEmbed()
-                        .setColor([255,255,0])
-                        .setAuthor("Your Showcase has been removed since you can only send in clips once every 5 minutes!", serverInfo.logo) 
-                        message.author.send(embed);
-                    }
-                }
-            });
         }
 
         // Auto Responder checker && Invite Guard
@@ -137,6 +182,42 @@ module.exports = {
             if (message.content.includes('discord.gg/') || message.content.includes('discordapp.com/invite/')) {
                 return message.delete();
             }
+        }
+
+        if (message.channel.id == serverInfo.betaSteamIDS) {
+            message.delete();
+
+            if (args.length == 5 && message.mentions.users.first()) {
+                if (message.mentions.users.first().id == message.author.id || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
+                   
+                    sql.get(`select * from BetaSteamIDS where DiscordID = ${message.mentions.users.first().id}`).then(row => {
+                        if (row) {
+                            message.author.send("Your account is already signed up for the beta.")
+                        } else {
+                            message.author.send(`__Is this information correct?__\n\nDiscord user: **${message.mentions.users.first().tag}**\nSteamID64: **${args[2]}**\nSteam Link: **<${args[4]}>**\n\nIf this is correct, please respond with **yes**.\nOtherwise respond with **no**.`).then(msg => {
+                                msg.channel.awaitMessages(response => response.content.toLowerCase() === 'yes' || response.content.toLowerCase() === 'no', {max: 1, time: 30000, errors: ['time']}).then(collected => {
+                                    if (collected.first().content.toLowerCase() == "yes") {
+                                        message.channel.send(`**${message.mentions.users.first().tag}** | ${args[2]} | <${args[4]}>`)
+                                        message.author.send("You have succesfully been added to the Beta Testers!")   
+                                        sql.run(`Insert into BetaSteamIDS (DiscordID, SteamID64, SteamLink) VALUES ('${message.mentions.users.first().id}','${args[2]}','${args[4]}')`) 
+                                    } else {
+                                        message.author.send("You have not been added to the Beta list.")
+                                    }
+                                })
+                                .catch(() => {
+                                    message.author.send("You have not confirmed with **yes** within 30 seconds and you have not been added to the list.")
+                                })
+                            })    
+        
+                        }
+                    })
+                                   } else {
+                    message.author.send("The person you mentioned is not yourself!")
+                }
+            } else {
+                message.author.send("Your input was incorrect. Please use the following format:\n`@User | SteamID64 | SteamURL`")
+            }
+
         }
 
         // Add reaction when bot is mentioned
