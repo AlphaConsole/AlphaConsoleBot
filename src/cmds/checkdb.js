@@ -4,14 +4,24 @@ const keys = require("../keys.js");
 module.exports = {
     title: "checkdb",
     perms: "Support+",
-    commands: ["!checkdb <@tag>"],
+    commands: ["!checkdb <@tag>|<steamID>|<discordID>"],
     description: ["Returns the users current status in the database"],
     
     run: async(client, serverInfo, message, args) => {
         if (isStaff(message.member)) {
             var request = require('request');
             var url = keys.CheckdbURL;
-            url += message.mentions.users.first().id;
+            var user;
+            if (isNaN(args[1])) {
+                url += message.mentions.users.first().id;
+                user = message.mentions.users.first().id;
+            } else if (args[1].length == 18) {
+                url += args[1];
+                user = client.users.find('id', args[1]).username;
+            } else {
+                message.reply('Incorrect length of discord ID.');
+                return;
+            }
             request({
                 method: 'GET',
                 url: url
@@ -23,7 +33,7 @@ module.exports = {
                     const embed = new Discord.MessageEmbed()
                     .setColor([255,255,0])
                     .setAuthor('Database Check', serverInfo.logo)
-                    .addField("User", message.mentions.users.first())
+                    .addField("User", user)
                     .addField("Error", `${result}`)
                     message.channel.send(embed)
                 } else if (body.toLowerCase().includes('no title set')) {
@@ -31,7 +41,7 @@ module.exports = {
                     const embed = new Discord.MessageEmbed()
                     .setColor([255,255,0])
                     .setAuthor('Database Check', serverInfo.logo)
-                    .addField("User", message.mentions.users.first())
+                    .addField("User", user)
                     .addField("Error", `${result}`)
                     message.channel.send(embed)
                 } else {
@@ -43,7 +53,7 @@ module.exports = {
                     const embed = new Discord.MessageEmbed()
                     .setColor([255,255,0])
                     .setAuthor('Database Check', serverInfo.logo)
-                    .addField("User", message.mentions.users.first())
+                    .addField("User", user)
                     .addField("Title", `${result}`)
                     .addField("Colour", colour);
                     message.channel.send(embed);
