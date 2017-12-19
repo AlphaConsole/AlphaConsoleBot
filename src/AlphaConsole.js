@@ -127,11 +127,6 @@ client.on('message', async message =>
             require('./cmds/events.js').run(client, serverInfo, message, args, Events)
         }
 
-        /// SUPPORT COMMANDS
-        if (args[0].toLowerCase() == "!checkdb") {
-            require('./cmds/checkdb.js').run(client, serverInfo, message, args)
-        }
-
         /// STAFF COMMANDS
         //Staff Custom Commands add
         if (args[0].toLowerCase() == "!addcom") {
@@ -181,7 +176,10 @@ client.on('message', async message =>
             require('./cmds/cases.js').run(client, serverInfo, sql, message, args)
         }
 
-
+        //Support checkdb for titles command
+        if (args[0].toLowerCase() == "!checkdb") {
+            require('./cmds/checkdb.js').run(client, serverInfo, message, args)
+        }
 
 
         /// MODERATOR COMMANDS
@@ -209,6 +207,12 @@ client.on('message', async message =>
         if (args[0].toLowerCase() == "!togglelinks") {
             require('./cmds/togglelinks.js').run(client, serverInfo, sql, message, args, AllowedLinksSet)
         }
+
+        //Moderator purge command
+        if (args[0].toLowerCase() == "!purge") {
+            require('./cmds/purge.js').run(client, serverInfo, message, args)
+        }
+        
 
 
 
