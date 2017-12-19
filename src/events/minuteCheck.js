@@ -20,5 +20,14 @@ module.exports = {
                 }
             });
         }).catch(err => console.log(err))
+        
+        sql.get(`select Value from CurrentStats where Type = 'toponline'`).then(row => {
+            var oldVal = row.Value;
+            var newVal = client.guilds.get(serverInfo.guildId).members.filter(m => m.presence.status != "offline").size;
+
+            if (oldVal == undefined || oldVal == null || oldVal < newVal) {
+                sql.run(`Update CurrentStats set Value = '${newVal}', Time = '${new Date().getTime()}' where Type = 'toponline'`).catch(e => console.log(e))                
+            }            
+        })
     }
 }

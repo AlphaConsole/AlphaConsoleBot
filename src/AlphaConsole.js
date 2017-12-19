@@ -26,7 +26,9 @@ var serverInfo = {
     EventsRole: '389384990087053312',
     suggestionsChannel: '389870221906804737',
     showcaseChannel: '349637406393237514',
-    betaSteamIDS: '391345364919123968'
+    betaSteamIDS: '391345364919123968',
+    setTitleChannel : '',
+    setSpecialTitleChannel: ''
   }
 
 //---------------------------//
@@ -127,11 +129,6 @@ client.on('message', async message =>
             require('./cmds/events.js').run(client, serverInfo, message, args, Events)
         }
 
-        /// SUPPORT COMMANDS
-        if (args[0].toLowerCase() == "!checkdb") {
-            require('./cmds/checkdb.js').run(client, serverInfo, message, args)
-        }
-
         /// STAFF COMMANDS
         //Staff Custom Commands add
         if (args[0].toLowerCase() == "!addcom") {
@@ -181,7 +178,10 @@ client.on('message', async message =>
             require('./cmds/cases.js').run(client, serverInfo, sql, message, args)
         }
 
-
+        //Support checkdb for titles command
+        if (args[0].toLowerCase() == "!checkdb") {
+            require('./cmds/checkdb.js').run(client, serverInfo, message, args)
+        }
 
 
         /// MODERATOR COMMANDS
@@ -210,6 +210,12 @@ client.on('message', async message =>
             require('./cmds/togglelinks.js').run(client, serverInfo, sql, message, args, AllowedLinksSet)
         }
 
+        //Moderator purge command
+        if (args[0].toLowerCase() == "!purge") {
+            require('./cmds/purge.js').run(client, serverInfo, message, args)
+        }
+        
+
 
 
         /// ADMIN COMMANDS
@@ -233,6 +239,10 @@ var j = schedule.scheduleJob({minute: 1}, function(){
 
 var j = schedule.scheduleJob({minute: 31}, function(){
     require('./events/StatusUpdate.js').run(client, serverInfo, sql);
+});
+
+var j = schedule.scheduleJob({hour: 9, minute: 40}, function(){
+    require('./events/DailyStats.js').run(client, serverInfo, sql);
 });
 
 client.login(require('./keys.js').TestBotToken);

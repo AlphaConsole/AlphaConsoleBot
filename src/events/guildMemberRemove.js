@@ -27,6 +27,17 @@ module.exports = {
         
             }
         }).catch(err => console.log(err))
+
+        sql.get(`select Value from CurrentStats where Type = 'left'`).then(row => {
+            var oldVal = row.Value;
+            var newVal = row.Value + 1;
+
+            if (oldVal == undefined || oldVal == null || oldVal < 0) {
+                newVal = 1;
+            }
+            
+            sql.run(`Update CurrentStats set Value = '${newVal}' where Type = 'left'`).catch(e => console.log(e))
+        })
     }
 };
 

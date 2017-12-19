@@ -220,6 +220,30 @@ module.exports = {
 
         }
 
+        if (message.channel.id == serverInfo.setTitleChannel || message.channel.id == serverInfo.setSpecialTitleChannel) {
+            sql.get(`select Value from CurrentStats where Type = 'messagestitles'`).then(row => {
+                var oldVal = row.Value;
+                var newVal = row.Value + 1;
+    
+                if (oldVal == undefined || oldVal == null || oldVal < 0) {
+                    newVal = 1;
+                }
+                
+                sql.run(`Update CurrentStats set Value = '${newVal}' where Type = 'messagestitles'`).catch(e => console.log(e))
+            })  
+        } else if (message.channel.id != serverInfo.aclogChannel && message.channel.id != serverInfo.serverlogChannel && message.channel.id != serverInfo.modlogChannel) {
+            sql.get(`select Value from CurrentStats where Type = 'messagesgeneral'`).then(row => {
+                var oldVal = row.Value;
+                var newVal = row.Value + 1;
+    
+                if (oldVal == undefined || oldVal == null || oldVal < 0) {
+                    newVal = 1;
+                }
+                
+                sql.run(`Update CurrentStats set Value = '${newVal}' where Type = 'messagesgeneral'`).catch(e => console.log(e))
+            })    
+        }
+
         // Add reaction when bot is mentioned
         message.mentions.users.forEach(user => {
             if (user.id == "236911139529687040") {
