@@ -26,7 +26,9 @@ var serverInfo = {
     EventsRole: '389384990087053312',
     suggestionsChannel: '389870221906804737',
     showcaseChannel: '349637406393237514',
-    betaSteamIDS: '391345364919123968'
+    betaSteamIDS: '391345364919123968',
+    setTitleChannel : '',
+    setSpecialTitleChannel: ''
   }
 
 //---------------------------//
@@ -237,6 +239,10 @@ var j = schedule.scheduleJob({minute: 1}, function(){
 
 var j = schedule.scheduleJob({minute: 31}, function(){
     require('./events/StatusUpdate.js').run(client, serverInfo, sql);
+});
+
+var j = schedule.scheduleJob({hour: 9, minute: 40}, function(){
+    require('./events/DailyStats.js').run(client, serverInfo, sql);
 });
 
 client.login(require('./keys.js').TestBotToken);
