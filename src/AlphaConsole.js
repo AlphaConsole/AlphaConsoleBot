@@ -109,7 +109,7 @@ client.on('message', async message =>
 {
     if (message.author.bot) return;
 
-    require('./events/spamCheck.js').run(client, serverInfo, message, authors, messagelog, warned, banned)
+    require('./events/spamCheck.js').run(client, serverInfo, message, authors, messagelog, warned, banned, sql)
 
     if (message.channel.type != 'dm') {
         var args = message.content.split(/[ ]+/);

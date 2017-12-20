@@ -190,7 +190,7 @@ module.exports = {
             if (args.length == 5 && message.mentions.users.first()) {
                 if (message.mentions.users.first().id == message.author.id || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
                    
-                    sql.get(`select * from BetaSteamIDS where DiscordID = ${message.mentions.users.first().id}`).then(row => {
+                    sql.get(`select * from BetaSteamIDS where DiscordID = '${message.mentions.users.first().id}'`).then(row => {
                         if (row) {
                             message.author.send("Your account is already signed up for the beta.")
                         } else {

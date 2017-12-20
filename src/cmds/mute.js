@@ -72,7 +72,7 @@ module.exports = {
                 } else {
 
                     //Let's first check if the user even exists in the db
-                    sql.get(`select * from Members where DiscordID = '${message.mentions.users.first().id}'`).then(row => {
+                    await sql.get(`select * from Members where DiscordID = '${message.mentions.users.first().id}'`).then(row => {
                         if (!row) {
                             var today = new Date().getTime();
                             sql.run(`Insert into Members(DiscordID, Username, JoinedDate)VALUES('${message.mentions.users.first().id}', '${mysql_real_escape_string(message.mentions.users.first().username)}', '${today}')`)
@@ -81,7 +81,7 @@ module.exports = {
                                     MutedUntil = new Date().getTime() + args[2] * 3600000; //args is the amount of hours. 3600000 transfers it to ms
 
                                     //Update Database with the newest time of when to be muted to
-                                    sql.run(`Update Members set MutedUntil = ${MutedUntil} where DiscordID = ${message.mentions.users.first().id}`)
+                                    sql.run(`Update Members set MutedUntil = ${MutedUntil} where DiscordID = '${message.mentions.users.first().id}'`)
                                         .catch(err => console.log(err));
                                 })
                                 .catch(err => console.log(err));
@@ -90,7 +90,7 @@ module.exports = {
                             MutedUntil = new Date().getTime() + args[2] * 3600000; //args is the amount of hours. 3600000 transfers it to ms
 
                             //Update Database with the newest time of when to be muted to
-                            sql.run(`Update Members set MutedUntil = ${MutedUntil} where DiscordID = ${message.mentions.users.first().id}`)
+                            sql.run(`Update Members set MutedUntil = ${MutedUntil} where DiscordID = '${message.mentions.users.first().id}'`)
                                 .catch(err => console.log(err));
 
                         }
@@ -103,7 +103,7 @@ module.exports = {
                     .setAuthor(`${message.mentions.users.first().tag} has been muted for ${args[2]} hours`, serverInfo.logo) 
                     message.channel.send(embed) //Remove this line if you don't want it to be public.
 
-                    sql.run(`Insert into logs(Action, Member, Moderator, value, Reason, Time, ChannelID) VALUES('mute', '${MutedUser.id}', '${message.author.id}', ${mysql_real_escape_string(args[2])},'${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}', '${message.channel.id}')`)
+                    await sql.run(`Insert into logs(Action, Member, Moderator, value, Reason, Time, ChannelID) VALUES('mute', '${MutedUser.id}', '${message.author.id}', ${mysql_real_escape_string(args[2])},'${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}', '${message.channel.id}')`)
                     .then(() => {
                         var CaseID = "Error";
                         sql.get(`select * from logs where Member = '${MutedUser.id}' order by ID desc`).then(roww => {

@@ -53,14 +53,14 @@ module.exports = {
                         sql.run(`Insert into Members(DiscordID, Username, JoinedDate)VALUES('${message.mentions.users.first().id}', '${mysql_real_escape_string(message.mentions.users.first().username)}', '${today}')`)
                             .then(() => {
                                 //Update Database and set his MutedUntill back to null in case he's unmuted from a temp mute
-                                sql.run(`Update Members set MutedUntil = null where DiscordID = ${message.mentions.users.first().id}`)
+                                sql.run(`Update Members set MutedUntil = null where DiscordID = '${message.mentions.users.first().id}'`)
                                 .catch(err => console.log(err));
 
                             })
                             .catch(err => console.log(err));
                     } else {
                         //Update Database and set his MutedUntill back to null in case he's unmuted from a temp mute
-                        sql.run(`Update Members set MutedUntil = null where DiscordID = ${message.mentions.users.first().id}`)
+                        sql.run(`Update Members set MutedUntil = null where DiscordID = '${message.mentions.users.first().id}'`)
                         .catch(err => console.log(err));
                         
                     }
