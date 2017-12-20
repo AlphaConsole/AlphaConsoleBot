@@ -13,6 +13,11 @@ var SwearWordsSet = new Set();
 var AutoResponds = new Map();
 var Commands = [];
 var Events = [];
+//anti-spam
+var authors = [];
+var messagelog = [];
+var warned = [];
+var banned = [];
 
 //Server Information
 var serverInfo = {
@@ -103,6 +108,8 @@ process.on('unhandledRejection', (reason, p) => {
 client.on('message', async message =>
 {
     if (message.author.bot) return;
+
+    require('./events/spamCheck.js').run(client, serverInfo, message, authors, messagelog, warned, banned)
 
     if (message.channel.type != 'dm') {
         var args = message.content.split(/[ ]+/);
