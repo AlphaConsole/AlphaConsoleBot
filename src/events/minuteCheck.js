@@ -14,7 +14,7 @@ module.exports = {
 
                     if (MutedUser != undefined) {
                         MutedUser.removeRole(MutedRole);
-                        sql.run(`update Members set MutedUntil = null where DiscordID = ${row.DiscordID}`)
+                        sql.run(`update Members set MutedUntil = null where DiscordID = '${row.DiscordID}'`)
                             .catch(err => console.log(err))
                     }
                 }
