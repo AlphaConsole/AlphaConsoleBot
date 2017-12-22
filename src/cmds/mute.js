@@ -43,18 +43,20 @@ module.exports = {
                 
                 if (args[2] == 0) {
 
-                    //Make a notice & Log it to the log-channel
-                    message.delete()
-                    const embed = new Discord.MessageEmbed()
-                    .setColor([255,255,0])
-                    .setAuthor(`${message.mentions.users.first().tag} has been permanently muted`, serverInfo.logo) 
-                    message.channel.send(embed) //Remove this line if you don't want it to be public.
-
                     sql.run(`Insert into logs(Action, Member, Moderator, value, Reason, Time, ChannelID) VALUES('mute', '${MutedUser.id}', '${message.author.id}', ${mysql_real_escape_string(args[2])},'${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}', '${message.channel.id}')`)
                     .then(() => {
                         var CaseID = "Error";
                         sql.get(`select * from logs where Member = '${message.mentions.users.first().id}' order by ID desc`).then(roww => {
-                            if (roww) CaseID = roww.ID
+                            if (!roww) return message.channel.send("An error occured.")
+                            
+                            CaseID = roww.ID
+
+                            //Make a notice & Log it to the log-channel
+                            const embed = new Discord.MessageEmbed()
+                            .setColor([255,255,0])
+                            .setAuthor(`${message.mentions.users.first().tag} has been permanently muted. Case number: ${CaseID}`, serverInfo.logo) 
+                            message.channel.send(embed) //Remove this line if you don't want it to be public.
+
         
                             const embedlog = new Discord.MessageEmbed()
                             .setColor([255,255,0])
@@ -96,18 +98,20 @@ module.exports = {
                         }
                     }).catch(err => console.log(err))
 
-                    //Make a notice & Log it to the log-channel
-                    message.delete()
-                    const embed = new Discord.MessageEmbed()
-                    .setColor([255,255,0])
-                    .setAuthor(`${message.mentions.users.first().tag} has been muted for ${args[2]} hours`, serverInfo.logo) 
-                    message.channel.send(embed) //Remove this line if you don't want it to be public.
-
                     await sql.run(`Insert into logs(Action, Member, Moderator, value, Reason, Time, ChannelID) VALUES('mute', '${MutedUser.id}', '${message.author.id}', ${mysql_real_escape_string(args[2])},'${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}', '${message.channel.id}')`)
                     .then(() => {
                         var CaseID = "Error";
                         sql.get(`select * from logs where Member = '${MutedUser.id}' order by ID desc`).then(roww => {
-                            if (roww) CaseID = roww.ID
+                            if (!roww) return message.channel.send("An error occured.")
+                            
+                            CaseID = roww.ID
+
+                            //Make a notice & Log it to the log-channel
+                            const embed = new Discord.MessageEmbed()
+                            .setColor([255,255,0])
+                            .setAuthor(`${message.mentions.users.first().tag} has been muted for ${args[2]} hours. Case number: ${CaseID}`, serverInfo.logo) 
+                            message.channel.send(embed) //Remove this line if you don't want it to be public.
+
         
                             const embedlog = new Discord.MessageEmbed()
                             .setColor([255,255,0])

@@ -57,6 +57,12 @@ module.exports = {
                     StatusText += args[i] + " ";
                 }        
 
+                sql.all("Select * from Statuses").then(rows => {
+                    if (rows.length == 0) {
+                        client.user.setActivity(StatusText, {type: StatusType, url: "https://www.twitch.tv/alphaconsole"});
+                    }
+                });
+
 
                 sql.run(`Insert into Statuses(StatusType, StatusText) VALUES ('${mysql_real_escape_string(StatusType)}', '${mysql_real_escape_string(StatusText)}')`).then(() => {
                     const embed = new Discord.MessageEmbed()
@@ -70,14 +76,23 @@ module.exports = {
                     .setColor([255,255,0])
                     .setAuthor("Status removed from the list.", serverInfo.logo)
                     message.channel.send(embed)
+
+                    sql.all("Select * from Statuses").then(rows => {
+                        if (rows.length == 0) {
+                            client.user.setActivity(`with ${message.guild.memberCount} members`, {url: "https://www.twitch.tv/alphaconsole"});
+                        }
+                    });
                 })
 
             } else if (args[1].toLowerCase() == "removeall") {
-                sql.run(`truncate Statuses`).then(() => {
-                    const embed = new Discord.MessageEmbed()
-                    .setColor([255,255,0])
-                    .setAuthor("Status list reset.", serverInfo.logo)
-                    message.channel.send(embed)
+                sql.run(`Delete from Statuses;`).then(() => {
+                    sql.run("delete from sqlite_sequence where name='Statuses'").then(() => {
+                        const embed = new Discord.MessageEmbed()
+                        .setColor([255,255,0])
+                        .setAuthor("Status list reset.", serverInfo.logo)
+                        message.channel.send(embed)
+                        client.user.setActivity(`with ${message.guild.memberCount} members`, {url: "https://www.twitch.tv/alphaconsole"});
+                    })
                 })
 
             }

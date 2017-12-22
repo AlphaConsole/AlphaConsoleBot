@@ -37,7 +37,7 @@ module.exports = {
                 sql.run(`Insert into Commands(Command, Response) VALUES ('${mysql_real_escape_string(TheCommand)}','${mysql_real_escape_string(ResponseText)}')`).then(() => {
                     const embed = new Discord.MessageEmbed()
                     .setColor([255,255,0])
-                    .setAuthor("Command succesfully added :wink:", serverInfo.logo)
+                    .setAuthor("Command succesfully added!", serverInfo.logo)
                     message.channel.send(embed)
 
                     const embedlog = new Discord.MessageEmbed()

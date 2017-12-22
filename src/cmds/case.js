@@ -39,7 +39,7 @@ module.exports = {
                             }
                         }
                         
-                        embed.addBlankField()
+                        embed.setThumbnail('https://upload.wikimedia.org/wikipedia/commons/c/c4/600_px_Transparent_flag.png')
                         embed.addField("Case by", `<@${row.Moderator}>`, true)
                         embed.addField("At channel", `<#${row.ChannelID}>`, true)
 

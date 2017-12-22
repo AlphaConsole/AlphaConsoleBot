@@ -36,7 +36,7 @@ module.exports = {
                 sql.run(`Update Commands set Response = '${mysql_real_escape_string(ResponseText)}' where Command = '${mysql_real_escape_string(TheCommand)}'`).then(() => {
                     const embed = new Discord.MessageEmbed()
                     .setColor([255,255,0])
-                    .setAuthor("Command succesfully edited :wink:", serverInfo.logo) 
+                    .setAuthor("Command succesfully edited!", serverInfo.logo) 
                     message.channel.send(embed)
 
                     

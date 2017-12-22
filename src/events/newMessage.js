@@ -52,7 +52,6 @@ module.exports = {
                 }
             }
 
-            console.log(SwearWordsSet)
             for (let word of SwearWordsSet) {   
                 if (message.content.toLowerCase().includes(word.toLowerCase())) {
                     return message.delete();
@@ -62,9 +61,19 @@ module.exports = {
 
         // #Showcase & #Suggestion channels
         if (message.channel.id == serverInfo.suggestionsChannel || message.channel.id == serverInfo.showcaseChannel) {
+
+            if (message.channel.id == serverInfo.showcaseChannel && message.attachments.size != 1) {
+                message.delete();
+                const embed = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setAuthor("Only images allowed in Showcase channel.", serverInfo.logo) 
+                return message.author.send(embed);
+            }
+
             //Let's first check if the user even exists in the db
             sql.get(`select * from Members where DiscordID = '${message.author.id}'`).then(row => {
                 if (!row) {
+
                     var today = new Date().getTime();
                     sql.run(`Insert into Members(DiscordID, Username, JoinedDate)VALUES('${message.author.id}', '${mysql_real_escape_string(message.author.username)}', '${today}')`)
                         .then(() => {
@@ -87,20 +96,13 @@ module.exports = {
                                     }
                                 } else if(message.channel.id == serverInfo.showcaseChannel) {
                                     if (row.Showcase < new Date().getTime()) {
-                                        if (message.content.length == 0) {
-                                            message.react('👍').then(() => {
-                                                message.react('👎').then(() => {
-                                                    message.react('❌')
-                                                })
+                                        message.react('👍').then(() => {
+                                            message.react('👎').then(() => {
+                                                message.react('❌')
                                             })
-                                            sql.run(`update Members set Showcase = '${new Date().getTime() + 300000}' where DiscordID = '${message.author.id}'`)                        
-                                        } else {
-                                            message.delete();
-                                            const embed = new Discord.MessageEmbed()
-                                            .setColor([255,255,0])
-                                            .setAuthor('Only images allowed in Showcase channel. No extra text!', serverInfo.logo) 
-                                            message.author.send(embed);
-                                        }
+                                        })
+                                        sql.run(`update Members set Showcase = '${new Date().getTime() + 300000}' where DiscordID = '${message.author.id}'`)                        
+
                 
                                     } else {
                                         message.delete()
@@ -128,31 +130,23 @@ module.exports = {
                                 message.delete()
                                 const embed = new Discord.MessageEmbed()
                                 .setColor([255,255,0])
-                                .setAuthor("Your suggestion has been removed since you can only send in clips once every 5 minutes!", serverInfo.logo) 
+                                .setAuthor("Your suggestion has been removed since you can only send in suggestions once every 5 minutes!", serverInfo.logo) 
                                 message.author.send(embed);
                             }
                         } else if(message.channel.id == serverInfo.showcaseChannel) {
                             if (row.Showcase < new Date().getTime()) {
-                                if (message.content.length == 0) {
-                                    message.react('👍').then(() => {
-                                        message.react('👎').then(() => {
-                                            message.react('❌')
-                                        })
+                                message.react('👍').then(() => {
+                                    message.react('👎').then(() => {
+                                        message.react('❌')
                                     })
-                                    sql.run(`update Members set Showcase = '${new Date().getTime() + 300000}' where DiscordID = '${message.author.id}'`)                        
-                                } else {
-                                    message.delete();
-                                    const embed = new Discord.MessageEmbed()
-                                    .setColor([255,255,0])
-                                    .setAuthor('Only images allowed in Showcase channel. No extra text!', serverInfo.logo) 
-                                    message.author.send(embed);
-                                }
-        
+                                })
+                                sql.run(`update Members set Showcase = '${new Date().getTime() + 300000}' where DiscordID = '${message.author.id}'`)                        
+
                             } else {
                                 message.delete()
                                 const embed = new Discord.MessageEmbed()
                                 .setColor([255,255,0])
-                                .setAuthor("Your Showcase has been removed since you can only send in clips once every 5 minutes!", serverInfo.logo) 
+                                .setAuthor("Your Showcase has been removed since you can only send in suggestions once every 5 minutes!", serverInfo.logo) 
                                 message.author.send(embed);
                             }
                         }
@@ -162,7 +156,7 @@ module.exports = {
         }
 
         // Auto Responder checker && Invite Guard
-        if (!hasRole(message.member, "Moderator") && !hasRole(message.member, "Admin") && !hasRole(message.member, "Developer")) {        
+        if (!hasRole(message.member, "Admin") && !hasRole(message.member, "Developer")) {        
             for (var [key, value] of AutoResponds) {
 
                 var argsKey = key.toLowerCase().split(/[ ]+/);

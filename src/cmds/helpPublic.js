@@ -1,25 +1,33 @@
 const Discord = require('discord.js');
 
 module.exports = {
-    title: "events",
-    perms: "Admin",
-    commands: ["!events"],
-    description: ["Provides all the events"],
+    title: "help",
+    perms: "everyone",
+    commands: ["!help"],
+    description: ["Provides the help info"],
     
-    run: async(client, serverInfo, message, args, Events) => {
-        if (hasRole(message.member, "Admin") || hasRole(message.member, "Developer"))    {                                                                                               // <---   If you would like to change role perms. Change [BontControl] to your role name
+    run: async(client, serverInfo, message, args, Commands) => {
 
+        if (message.channel.id == serverInfo.BotSpam) {
             if (args.length == 1) {
+
+                member = client.guilds.get(serverInfo.guildId).members.get(message.author.id);
+
+                var everyone = "";
+                var staff = "";
+                var support = "";
+                var moderator = "";
+                var admin = "";
+
+                for (var key in Commands) {
+                    if (Commands[key].perms.toLowerCase() == "everyone") everyone += Commands[key].title + "\n";
+                }
 
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
-                .setAuthor("Events command", serverInfo.logo) 
-
-
-                for (var key in Events) {
-                    embed.addField(Events[key].title, Events[key].desc)
-                }
-
+                .setAuthor("Help command", serverInfo.logo) 
+                .addField("Everyone commands", everyone)
+                .setFooter("Do: !help <command> for more info")
                 message.channel.send(embed)
 
             } else if (args.length == 2) {
@@ -41,8 +49,7 @@ module.exports = {
                 }
             }
         }
-    }
-    
+    }    
 };
 
 //Functions used to check if a player has the desired role

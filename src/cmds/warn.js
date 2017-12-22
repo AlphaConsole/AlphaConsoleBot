@@ -79,28 +79,23 @@ function WarnUser(client, serverInfo, sql, message, row, args) {
 
     sql.run(`Insert Into logs(Action, Member, Moderator, Reason, Time, ChannelID) VALUES('warn', '${user.id}', '${message.author.id}', '${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}', '${message.channel.id}')`)
     .then(() => {
-        const embedChannel = new Discord.MessageEmbed()
-        .setColor([255,255,0])
-        .setAuthor(`${user.tag} has been warned!`, serverInfo.logo) 
-        message.channel.send(embedChannel)
 
         var CaseID = "Error";
         sql.get(`select * from logs where Member = '${user.id}' order by ID desc`).then(roww => {
-            if (roww) CaseID = roww.ID
+            if (!roww) return message.channel.send("An error occured");
+
+            CaseID = roww.ID
+            const embedChannel = new Discord.MessageEmbed()
+            .setColor([255,255,0])
+            .setAuthor(`${user.tag} has been warned! Case number: ${CaseID}`, serverInfo.logo) 
+            message.channel.send(embedChannel)
+            
     
             if (row.Warnings == 0) {
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
                 .setAuthor("You have received a warning. Next warning will result in a temporary mute!", serverInfo.logo) 
                 user.send(embed)
-        
-                message.channel.messages.fetch({limit:100}).then(messages => {
-                    messages.forEach(themessage => {
-                        if (themessage.author.id == user.id) {
-                            themessage.delete();
-                        }
-                    });
-                });
         
                 const embedLog = new Discord.MessageEmbed()
                 .setColor([255,255,0])
@@ -121,14 +116,6 @@ function WarnUser(client, serverInfo, sql, message, row, args) {
                 .setColor([255,255,0])
                 .setAuthor("You have received a second warning! You'll now be muted for 15 minutes, you are warned!", serverInfo.logo) 
                 user.send(embed)
-        
-                message.channel.messages.fetch({limit:100}).then(messages => {
-                    messages.forEach(themessage => {
-                        if (themessage.author.id == user.id) {
-                            themessage.delete();
-                        }
-                    });      
-                });
         
                 const embedLog = new Discord.MessageEmbed()
                 .setColor([255,255,0])
@@ -153,14 +140,6 @@ function WarnUser(client, serverInfo, sql, message, row, args) {
                 .setColor([255,255,0])
                 .setAuthor("You have received another warning! You'll now be muted, and the staff will look into your behaviour for further actions.", serverInfo.logo) 
                 user.send(embed)
-        
-                message.channel.messages.fetch({limit:100}).then(messages => {
-                    messages.forEach(themessage => {
-                        if (themessage.author.id == user.id) {
-                            themessage.delete();
-                        }
-                    });      
-                });
         
                 const embedLog = new Discord.MessageEmbed()
                 .setColor([255,255,0])
