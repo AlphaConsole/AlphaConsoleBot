@@ -5,6 +5,9 @@ module.exports = {
     description: "Checks for spam",
     
     run: async(client, serverInfo, message, authors, messagelog, warned, banned, sql) => {
+        
+        if (isStaff(message.member)) return;
+
         const warnBuffer = 3;
         const maxBuffer = 5;
         const interval = 1000;
@@ -196,3 +199,29 @@ module.exports = {
     }
 };
 
+/**
+ * Returns true if user is part of staff
+ * @param {user} user 
+ */
+function isStaff(user) {
+    if (hasRole(user, "Developer") ||hasRole(user, "Admin") || hasRole(user, "Moderator") || hasRole(user, "Support")) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+//Functions used to check if a player has the desired role
+function pluck(array) {
+    return array.map(function(item) { return item["name"]; });
+}
+function hasRole(mem, role)
+{
+    if (pluck(mem.roles).includes(role))
+    {
+        return true;
+    } else {
+        return false;
+    }
+
+}
