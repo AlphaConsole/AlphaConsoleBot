@@ -13,13 +13,18 @@ module.exports = {
             var url = keys.CheckdbURL;
             var user;
             if (isNaN(args[1])) {
-                url += message.mentions.users.first().id;
+                //discord
+                url += '?DiscordID=' + message.mentions.users.first().id;
                 user = message.mentions.users.first().id;
             } else if (args[1].length == 18) {
-                url += args[1];
+                url += '?DiscordID=' + args[1];
                 user = client.users.find('id', args[1]).username;
+            } else if (args[1].length == 17) {
+                //steam
+                url += '?SteamID=' + args[1];
+                user = args[1];
             } else {
-                message.reply('Incorrect length of discord ID.');
+                message.reply('Incorrect parameter');
                 return;
             }
             request({
