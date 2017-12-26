@@ -77,7 +77,7 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 
 //User Info changed
 client.on('guildMemberUpdate', (oldMember, newMember) => {
-    require('./events/guildMemberUpdate.js').run(client, serverInfo, oldMember, newMember, sql);
+    require('./events/guildMemberUpdate.js').run(client, serverInfo, oldMember, newMember, sql, keys);
 });
 
 //Personal Info changed
