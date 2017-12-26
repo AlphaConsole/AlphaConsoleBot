@@ -13,13 +13,18 @@ module.exports = {
             var url = keys.CheckdbURL;
             var user;
             if (isNaN(args[1])) {
-                url += message.mentions.users.first().id;
-                user = message.mentions.users.first().id;
+                //discord
+                url += '?DiscordID=' + message.mentions.users.first().id;
+                user = message.mentions.users.first();
             } else if (args[1].length == 18) {
-                url += args[1];
+                url += '?DiscordID=' + args[1];
                 user = client.users.find('id', args[1]).username;
+            } else if (args[1].length == 17) {
+                //steam
+                url += '?SteamID=' + args[1];
+                user = args[1];
             } else {
-                message.reply('Incorrect length of discord ID.');
+                message.reply('Incorrect parameter');
                 return;
             }
             request({
@@ -55,7 +60,7 @@ module.exports = {
                     .setAuthor('Database Check', serverInfo.logo)
                     .addField("User", user)
                     .addField("Title", `${result}`)
-                    .addField("Colour", colour);
+                    .addField("Colour", returnColour(colour));
                     message.channel.send(embed);
                 }
             });
@@ -246,4 +251,35 @@ function mysql_real_escape_string (str) {
                                   // and double/single quotes
         }
     });
+}
+
+function returnColour(colourID) {
+    switch (colourID) {
+        case '0':
+            return 'No title';
+            break;
+        case '1':
+            return 'Gray';
+            break;
+        case '2':
+            return 'Glowing Green (Twitch Subs & Legacy)' 
+            break;
+        case '3':
+            return 'Non-glowing Green';
+            break;
+        case '4':
+            return 'Non-glowing Yellow';
+            break;
+        case '5':
+            return 'Glowing Yellow';
+            break;
+        case '6':
+            return 'Purple (Twitch Subs & Legacy)';
+            break;
+        case '7':
+            return 'RLCS Blue';
+            break;
+        default:
+            return 'No colour';
+    }
 }
