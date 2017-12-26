@@ -9,7 +9,7 @@ module.exports = {
     description: ["Use this to set your in game title", "Use this to set your in game title color"],
     
     run: async (client, serverInfo, message, blackListedWords, args, sql) => {
-        switch (args[1]) {
+        switch (args[1].toLowerCase()) {
             case "title":
                 (args[0].toLowerCase() == "!set" ? setTitle(client, serverInfo, message, blackListedWords, args) : overrideTitle(client, serverInfo, message, blackListedWords, args));
                 break;
