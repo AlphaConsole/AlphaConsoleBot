@@ -4,7 +4,7 @@ module.exports = {
     title: "guildMemberUpdate",
     description: ["Logs a message if someone changed his name on the Discord or when roles are changed"],
     
-    run: async(client, serverInfo, oldMember, newMember, sql) => {
+    run: async(client, serverInfo, oldMember, newMember, sql, keys) => {
 
         if (oldMember.nickname != newMember.nickname) {
                     
@@ -32,6 +32,29 @@ module.exports = {
             newMember.roles.array().forEach(role => {
                 if (role.name != '@everyone') newRolesID += " " + role.id;
             });
+
+            if (oldRoles.includes('Twitch Sub') && !newRoles.includes('Twitch Sub')) {
+                var request = require('request');
+                var url = keys.SetTitleURL;
+                user = newMember;
+                url += '?DiscordID=' + user.id + '&key=' + keys.Password + "&color=1";
+                request({
+                    method: 'GET',
+                    url: url
+                }, function (err, response, body) {
+                });
+                oldMember.send('Hi, your Twitch Subscription to AlphaConsole has ended therefor your access to the' 
+                +' subscriber features has been removed and your title colour has been reset. If you subscribe again you will have access to those ' +
+            ' features again. \n<https://www.twitch.tv/alphaconsole> \nHave a great day!');
+
+            const embedlog = new Discord.MessageEmbed()
+            .setColor([255,255,0])
+            .setAuthor('Title Colour Auto Reset', serverInfo.logo)
+            .setDescription('<@' + user.id + '>\'s colour has been reset because Twitch Subscription ended.')
+            .setTimestamp()
+            client.guilds.get(serverInfo.guildId).channels.get(serverInfo.modlogChannel).send(embedlog);
+            }
+        
 
             //Let's first check if the user even exists in the db
             sql.get(`select * from Members where DiscordID = '${newMember.user.id}'`).then(row => {
