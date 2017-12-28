@@ -19,7 +19,8 @@ var messagelog = [];
 var warned = [];
 var banned = [];
 //server information
-var serverInfo = require("../src/serverInfo.js").serverInfo;
+var serverInfoPath = process.argv.slice(2).pop().replace('-serverfile=', '');
+var serverInfo = require(serverInfoPath).serverInfo;
 
 //---------------------------//
 //      Bot Load             //

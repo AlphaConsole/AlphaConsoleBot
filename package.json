@@ -4,7 +4,8 @@
   "description": "Bot for AlphaConsole discord",
   "main": "alphaconsole.js",
   "scripts": {
-    "test": "nodemon src/alphaconsole.js"
+    "test": "nodemon src/alphaconsole.js -serverfile=../src/serverInfo.js",
+    "production": "nodemon src/alphaconsole.js -serverfile=../src/serverInfo-OfficialDiscord.js"
   },
   "author": "Hayden Meloche",
   "license": "ISC",
