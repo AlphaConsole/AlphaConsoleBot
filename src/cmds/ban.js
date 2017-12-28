@@ -17,6 +17,13 @@ module.exports = {
                 return message.channel.send(embed)
             }
 
+            if (isStaff(message.guild.member(message.mentions.users.first()))) {
+                const embed = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setTitle('You cannot ban a staff member.')
+                return message.channel.send(embed)
+            }
+
             //Check if there is a reason
             if (args.length == 2) {
                 var TheReason = "No reason provided";
@@ -102,4 +109,16 @@ function mysql_real_escape_string (str) {
                                   // and double/single quotes
         }
     });
+}
+
+/**
+ * Returns true if user is part of staff
+ * @param {user} user 
+ */
+function isStaff(user) {
+    if (hasRole(user, "Developer") ||hasRole(user, "Admin") || hasRole(user, "Moderator") || hasRole(user, "Support")) {
+        return true;
+    } else {
+        return false;
+    }
 }
