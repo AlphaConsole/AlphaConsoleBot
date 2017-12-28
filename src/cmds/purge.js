@@ -19,6 +19,11 @@ module.exports = {
                 .setDescription(`${message.member} (${message.author.id}) has purged a message in ${message.channel}`)
                 .setTimestamp()
                 message.guild.channels.get(serverInfo.modlogChannel).send(embedlog)
+
+                const embed = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setAuthor(`${message.author.tag} has purged 1 message`, serverInfo.logo) 
+                message.channel.send(embed);
             } else if (args.length == 2) {
 
                 if(!isNumber(args[1]) || args[1].startsWith(".")) {
@@ -41,6 +46,11 @@ module.exports = {
                 .setDescription(`${message.member} (${message.author.id}) has purged ${amount} messages in ${message.channel}`)
                 .setTimestamp()
                 message.guild.channels.get(serverInfo.modlogChannel).send(embedlog)
+
+                const embed = new Discord.MessageEmbed()
+                .setColor([255,255,0])
+                .setAuthor(`${message.author.tag} has purged ${amount - 1} messages`, serverInfo.logo) 
+                message.channel.send(embed);
             }
         }
     }

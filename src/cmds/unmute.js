@@ -32,7 +32,6 @@ module.exports = {
                 MutedUser.removeRole(MutedRole);
 
                 //Make a notice & Log it to the log-channel
-                message.delete()
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
                 .setAuthor(`${message.mentions.users.first().tag} has been unmuted.`, serverInfo.logo) 
@@ -67,7 +66,6 @@ module.exports = {
                 }).catch(err => console.log(err))
 
             } else {
-                message.delete();
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
                 .setAuthor('__Command wrongly build:__ \n\n`!Unmute @user`', serverInfo.logo) 

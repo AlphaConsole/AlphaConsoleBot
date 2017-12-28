@@ -18,23 +18,8 @@ var authors = [];
 var messagelog = [];
 var warned = [];
 var banned = [];
-
-//Server Information
-var serverInfo = {
-    guildName: 'AC Beta',
-    guildId: '348214140889989140',
-    aclogChannel: '389536034041495562',
-    serverlogChannel: '389536059177828374',
-    modlogChannel: '389536131089432596',
-    DynamicCat: '388834196782579712',
-    BotSpam: '389241234100715520',
-    EventsRole: '389384990087053312',
-    suggestionsChannel: '389870221906804737',
-    showcaseChannel: '349637406393237514',
-    betaSteamIDS: '391345364919123968',
-    setTitleChannel : '',
-    setSpecialTitleChannel: ''
-  }
+//server information
+var serverInfo = require("../src/serverInfo.js").serverInfo;
 
 //---------------------------//
 //      Bot Load             //
@@ -108,12 +93,13 @@ process.on('unhandledRejection', (reason, p) => {
 client.on('message', async message =>
 {
     if (message.author.bot) return;
+    var args = message.content.split(/[ ]+/);
 
-    require('./events/spamCheck.js').run(client, serverInfo, message, authors, messagelog, warned, banned, sql)
 
     if (message.channel.type != 'dm') {
-        var args = message.content.split(/[ ]+/);
         require('./events/newMessage.js').run(client, serverInfo, sql, message, args, AllowedLinksSet, AutoResponds, SwearWordsSet)
+        require('./events/spamCheck.js').run(client, serverInfo, message, authors, messagelog, warned, banned, sql)
+
 
         /// USER COMMANDS
         // Bot-Spam: Self-Assign role
@@ -123,13 +109,14 @@ client.on('message', async message =>
             }
         }
 
+        //Help command
+        if (args[0].toLowerCase() == "!help" || args[0].toLowerCase() == "!h") {
+            require('./cmds/helpPublic.js').run(client, serverInfo, message, args, Commands)
+        }
+
         //Title commands
         if (args[0].toLowerCase() == "!set" || args[0].toLowerCase() == "!override") {
             require('./cmds/titles.js').run(client, serverInfo, message, blackListedWords, args, sql)
-        }
-
-        if (args[0].toLowerCase() == "!help" || args[0].toLowerCase() == "!h") {
-            require('./cmds/help.js').run(client, serverInfo, message, args, Commands)
         }
 
         if (args[0].toLowerCase() == "!events") {
@@ -150,6 +137,11 @@ client.on('message', async message =>
         //Staff Custom Commands delete
         if (args[0].toLowerCase() == "!delcom") {
             require('./cmds/delcom.js').run(client, serverInfo, sql, message, args)
+        }
+
+        //Staff usercount command
+        if (args[0].toLowerCase() == "!usercount") {
+            require('./cmds/usercount.js').run(client, serverInfo, sql, message, args)
         }
 
 
@@ -229,6 +221,13 @@ client.on('message', async message =>
         //Admin Bot Status
         if (args[0].toLowerCase() == "!status") {
             require('./cmds/status.js').run(client, serverInfo, sql, message, args)
+        }
+
+    } else {
+        /// ALL DM COMMANDS
+
+        if (args[0].toLowerCase() == "!help" || args[0].toLowerCase() == "!h") {
+            require('./cmds/help.js').run(client, serverInfo, message, args, Commands)
         }
 
     }

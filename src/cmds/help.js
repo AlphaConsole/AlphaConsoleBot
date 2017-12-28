@@ -7,7 +7,10 @@ module.exports = {
     description: ["Provides the help info"],
     
     run: async(client, serverInfo, message, args, Commands) => {
+
         if (args.length == 1) {
+
+            member = client.guilds.get(serverInfo.guildId).members.get(message.author.id);
 
             var everyone = "";
             var staff = "";
@@ -28,10 +31,10 @@ module.exports = {
             .setAuthor("Help command", serverInfo.logo) 
             .addField("Everyone commands", everyone)
             .setFooter("Do: !help <command> for more info")
-            if (hasRole(message.member, "Admin") || hasRole(message.member, "Developer") || hasRole(message.member, "Moderator") || hasRole(message.member, "Support") || hasRole(message.member, "Staff")) embed.addField("Staff commands", staff)            
-            if (hasRole(message.member, "Admin") || hasRole(message.member, "Developer") || hasRole(message.member, "Moderator") || hasRole(message.member, "Support")) embed.addField("Support commands", support)
-            if (hasRole(message.member, "Admin") || hasRole(message.member, "Developer") || hasRole(message.member, "Moderator")) embed.addField("Moderator commands", moderator);
-            if (hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) embed.addField("Admin commands", admin);
+            if (hasRole(member, "Admin") || hasRole(member, "Developer") || hasRole(member, "Moderator") || hasRole(member, "Support") || hasRole(member, "Staff")) embed.addField("Staff commands", staff)            
+            if (hasRole(member, "Admin") || hasRole(member, "Developer") || hasRole(member, "Moderator") || hasRole(member, "Support")) embed.addField("Support commands", support)
+            if (hasRole(member, "Admin") || hasRole(member, "Developer") || hasRole(member, "Moderator")) embed.addField("Moderator commands", moderator);
+            if (hasRole(member, "Admin") || hasRole(member, "Developer")) embed.addField("Admin commands", admin);
             message.channel.send(embed)
 
         } else if (args.length == 2) {
@@ -52,8 +55,7 @@ module.exports = {
                 message.channel.send(embed)
             }
         }
-    }
-    
+    }    
 };
 
 //Functions used to check if a player has the desired role

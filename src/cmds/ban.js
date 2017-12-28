@@ -36,7 +36,15 @@ module.exports = {
                 .then(() => {
                     var CaseID = "Error";
                     sql.get(`select * from logs where Member = '${BannedUser.id}' order by ID desc`).then(roww => {
-                        if (roww) CaseID = roww.ID
+                        if (!roww) return message.channel.send("An error occured");
+                        
+                        CaseID = roww.ID
+                        //Make a notice & Log it to the log-channel
+                        const embed = new Discord.MessageEmbed()
+                        .setColor([255,255,0])
+                        .setAuthor(`${message.mentions.users.first().tag} has been banned from the server. Case number: ${CaseID}`, serverInfo.logo) 
+                        message.channel.send(embed) //Remove this line if you don't want it to be public.
+
             
                         const embedlog = new Discord.MessageEmbed()
                         .setColor([255,255,0])
@@ -50,14 +58,6 @@ module.exports = {
                     });        
                 })
                 .catch(err => console.log(err));
-
-            //Make a notice & Log it to the log-channel
-            message.delete()
-            const embed = new Discord.MessageEmbed()
-            .setColor([255,255,0])
-            .setAuthor(`${message.mentions.users.first().tag} has been banned from the server.`, serverInfo.logo) 
-            message.channel.send(embed) //Remove this line if you don't want it to be public.
-
 
 
 

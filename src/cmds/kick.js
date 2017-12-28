@@ -36,12 +36,20 @@ module.exports = {
                 .then(() => {
                     var CaseID = "Error";
                     sql.get(`select * from logs where Member = '${KickedUser.id}' order by ID desc`).then(roww => {
-                        if (roww) CaseID = roww.ID
+                        if (!roww) return message.channel.send("An error occured");
+                        
+                        CaseID = roww.ID
+
+                        //Make a notice & Log it to the log-channel
+                        const embed = new Discord.MessageEmbed()
+                        .setColor([255,255,0])
+                        .setAuthor(`${message.mentions.users.first().tag} has been kicked from the server. Case number: ${CaseID}`, serverInfo.logo) 
+                        message.channel.send(embed) //Remove this line if you don't want it to be public.
             
                         const embedlog = new Discord.MessageEmbed()
                         .setColor([255,255,0])
                         .setAuthor(`Case ${CaseID} | User Kick`, serverInfo.logo)
-                        .setDescription(`${message.guild.members.get(message.mentions.users.first().id)} (${message.mentions.users.first().id}) has been kicked by ${message.member}`)
+                        .setDescription(`**${message.mentions.users.first().tag}** (${message.mentions.users.first().id}) has been kicked by ${message.member}`)
                         .setTimestamp()
                         .addField('Reason', TheReason)
                         message.guild.channels.get(serverInfo.modlogChannel).send(embedlog).then(msg => {
@@ -50,14 +58,6 @@ module.exports = {
                     });        
                 })
                 .catch(err => console.log(err));
-
-            //Make a notice & Log it to the log-channel
-            message.delete()
-            const embed = new Discord.MessageEmbed()
-            .setColor([255,255,0])
-            .setAuthor(`${message.mentions.users.first().tag} has been kicked from the server.`, serverInfo.logo) 
-            message.channel.send(embed) //Remove this line if you don't want it to be public.
-
 
         }
     }

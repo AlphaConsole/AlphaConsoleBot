@@ -3,7 +3,7 @@ const keys = require("../keys.js");
 
 module.exports = {
     title: "checkdb",
-    perms: "Support+",
+    perms: "Support",
     commands: ["!checkdb <@tag>|<steamID>|<discordID>"],
     description: ["Returns the users current status in the database"],
     

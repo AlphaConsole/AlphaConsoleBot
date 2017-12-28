@@ -8,24 +8,49 @@ module.exports = {
     
         if (reaction._emoji.name == "❌") {
             if (hasRole(client.guilds.get(serverInfo.guildId).members.get(user.id), "Developer") || hasRole(client.guilds.get(serverInfo.guildId).members.get(user.id), "Admin")) {
-                reaction.message.delete();
-                const embed = new Discord.MessageEmbed()
-                .setColor([255,255,0])
-                .setAuthor(`Your suggestion was deleted by ${user.username}`, serverInfo.logo)
-                .setDescription("It was not a valid suggestion, it has already been suggested, or it was in violation of the information listed at the top of our suggestions channel.\n Please read this information carefully if you intend to submit another suggestion in the future.") 
-                reaction.message.author.send(embed);
 
-                const embedLog = new Discord.MessageEmbed()
-                .setColor([255,255,0])
-                .setAuthor(`SUGGESTION / SHOWCASE DELETED`, serverInfo.logo)
-                .addField(`Suggested by `, `${reaction.message.member} (${reaction.message.author.id})`)
-
-                if (reaction.message.content.length != 0) {
-                    embedLog.addField(`Content`, `${reaction.message.content}`)
+                if (reaction.message.channel.id == serverInfo.suggestionsChannel) {
+                    reaction.message.delete();
+                    const embed = new Discord.MessageEmbed()
+                    .setColor([255,255,0])
+                    .setAuthor(`Your suggestion was deleted by ${user.username}`, serverInfo.logo)
+                    .setDescription("It was not a valid suggestion, it has already been suggested, or it was in violation of the information listed at the top of our suggestions channel.\n Please read this information carefully if you intend to submit another suggestion in the future.") 
+                    reaction.message.author.send(embed);
+    
+                    const embedLog = new Discord.MessageEmbed()
+                    .setColor([255,255,0])
+                    .setAuthor(`SUGGESTION DELETED`, serverInfo.logo)
+                    .addField(`Suggested by `, `${reaction.message.member} (${reaction.message.author.id})`)
+    
+                    if (reaction.message.content.length != 0) {
+                        embedLog.addField(`Content`, `${reaction.message.content}`)
+                    }
+                    embedLog.addField(`Channel`, `${reaction.message.channel}`)
+                    embedLog.addField(`Deleted by`, `${user.username}`)
+                    reaction.message.guild.channels.get(serverInfo.aclogChannel).send(embedLog)
+    
                 }
-                embedLog.addField(`Channel`, `${reaction.message.channel}`)
-                embedLog.addField(`Deleted by`, `${user.username}`)
-                reaction.message.guild.channels.get(serverInfo.aclogChannel).send(embedLog)
+                if (reaction.message.channel.id == serverInfo.showcaseChannel) {
+                    reaction.message.delete();
+                    const embed = new Discord.MessageEmbed()
+                    .setColor([255,255,0])
+                    .setAuthor(`Your showcase was deleted by ${user.username}`, serverInfo.logo)
+                    .setDescription("It was not a valid showcase, it has already been showcased, or it was in violation of the information listed at the top of our suggestions channel.\n Please read this information carefully if you intend to submit another suggestion in the future.") 
+                    reaction.message.author.send(embed);
+    
+                    const embedLog = new Discord.MessageEmbed()
+                    .setColor([255,255,0])
+                    .setAuthor(`SHOWCASE DELETED`, serverInfo.logo)
+                    .addField(`Showcased by `, `${reaction.message.member} (${reaction.message.author.id})`)
+    
+                    if (reaction.message.content.length != 0) {
+                        embedLog.addField(`Content`, `${reaction.message.content}`)
+                    }
+                    embedLog.addField(`Channel`, `${reaction.message.channel}`)
+                    embedLog.addField(`Deleted by`, `${user.username}`)
+                    reaction.message.guild.channels.get(serverInfo.aclogChannel).send(embedLog)
+    
+                }
             }
         }
     }

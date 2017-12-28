@@ -26,10 +26,13 @@ module.exports = {
 
                         sql.all(`Select * from logs where Member = '${DiscordID}' and Action = 'warn' order by Time ASC`).then(rows => {
                             rows.forEach(row => {
-                                Reasons += row.ID + ". " + row.Reason + "\n";
+                                Reasons += "**" + row.ID + "**: " + row.Reason + "\n";
                             });
+
                             embed.addField("Warnings", rows.length)
-                            embed.addField("Reasons", Reasons)
+                            if (Reasons != "") {
+                                embed.addField("Reasons", Reasons)
+                            } 
                             message.channel.send(embed);
                         })
                     } else {

@@ -34,7 +34,7 @@ module.exports = {
                     embed.setThumbnail('http://www.cityrider.com/fixed/43aspect.png')
 
                     sql.all(`select * from logs where Member = '${TheUser.id}' AND Action = 'kick'`).then(kicks => {
-                        embed.addField("kicks", kicks.length, true)
+                        embed.addField("Kicks", kicks.length, true)
 
                         sql.all(`select * from logs where Member = '${TheUser.id}' AND Action = 'ban'`).then(bans => {
                             embed.addField("Bans", bans.length, true)
@@ -43,7 +43,7 @@ module.exports = {
 
                                 var output = ""
                                 cases.forEach(element => {
-                                    output += element.ID + ': ' + capitalizeFirstLetter(element.Action) + " - " + element.Reason + "\n"
+                                    output += "**" + element.ID + '**: ' + capitalizeFirstLetter(element.Action) + " - " + element.Reason + "\n"
                                 });
                                 
                                 embed.addField("Last 5 cases", output)
