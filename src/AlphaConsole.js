@@ -1,5 +1,3 @@
-//import { GuildChannel } from 'discord.js';
-
 //Main file for AlphaConsole Discord Bot
 
 
