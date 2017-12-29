@@ -224,6 +224,14 @@ client.on('message', async message =>
             require('./cmds/status.js').run(client, serverInfo, sql, message, args)
         }
 
+        //Disables all channels which rely on the bot heavily. (#set-title, special title, etc)
+        if (args[0].toLowerCase() == "!lockdown") {
+            require('./cmds/lockdown.js').run(client, serverInfo, message, args)
+        }
+        if (args[0].toLowerCase() == "!unlock") {
+            require('./cmds/unlockdown.js').run(client, serverInfo, message, args)
+        }
+
     } else {
         /// ALL DM COMMANDS
 
