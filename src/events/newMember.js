@@ -5,7 +5,7 @@ module.exports = {
     description: "Logs whenever a new members joins",
     
     run: async(client, serverInfo, member, sql) => {
-        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.serverlogChannel).send(":white_check_mark: `["+ new Date().toTimeString().split(' ')[0] +"]` **" + member.user.tag + "** joined the guild. Total members: **" + numberWithSpaces(client.guilds.get(serverInfo.guildId).members.size) + "**");
+        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.serverlogChannel).send(":white_check_mark: `["+ new Date().toTimeString().split(' ')[0] +"]` **" + member.user.tag + "** joined the guild. Total members: **" + numberWithSpaces(client.guilds.get(serverInfo.guildId).memberCount) + "**");
 
         member.send("Welcome to the AlphaConsole Discord server! We are the largest Rocket League related server in the world!\n**Before you start, please make sure to:**\n\n- Download the latest version of AlphaConsole in #download.\n\n- Read all information in #faq.\n\n- Read #troubleshooting if you are having issues.\n\nIf you still have questions, feel free to contact one of our Staff members in #help.")
 
