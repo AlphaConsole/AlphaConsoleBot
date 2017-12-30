@@ -25,7 +25,8 @@ This bot is a re-write of our old C# Discord bot. It serves our server in many d
 ##### For our users:
 
  - Allows them to set a custom title in game
-  ![](https://cdn.discordapp.com/attachments/328236864534216704/381109222563250176/EveryTitleColor.gif)
+ 
+   ![](https://cdn.discordapp.com/attachments/328236864534216704/381109222563250176/EveryTitleColor.gif)
  - Responds automatically to commonly asked questions
 
 ##### For the AlphaConsole Staff
@@ -44,6 +45,7 @@ Also required is an API key from discord which you can create [here.](https://di
 Once you have a key you will need to put that into the `keys.js`.
 
 If you have any questions feel free to message me on Discord, my ID is
+
 <img src="https://i.imgur.com/wloHJJi.png" width="20%">
 
 ----------
