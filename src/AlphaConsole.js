@@ -130,6 +130,11 @@ client.on('message', async message =>
             validCMD = true;
         }
 
+        else if (args[0].toLowerCase() == '!get' && args[1].toLowerCase() == 'title') {
+            require('./cmds/getTitle.js').run(client, serverInfo, message, args)
+            validCMD = true;
+        }
+
         else if (args[0].toLowerCase() == "!events") {
             require('./cmds/events.js').run(client, serverInfo, message, args, Events)
             validCMD = true;
