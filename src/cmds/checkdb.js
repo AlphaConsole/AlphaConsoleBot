@@ -73,8 +73,6 @@ module.exports = {
                     }
                 }
             });
-        } else {
-            message.delete().catch(console.error);
         }
     }
 }

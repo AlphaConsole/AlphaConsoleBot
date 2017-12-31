@@ -130,7 +130,6 @@ module.exports = {
 
 
             } else {
-                message.delete();
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
                 .setAuthor('__Command wrongly build:__ `!Mute @user [Time in hours] [?Reason]`', serverInfo.logo) 

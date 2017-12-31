@@ -47,7 +47,6 @@ module.exports = {
                 
                 sql.run(`insert into SwearWords(Word) VALUES ('${words.trim()}')`)
 
-                message.delete();
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
                 .setAuthor('Swear word added.', serverInfo.logo)

@@ -24,8 +24,6 @@ module.exports = {
                 .setColor([255,255,0])
                 .setAuthor('All bot reliant channels have been re-enabled.', serverInfo.logo) 
                 message.channel.send(embedChannel);
-        } else {
-            message.delete();
         }
     }
 };

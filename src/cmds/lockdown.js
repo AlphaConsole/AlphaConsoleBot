@@ -24,8 +24,6 @@ module.exports = {
                 .setColor([255,255,0])
                 .setAuthor('All bot reliant channels have been locked down.', serverInfo.logo) 
                 return message.channel.send(embedChannel)
-        } else {
-            message.delete();
         }
     }
 };
