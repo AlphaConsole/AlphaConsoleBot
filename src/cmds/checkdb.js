@@ -280,6 +280,6 @@ function returnColour(colourID) {
             return 'RLCS Blue';
             break;
         default:
-            return 'No colour';
+            return 'Cycling Colours';
     }
 }
