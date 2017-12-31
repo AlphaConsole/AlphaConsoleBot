@@ -16,6 +16,12 @@ module.exports = {
 
     run: async(client, serverInfo, sql, message, args, SwearWordsSet) => {
         if (hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
+            if (message.channel.id != serverInfo.staffChannel && message.channel.id != serverInfo.basementChannel) {
+                const embed = new Discord.MessageEmbed()
+                    .setColor([255,255,0])
+                    .setAuthor("Viewing swear words is not allowed in this channel.", serverInfo.logo) 
+                    return message.channel.send(embed)
+            }
 
             if (args.length == 1) {
                 sql.all("Select * from SwearWords").then(rows => {

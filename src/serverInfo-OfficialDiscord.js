@@ -12,5 +12,7 @@ module.exports.serverInfo = {
     showcaseChannel: '358833347486810112',
     betaSteamIDS: '387726240049528832',
     setTitleChannel : '328236864534216704',
-    setSpecialTitleChannel: '363137607540015106'
+    setSpecialTitleChannel: '363137607540015106',
+    staffChannel: '325079897209044993',
+    basementChannel: '385890535753383956'
 }
