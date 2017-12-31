@@ -55,13 +55,22 @@ module.exports = {
                     for (let index = 0; index < info.length-1; index++) {
                         result += info[index] + " ";
                     }
-                    const embed = new Discord.MessageEmbed()
-                    .setColor([255,255,0])
-                    .setAuthor('Database Check', serverInfo.logo)
-                    .addField("User", user)
-                    .addField("Title", `${result}`)
-                    .addField("Colour", returnColour(colour));
-                    message.channel.send(embed);
+                    if (result.trim() == 'X' && returnColour(colour) == 'Cycling Colours') {
+                        const embed = new Discord.MessageEmbed()
+                        .setColor([255,255,0])
+                        .setAuthor('Database Check', serverInfo.logo)
+                        .addField("User", user)
+                        .addField("Information", `User has disabled their title.`)
+                        message.channel.send(embed);
+                    } else {
+                        const embed = new Discord.MessageEmbed()
+                        .setColor([255,255,0])
+                        .setAuthor('Database Check', serverInfo.logo)
+                        .addField("User", user)
+                        .addField("Title", `${result}`)
+                        .addField("Colour", returnColour(colour));
+                        message.channel.send(embed);
+                    }
                 }
             });
         } else {
@@ -278,6 +287,9 @@ function returnColour(colourID) {
             break;
         case '7':
             return 'RLCS Blue';
+            break;
+        case 'X':
+            return 'Disabled (X)';
             break;
         default:
             return 'Cycling Colours';

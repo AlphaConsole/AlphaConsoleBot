@@ -94,8 +94,8 @@ process.on('unhandledRejection', (reason, p) => {
 client.on('message', async message =>
 {
     if (message.author.bot) return;
-    var args = message.content.split(/[ ]+/);
 
+    var args = message.content.split(/[ ]+/);
 
     if (message.channel.type != 'dm') {
         require('./events/newMessage.js').run(client, serverInfo, sql, message, args, AllowedLinksSet, AutoResponds, SwearWordsSet)
@@ -118,6 +118,10 @@ client.on('message', async message =>
         //Title commands
         if (args[0].toLowerCase() == "!set" || args[0].toLowerCase() == "!override") {
             require('./cmds/titles.js').run(client, serverInfo, message, blackListedWords, args, sql)
+        }
+
+        if (args[0].toLowerCase() == "!disable") {
+            require('./cmds/disable.js').run(client, serverInfo, message, args)
         }
 
         if (args[0].toLowerCase() == "!events") {
@@ -232,6 +236,13 @@ client.on('message', async message =>
             require('./cmds/unlockdown.js').run(client, serverInfo, message, args)
         }
 
+        //Keep #Set-title clean
+        if (message.channel.id == serverInfo.setTitleChannel || message.channel.id == serverInfo.setSpecialTitleChannel) {
+            message.delete().catch(console.error);
+        } else if (args[0].toLowerCase() == "!set") {
+            message.delete().catch(console.error);
+        }
+
     } else {
         /// ALL DM COMMANDS
 
@@ -240,6 +251,8 @@ client.on('message', async message =>
         }
 
     }
+
+    
 })
 
 var schedule = require('node-schedule');

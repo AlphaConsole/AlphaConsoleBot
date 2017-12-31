@@ -21,7 +21,6 @@ module.exports = {
                 setSpecialTitle(client, serverInfo, message, blackListedWords, args, sql);
                 break;
             default:
-                message.delete().catch(console.error);
                 break;
         }
     }
@@ -42,12 +41,10 @@ function setTitle(client, serverInfo, message, blackListedWords, args) {
                 + "AlphaConsole does not allow faking of real titles. If you continue to try and bypass the blacklist system, it could result in loss of access to our custom titles.");
         }
     }
-    message.delete().catch(console.error);
 }
 
 function setColour(client, serverInfo, message, blackListedWords, args) {
     var success = setUsersColour(message.member, args[2], message);
-    message.delete().catch(console.error);
     
 }
 
@@ -59,7 +56,6 @@ function overrideTitle(client, serverInfo, message, blackListedWords, args) {
             message.author.send(`User ${args[2]} updated sucessfully.`);
         }
     }
-    message.delete().catch(console.error);
 }
 
 function overrideColour(client, serverInfo, message, blackListedWords, args) {
@@ -69,7 +65,6 @@ function overrideColour(client, serverInfo, message, blackListedWords, args) {
             message.author.send(`User ${args[2]} updated successfully.`);
         }
     }
-    message.delete().catch(console.error);
 }
 
 function setSpecialTitle(client, serverInfo, message, blackListedWords, args, sql) {
@@ -90,7 +85,6 @@ function setSpecialTitle(client, serverInfo, message, blackListedWords, args, sq
             }
         }).catch(err => console.log(err))
     }
-    message.delete().catch(console.error);
 }
 
 //---------------------------//
