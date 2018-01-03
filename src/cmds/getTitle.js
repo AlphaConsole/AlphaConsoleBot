@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const keys = require("../keys.js");
 
 module.exports = {
-    title: "Get Title",
+    title: "get title",
     perms: "Everyone",
     commands: ["!get title"],
     description: ["Returns your current title"],
