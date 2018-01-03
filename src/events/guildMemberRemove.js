@@ -5,7 +5,7 @@ module.exports = {
     description: "Logs when a member leaves the server",
     
     run: async(client, serverInfo, member, sql) => {
-        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.serverlogChannel).send(":x: `["+ new Date().toTimeString().split(' ')[0] +"]` **" + member.user.tag + "** left the guild. Total members: **" + numberWithSpaces(client.guilds.get(serverInfo.guildId).members.size) + "**")
+        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.serverlogChannel).send(":x: `["+ new Date().toTimeString().split(' ')[0] +"]` **" + member.user.tag + "** left the guild. Total members: **" + numberWithSpaces(client.guilds.get(serverInfo.guildId).memberCount) + "**")
     
         var newRolesID = ""
         member.roles.array().forEach(role => {
