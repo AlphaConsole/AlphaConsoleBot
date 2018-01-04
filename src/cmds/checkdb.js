@@ -8,7 +8,7 @@ module.exports = {
     description: ["Returns the users current status in the database"],
     
     run: async(client, serverInfo, message, args) => {
-        if (isStaff(message.member)) {
+        if (isStaff(message.member) || hasRole(message.member, "Community Helper")) {
             var request = require('request');
             var url = keys.CheckdbURL;
             var user;
