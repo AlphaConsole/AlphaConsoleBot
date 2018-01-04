@@ -14,10 +14,10 @@ module.exports = {
                 ResponseText += "`@everyone` ";
             } else if (args[i] == "@here") {
                 ResponseText += "`@here` ";
-            } else if (message.mentions.roles.has(args[i].substring(3, 21))) {
-                ResponseText += '**' + message.mentions.roles.get(args[i].substring(3, 21)).name + '** '
-            } else if (message.mentions.users.has(args[i].substring(2, 20))) {
-                ResponseText += '**' + message.mentions.users.get(args[i].substring(2, 20)).tag + '** '
+            } else if (message.mentions.roles.has(args[i].replace(/[^0-9]/g, ''))) {
+                ResponseText += '**' + message.mentions.roles.get(args[i].replace(/[^0-9]/g, '')).name + '** '
+            } else if (message.mentions.users.has(args[i].replace(/[^0-9]/g, ''))) {
+                ResponseText += '**' + message.mentions.users.get(args[i].replace(/[^0-9]/g, '')).tag + '** '
             } else {
                 ResponseText += args[i] + " ";
             }
