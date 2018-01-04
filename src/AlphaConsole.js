@@ -115,7 +115,7 @@ client.on('message', async message =>
             }
 
             //Help command
-            else if (args[0].toLowerCase() == "!help" || args[0].toLowerCase() == "!h") {
+            if (args[0].toLowerCase() == "!help" || args[0].toLowerCase() == "!h") {
                 require('./cmds/helpPublic.js').run(client, serverInfo, message, args, Commands)
             }
 
@@ -126,12 +126,6 @@ client.on('message', async message =>
 
             else if (args[0].toLowerCase() == "!disable") {
                 require('./cmds/disable.js').run(client, serverInfo, message, args)
-            }
-
-            else if (args.length == 2) {
-                if (args[0].toLowerCase() == '!get' && args[1].toLowerCase() == 'title') {
-                    require('./cmds/getTitle.js').run(client, serverInfo, message, args)
-                }
             }
 
             else if (args[0].toLowerCase() == "!events") {
@@ -241,6 +235,13 @@ client.on('message', async message =>
             }
             else if (args[0].toLowerCase() == "!unlock") {
                 require('./cmds/unlockdown.js').run(client, serverInfo, message, args)
+            }
+
+            //For commands with 2 args.
+            else if (args.length == 2) {
+                if (args[0].toLowerCase() == '!get' && args[1].toLowerCase() == 'title') {
+                    require('./cmds/getTitle.js').run(client, serverInfo, message, args)
+                }
             }
 
             //Keep #Set-title clean
