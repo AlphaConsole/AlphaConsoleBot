@@ -23,6 +23,6 @@ module.exports = {
             }
         }
 
-        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.serverlogChannel).send(":pencil: `["+ new Date().toTimeString().split(' ')[0] +"]` **Channel: <#" + message.channel.id + "> " + message.member.user.tag + "**'s message was deleted. Content: " + ResponseText)
+        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.serverlogChannel).send(":pencil: `["+ new Date().toTimeString().split(' ')[0] +"]` **Channel: <#" + message.channel.id + "> " + message.author.tag + "**'s message was deleted. Content: " + ResponseText)
     }
 };

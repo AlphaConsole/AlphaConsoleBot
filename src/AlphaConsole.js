@@ -126,8 +126,10 @@ client.on('message', async message =>
             require('./cmds/disable.js').run(client, serverInfo, message, args)
         }
 
-        else if (args[0].toLowerCase() == '!get' && args[1].toLowerCase() == 'title') {
-            require('./cmds/getTitle.js').run(client, serverInfo, message, args)
+        else if (args.length == 2) {
+            if (args[0].toLowerCase() == '!get' && args[1].toLowerCase() == 'title') {
+                require('./cmds/getTitle.js').run(client, serverInfo, message, args)
+            }
         }
 
         else if (args[0].toLowerCase() == "!events") {

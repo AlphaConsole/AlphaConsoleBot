@@ -23,7 +23,7 @@ module.exports = {
                     const embedlog = new Discord.MessageEmbed()
                     .setColor([255,255,0])
                     .setAuthor('Togglelinks', serverInfo.logo)
-                    .addField("Links enabled at", `**${message.channel.name}** (${message.channel})`)
+                    .addField("Link protection enabled at", `**${message.channel.name}** (${message.channel})`)
                     .addField("by", `**${message.member.user.tag}** (${message.member})`)
                     .setTimestamp()
                     client.guilds.get(serverInfo.guildId).channels.get(serverInfo.aclogChannel).send(embedlog);
@@ -40,7 +40,7 @@ module.exports = {
                     const embedlog = new Discord.MessageEmbed()
                     .setColor([255,255,0])
                     .setAuthor('Togglelinks', serverInfo.logo)
-                    .addField("Links disabled at", `**${message.channel.name}** (${message.channel})`)
+                    .addField("Link protection disabled at", `**${message.channel.name}** (${message.channel})`)
                     .addField("by", `**${message.member.user.tag}** (${message.member})`)
                     .setTimestamp()
                     client.guilds.get(serverInfo.guildId).channels.get(serverInfo.aclogChannel).send(embedlog);

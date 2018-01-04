@@ -156,23 +156,26 @@ module.exports = {
         }
 
         // Auto Responder checker && Invite Guard
-        if (!hasRole(message.member, "Admin") && !hasRole(message.member, "Developer")) {        
-            for (var [key, value] of AutoResponds) {
+        if (!hasRole(message.member, "Admin") && !hasRole(message.member, "Developer")) {
+            
+            if (!noAutoResponceChannel(message.channel.id, serverInfo)) {
+            
+                for (var [key, value] of AutoResponds) {
 
-                var argsKey = key.toLowerCase().split(/[ ]+/);
-                counter = 0;
+                    var argsKey = key.toLowerCase().split(/[ ]+/);
+                    counter = 0;
 
-                for (let i = 0; i < argsKey.length; i++) {
-                    if (message.content.toLowerCase().includes(argsKey[i].toLowerCase().trim())) {
-                        counter++;
+                    for (let i = 0; i < argsKey.length; i++) {
+                        if (message.content.toLowerCase().includes(argsKey[i].toLowerCase().trim())) {
+                            counter++;
+                        }
+                    }
+
+                    if (counter == argsKey.length) {
+                        message.channel.send(`${message.author}, ${value}`);
                     }
                 }
-
-                if (counter == argsKey.length) {
-                    message.channel.send(`${message.author}, ${value}`);
-                }
             }
-
             if (message.content.includes('discord.gg/') || message.content.includes('discordapp.com/invite/')) {
                 return message.delete();
             }
@@ -260,6 +263,22 @@ function hasRole(mem, role)
         return false;
     }
 
+}
+
+function noAutoResponceChannel(channelID, serverInfo) {
+    if (channelID == serverInfo.aclogChannel) return true;
+    if (channelID == serverInfo.basementChannel) return true;
+    if (channelID == serverInfo.betaSteamIDS) return true;
+    if (channelID == serverInfo.BotSpam) return true;
+    if (channelID == serverInfo.modlogChannel) return true;
+    if (channelID == serverInfo.serverlogChannel) return true;
+    if (channelID == serverInfo.setSpecialTitleChannel) return true;
+    if (channelID == serverInfo.setTitleChannel) return true;
+    if (channelID == serverInfo.showcaseChannel) return true;
+    if (channelID == serverInfo.staffChannel) return true;
+    if (channelID == serverInfo.suggestionsChannel) return true;
+    //Else return false
+    return false;
 }
 
 function getRandomIntInclusive(min, max) {
