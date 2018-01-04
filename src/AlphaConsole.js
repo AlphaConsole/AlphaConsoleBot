@@ -99,152 +99,155 @@ client.on('message', async message =>
 
     if (message.channel.type != 'dm') {
 
+        await message.guild.members.fetch(message.author.id).then(m => {
+            message.member = m;
 
-        require('./events/newMessage.js').run(client, serverInfo, sql, message, args, AllowedLinksSet, AutoResponds, SwearWordsSet)
-        require('./events/spamCheck.js').run(client, serverInfo, message, authors, messagelog, warned, banned, sql)
+            require('./events/newMessage.js').run(client, serverInfo, sql, message, args, AllowedLinksSet, AutoResponds, SwearWordsSet)
+            require('./events/spamCheck.js').run(client, serverInfo, message, authors, messagelog, warned, banned, sql)
 
 
-        /// USER COMMANDS
-        // Bot-Spam: Self-Assign role
-        if(message.channel.id.includes(serverInfo.BotSpam)) {
-            if (args[0].toLowerCase() == "!role") {
-                require('./cmds/role.js').run(client, serverInfo, sql, message, args)
+            /// USER COMMANDS
+            // Bot-Spam: Self-Assign role
+            if(message.channel.id.includes(serverInfo.BotSpam)) {
+                if (args[0].toLowerCase() == "!role") {
+                    require('./cmds/role.js').run(client, serverInfo, sql, message, args)
+                }
             }
-        }
 
-        //Help command
-        else if (args[0].toLowerCase() == "!help" || args[0].toLowerCase() == "!h") {
-            require('./cmds/helpPublic.js').run(client, serverInfo, message, args, Commands)
-        }
-
-        //Title commands
-        else if (args[0].toLowerCase() == "!set" || args[0].toLowerCase() == "!override") {
-            require('./cmds/titles.js').run(client, serverInfo, message, blackListedWords, args, sql)
-        }
-
-        else if (args[0].toLowerCase() == "!disable") {
-            require('./cmds/disable.js').run(client, serverInfo, message, args)
-        }
-
-        else if (args.length == 2) {
-            if (args[0].toLowerCase() == '!get' && args[1].toLowerCase() == 'title') {
-                require('./cmds/getTitle.js').run(client, serverInfo, message, args)
+            //Help command
+            else if (args[0].toLowerCase() == "!help" || args[0].toLowerCase() == "!h") {
+                require('./cmds/helpPublic.js').run(client, serverInfo, message, args, Commands)
             }
-        }
 
-        else if (args[0].toLowerCase() == "!events") {
-            require('./cmds/events.js').run(client, serverInfo, message, args, Events)
-        }
+            //Title commands
+            else if (args[0].toLowerCase() == "!set" || args[0].toLowerCase() == "!override") {
+                require('./cmds/titles.js').run(client, serverInfo, message, blackListedWords, args, sql)
+            }
 
-        /// STAFF COMMANDS
-        //Staff Custom Commands add
-        else if (args[0].toLowerCase() == "!addcom") {
-            require('./cmds/addcom.js').run(client, serverInfo, sql, message, args)
-        }
+            else if (args[0].toLowerCase() == "!disable") {
+                require('./cmds/disable.js').run(client, serverInfo, message, args)
+            }
 
-        //Staff Custom Commands edit
-        else if (args[0].toLowerCase() == "!editcom") {
-            require('./cmds/editcom.js').run(client, serverInfo, sql, message, args)
-        }
+            else if (args.length == 2) {
+                if (args[0].toLowerCase() == '!get' && args[1].toLowerCase() == 'title') {
+                    require('./cmds/getTitle.js').run(client, serverInfo, message, args)
+                }
+            }
 
-        //Staff Custom Commands delete
-        else if (args[0].toLowerCase() == "!delcom") {
-            require('./cmds/delcom.js').run(client, serverInfo, sql, message, args)
-        }
+            else if (args[0].toLowerCase() == "!events") {
+                require('./cmds/events.js').run(client, serverInfo, message, args, Events)
+            }
 
-        //Staff usercount command
-        else if (args[0].toLowerCase() == "!usercount") {
-            require('./cmds/usercount.js').run(client, serverInfo, sql, message, args)
-        }
+            /// STAFF COMMANDS
+            //Staff Custom Commands add
+            else if (args[0].toLowerCase() == "!addcom") {
+                require('./cmds/addcom.js').run(client, serverInfo, sql, message, args)
+            }
 
+            //Staff Custom Commands edit
+            else if (args[0].toLowerCase() == "!editcom") {
+                require('./cmds/editcom.js').run(client, serverInfo, sql, message, args)
+            }
 
+            //Staff Custom Commands delete
+            else if (args[0].toLowerCase() == "!delcom") {
+                require('./cmds/delcom.js').run(client, serverInfo, sql, message, args)
+            }
 
-        /// SUPPORT COMMANDS
-        //Support mute command
-        else if (args[0].toLowerCase() == "!mute") {
-            require('./cmds/mute.js').run(client, serverInfo, sql, message, args)
-        }
-
-        //Support unmute command
-        else if (args[0].toLowerCase() == "!unmute") {
-            require('./cmds/unmute.js').run(client, serverInfo, sql, message, args)
-        }
-
-        //Support warn command
-        else if (args[0].toLowerCase() == "!warn") {
-            require('./cmds/warn.js').run(client, serverInfo, sql, message, args)
-        }
-
-        //Support check command
-        else if (args[0].toLowerCase() == "!check") {
-            require('./cmds/check.js').run(client, serverInfo, sql, message, args)
-        }
-
-        //Support check command
-        else if (args[0].toLowerCase() == "!case") {
-            require('./cmds/case.js').run(client, serverInfo, sql, message, args)
-        }
-
-        //Support check command
-        else if (args[0].toLowerCase() == "!cases") {
-            require('./cmds/cases.js').run(client, serverInfo, sql, message, args)
-        }
-
-        //Support checkdb for titles command
-        else if (args[0].toLowerCase() == "!checkdb") {
-            require('./cmds/checkdb.js').run(client, serverInfo, message, args)
-        }
+            //Staff usercount command
+            else if (args[0].toLowerCase() == "!usercount") {
+                require('./cmds/usercount.js').run(client, serverInfo, sql, message, args)
+            }
 
 
-        /// MODERATOR COMMANDS
-        //Moderator kick command
-        else if (args[0].toLowerCase() == "!kick") {
-            require('./cmds/kick.js').run(client, serverInfo, sql, message, args)
-        }
 
-        //Moderator ban command
-        else if (args[0].toLowerCase() == "!ban") {
-            require('./cmds/ban.js').run(client, serverInfo, sql, message, args)
-        }
+            /// SUPPORT COMMANDS
+            //Support mute command
+            else if (args[0].toLowerCase() == "!mute") {
+                require('./cmds/mute.js').run(client, serverInfo, sql, message, args)
+            }
 
-        //Moderator auto respond command
-        else if (args[0].toLowerCase() == "!auto") {
-            require('./cmds/auto.js').run(client, serverInfo, sql, message, args, AutoResponds)
-        }
+            //Support unmute command
+            else if (args[0].toLowerCase() == "!unmute") {
+                require('./cmds/unmute.js').run(client, serverInfo, sql, message, args)
+            }
 
-        //Moderator swear words command
-        else if (args[0].toLowerCase() == "!swearwords") {
-            require('./cmds/swearwords.js').run(client, serverInfo, sql, message, args, SwearWordsSet)
-        }
+            //Support warn command
+            else if (args[0].toLowerCase() == "!warn") {
+                require('./cmds/warn.js').run(client, serverInfo, sql, message, args)
+            }
 
-        //Moderator togglelinks command
-        else if (args[0].toLowerCase() == "!togglelinks") {
-            require('./cmds/togglelinks.js').run(client, serverInfo, sql, message, args, AllowedLinksSet)
-        }
+            //Support check command
+            else if (args[0].toLowerCase() == "!check") {
+                require('./cmds/check.js').run(client, serverInfo, sql, message, args)
+            }
 
-        //Moderator purge command
-        else if (args[0].toLowerCase() == "!purge") {
-            require('./cmds/purge.js').run(client, serverInfo, message, args)
-        }
-        
-        /// ADMIN COMMANDS
-        //Admin Bot Status
-        else if (args[0].toLowerCase() == "!status") {
-            require('./cmds/status.js').run(client, serverInfo, sql, message, args)
-        }
+            //Support check command
+            else if (args[0].toLowerCase() == "!case") {
+                require('./cmds/case.js').run(client, serverInfo, sql, message, args)
+            }
 
-        //Disables all channels which rely on the bot heavily. (#set-title, special title, etc)
-        else if (args[0].toLowerCase() == "!lockdown") {
-            require('./cmds/lockdown.js').run(client, serverInfo, message, args)
-        }
-        else if (args[0].toLowerCase() == "!unlock") {
-            require('./cmds/unlockdown.js').run(client, serverInfo, message, args)
-        }
+            //Support check command
+            else if (args[0].toLowerCase() == "!cases") {
+                require('./cmds/cases.js').run(client, serverInfo, sql, message, args)
+            }
 
-        //Keep #Set-title clean
-        if (message.channel.id == serverInfo.setTitleChannel || message.channel.id == serverInfo.setSpecialTitleChannel) {
-            message.delete().catch(console.error);
-        }
+            //Support checkdb for titles command
+            else if (args[0].toLowerCase() == "!checkdb") {
+                require('./cmds/checkdb.js').run(client, serverInfo, message, args)
+            }
+
+
+            /// MODERATOR COMMANDS
+            //Moderator kick command
+            else if (args[0].toLowerCase() == "!kick") {
+                require('./cmds/kick.js').run(client, serverInfo, sql, message, args)
+            }
+
+            //Moderator ban command
+            else if (args[0].toLowerCase() == "!ban") {
+                require('./cmds/ban.js').run(client, serverInfo, sql, message, args)
+            }
+
+            //Moderator auto respond command
+            else if (args[0].toLowerCase() == "!auto") {
+                require('./cmds/auto.js').run(client, serverInfo, sql, message, args, AutoResponds)
+            }
+
+            //Moderator swear words command
+            else if (args[0].toLowerCase() == "!swearwords") {
+                require('./cmds/swearwords.js').run(client, serverInfo, sql, message, args, SwearWordsSet)
+            }
+
+            //Moderator togglelinks command
+            else if (args[0].toLowerCase() == "!togglelinks") {
+                require('./cmds/togglelinks.js').run(client, serverInfo, sql, message, args, AllowedLinksSet)
+            }
+
+            //Moderator purge command
+            else if (args[0].toLowerCase() == "!purge") {
+                require('./cmds/purge.js').run(client, serverInfo, message, args)
+            }
+            
+            /// ADMIN COMMANDS
+            //Admin Bot Status
+            else if (args[0].toLowerCase() == "!status") {
+                require('./cmds/status.js').run(client, serverInfo, sql, message, args)
+            }
+
+            //Disables all channels which rely on the bot heavily. (#set-title, special title, etc)
+            else if (args[0].toLowerCase() == "!lockdown") {
+                require('./cmds/lockdown.js').run(client, serverInfo, message, args)
+            }
+            else if (args[0].toLowerCase() == "!unlock") {
+                require('./cmds/unlockdown.js').run(client, serverInfo, message, args)
+            }
+
+            //Keep #Set-title clean
+            if (message.channel.id == serverInfo.setTitleChannel || message.channel.id == serverInfo.setSpecialTitleChannel) {
+                message.delete().catch(console.error);
+            }
+        });
 
     } else {
         /// ALL DM COMMANDS
