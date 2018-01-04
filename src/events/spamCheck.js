@@ -8,6 +8,8 @@ module.exports = {
         
         if (isStaff(message.member)) return;
 
+        if (noAutoResponceChannel(message.channel.id, serverInfo)) return;
+
         const warnBuffer = 3;
         const maxBuffer = 5;
         const interval = 1000;
@@ -268,4 +270,46 @@ function hasRole(mem, role)
         return false;
     }
 
+}
+
+function mysql_real_escape_string (str) {
+    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
+        switch (char) {
+            case "\0":
+                return "\\0";
+            case "\x08":
+                return "\\b";
+            case "\x09":
+                return "\\t";
+            case "\x1a":
+                return "\\z";
+            case "\n":
+                return "\\n";
+            case "\r":
+                return "\\r";
+            case "\"":
+            case "'":
+            case "\\":
+            case "%":
+                return char+char; // prepends a backslash to backslash, percent,
+                                  // and double/single quotes
+        }
+    });
+}
+
+
+function noAutoResponceChannel(channelID, serverInfo) {
+    if (channelID == serverInfo.aclogChannel) return true;
+    if (channelID == serverInfo.basementChannel) return true;
+    if (channelID == serverInfo.betaSteamIDS) return true;
+    if (channelID == serverInfo.BotSpam) return true;
+    if (channelID == serverInfo.modlogChannel) return true;
+    if (channelID == serverInfo.serverlogChannel) return true;
+    if (channelID == serverInfo.setSpecialTitleChannel) return true;
+    if (channelID == serverInfo.setTitleChannel) return true;
+    if (channelID == serverInfo.showcaseChannel) return true;
+    if (channelID == serverInfo.staffChannel) return true;
+    if (channelID == serverInfo.suggestionsChannel) return true;
+    //Else return false
+    return false;
 }
