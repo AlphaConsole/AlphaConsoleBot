@@ -1,11 +1,16 @@
 //Main file for AlphaConsole Discord Bot
 
+var fs = require('fs');
+//if (fs.existsSync(path)) {
+    // Do something
+//}
+
 
 //const
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const sql = require("sqlite");
-sql.open("src/sqlite/AlphaConsole.db");
+sql.open("src/sqlite/Bot.db");
 
 //vars
 var AllowedLinksSet = new Set();
@@ -26,7 +31,7 @@ var serverInfo = require(serverInfoPath).serverInfo;
 //      Bot Load             //
 //---------------------------//
 //Load blacklist
-const keys = require("../src/keys.js");
+const keys = require("../src/tokens.js");
 var request = require('request');
 var blackListedWords = [];
 request({
@@ -183,7 +188,7 @@ client.on('message', async message =>
 
             //Support check command
             else if (args[0].toLowerCase() == "!cases") {
-                require('./cmds/cases.js').run(client, serverInfo, sql, message, args)
+                require('./cmds/cases.js').run(client, serverInfo, sql, message, args, keys)
             }
 
             //Support checkdb for titles command
@@ -280,4 +285,4 @@ var j = schedule.scheduleJob({hour: 9, minute: 40}, function(){
     require('./events/DailyStats.js').run(client, serverInfo, sql);
 });
 
-client.login(require('./keys.js').TestBotToken);
+client.login(require('./tokens.js').TestBotToken);

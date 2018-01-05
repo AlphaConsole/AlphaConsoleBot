@@ -58,4 +58,8 @@ typings/
 .env
 
 #Ignore AC keys & passwords
-src/keys.js
+src/tokensOfficialServer.js
+src/tokens.js
+.vscode/launch.json
+src/sqlite/AlphaConsole.db
+src/sqlite/Bot.db

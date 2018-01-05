@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const keys = require("../keys.js");
+const keys = require("../tokens.js");
 
 
 module.exports = {

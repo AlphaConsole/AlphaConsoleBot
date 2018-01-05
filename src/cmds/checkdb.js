@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const keys = require("../keys.js");
+const keys = require("../tokens.js");
 
 module.exports = {
     title: "checkdb",
@@ -7,7 +7,7 @@ module.exports = {
     commands: ["!checkdb <@tag>|<steamID>|<discordID>"],
     description: ["Returns the users current status in the database"],
     
-    run: async(client, serverInfo, message, args) => {
+    run: async(client, serverInfo, message, args,) => {
         if (isStaff(message.member) || hasRole(message.member, "Community Helper")) {
             var request = require('request');
             var url = keys.CheckdbURL;
