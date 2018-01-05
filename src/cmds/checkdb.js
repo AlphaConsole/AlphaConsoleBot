@@ -12,7 +12,10 @@ module.exports = {
             var request = require('request');
             var url = keys.CheckdbURL;
             var user;
-            if (isNaN(args[1])) {
+            if (args[1] == undefined) {
+                message.reply('Need a parameter');
+                return;
+            } else if (isNaN(args[1])) {
                 //discord
                 url += '?DiscordID=' + message.mentions.users.first().id;
                 user = message.mentions.users.first();
@@ -73,7 +76,7 @@ module.exports = {
                     }
                 }
             });
-        }
+        } 
     }
 }
 
