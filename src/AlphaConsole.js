@@ -1,11 +1,5 @@
 //Main file for AlphaConsole Discord Bot
 
-var fs = require('fs');
-//if (fs.existsSync(path)) {
-    // Do something
-//}
-
-
 //const
 const Discord = require('discord.js');
 const client = new Discord.Client();
