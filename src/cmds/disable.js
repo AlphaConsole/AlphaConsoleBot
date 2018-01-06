@@ -7,7 +7,7 @@ module.exports = {
     description: ["Disables your custom title"],
 
     run: async(client, serverInfo, message, args) => {
-        const keys = require("../keys.js");
+        const keys = require("../tokens.js");
         var request = require('request');
         var url = keys.SetTitleURL;
         const user = message.author;
