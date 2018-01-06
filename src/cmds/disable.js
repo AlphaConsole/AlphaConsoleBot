@@ -18,11 +18,15 @@ module.exports = {
         }, function (err, response, body) {
             if (err) user.send('Their was an error updating your title. Please' +
                 ' pm an admin this error: \n' + err);
-            if (body.toLowerCase().includes('done')) {
-                user.send('Your title has been disable.');
-            } else if (body.toLowerCase().includes('the user does not exist')) {
-                user.send('Hi, in order to use our custom title service you must authorize your discord account. \n'
-                    + "Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.")
+            if (body) {
+                if (body.toLowerCase().includes('done')) {
+                    user.send('Your title has been disable.');
+                } else if (body.toLowerCase().includes('the user does not exist')) {
+                    user.send('Hi, in order to use our custom title service you must authorize your discord account. \n'
+                        + "Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.")
+                }
+            } else {
+                user.send('There was an error. Please try again. If this problem continues please contact an admin.');
             }
         });
     }

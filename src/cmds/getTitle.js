@@ -57,7 +57,7 @@ module.exports = {
                         }
                     }
                 } else {
-                    message.reply('There was an error. Please try again.');
+                    user.send('There was an error. Please try again. If this problem continues please contact an admin.');
                 }
             });
     }
