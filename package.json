@@ -5,7 +5,7 @@
   "main": "alphaconsole.js",
   "scripts": {
     "test": "nodemon --inspect src/alphaconsole.js -serverfile=../src/serverInfo.js",
-    "prod": "node src/alphaconsole.js -serverfile=../src/serverInfo-OfficialDiscord.js"
+    "prod": "node src/AlphaConsole.js -serverfile=../src/serverInfo-OfficialDiscord.js"
   },
   "author": "Hayden Meloche",
   "license": "ISC",
