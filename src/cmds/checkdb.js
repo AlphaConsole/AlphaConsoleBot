@@ -35,7 +35,8 @@ module.exports = {
                 url: url
             }, function (err, response, body) {
                 var result = "";
-                if (err) message.author.send('Their was an error. Send root this -> ' + err);
+                if (body) {
+                    if (err) message.author.send('Their was an error. Send root this -> ' + err);
                 if (body.toLowerCase().includes('not signed up for db')) {
                     result = `${message.mentions.users.first().username} was **not** found in the database.`;
                     const embed = new Discord.MessageEmbed()
@@ -75,6 +76,9 @@ module.exports = {
                         message.channel.send(embed);
                     }
                 }
+            } else {
+                message.reply('There was an errror. Please try again.');
+            }
             });
         } 
     }
