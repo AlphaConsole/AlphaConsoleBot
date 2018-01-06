@@ -41,7 +41,7 @@ For a breakdown of event calls you can go to `src\events`
 If you are interested in contributing to this project it will require some setup. 
 
 #### Tokens
-You will need to create a `tokens.js` file in `src/` file that looks like [this]("https://gist.github.com/HaydenMeloche/88ff8b1687a13633d2c0de87c0caea73.js) and fill in a Discord API key which can be generated from [here.](https://discordapp.com/developers/applications/me)
+You will need to create a `tokens.js` file in `src/` file that looks like [this](https://gist.github.com/HaydenMeloche/88ff8b1687a13633d2c0de87c0caea73.js) and fill in a Discord API key which can be generated from [here.](https://discordapp.com/developers/applications/me)
 
 Due to security reasons the rest of `tokens.js` must be blank otherwise people could mess with our database (meaning you can't use some of the bots functionality like `!set title`).
 
