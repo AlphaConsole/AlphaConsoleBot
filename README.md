@@ -51,7 +51,7 @@ Due to security reasons the rest of `tokens.js` must be blank otherwise people c
 
 #### Database
 
-This bot writes a lot into a SQLite database. A blank default one can be downloaded from here
+This bot writes a lot into a SQLite database. A blank default one can be downloaded from [here](https://cdn.discordapp.com/attachments/304040300622643202/399295524022517770/Bot.db). It needs to be placed into `src/sqlite`.
 
 
 ##### Please create a pull request into the `dev` branch :)
