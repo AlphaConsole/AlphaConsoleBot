@@ -127,7 +127,25 @@ function setUsersTitle(user, userTitle, message) {
  * @param {message object} message 
  */
 function setUsersColour(user, userColour, message) {
-    if (isValidColour(user, userColour)) {
+    var validColour = true;
+    if (userColour.includes('::')) {
+        var colours = userColour.split('::');
+        colours.forEach(element => {
+            if (!isValidColour(user, element)){
+                message.author.send('Hi, you have either chosen an invalid colour or a colour you do not have access to.'
+            + '\nSubscribe to our twitch for access to more colours! \nhttps://www.twitch.tv/alphaconsole');
+                validColour = false;
+        }
+        });
+        
+    } else {
+        if (!isValidColour(user, userColour)) {
+            message.author.send('Hi, you have either chosen an invalid colour or a colour you do not have access to.'
+            + '\nSubscribe to our twitch for access to more colours! \nhttps://www.twitch.tv/alphaconsole');
+            validColour = false;
+        }
+    }
+    if (validColour) {
         var success = false;
         var request = require('request');
         var url = keys.SetTitleURL;
@@ -150,10 +168,8 @@ function setUsersColour(user, userColour, message) {
                 user.send('There was an error. Please try again. If this problem continues please contact an admin.');
             }
         });
-    } else {
-        message.author.send('Hi, you have either chosen an invalid colour or a colour you do not have access to.'
-            + '\nSubscribe to our twitch for access to more colours! \nhttps://www.twitch.tv/alphaconsole')
     }
+        
     return success;
 }
 
