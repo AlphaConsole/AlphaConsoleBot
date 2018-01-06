@@ -18,42 +18,46 @@ module.exports = {
             }, function (err, response, body) {
                 var result = "";
                 if (err) message.author.send('Their was an error. Send root this -> ' + err);
-                if (body.toLowerCase().includes('not signed up for db')) {
-                    const embed = new Discord.MessageEmbed()
-                    .setColor([255,255,0])
-                    .setAuthor('Database Check', serverInfo.logo)
-                    .addField("Error", `It appears you have not signed up for our title service. Please click this link and makes sure you are logging in with the correct account.`)
-                    .addField("Link", 'http://www.alphaconsole.net/auth/index.php')
-                    user.send(embed)
-                } else if (body.toLowerCase().includes('no title set')) {
-                    result = `No title set. Go to #set-title and set a title!`;
-                    const embed = new Discord.MessageEmbed()
-                    .setColor([255,255,0])
-                    .setAuthor('Database Check', serverInfo.logo)
-                    .addField("Error", `${result}`)
-                    user.send(embed)
-                } else {
-                    var info = body.split(' ');
-                    var colour = info[info.length-1];
-                    for (let index = 0; index < info.length-1; index++) {
-                        result += info[index] + " ";
-                    }
-                    if (result.trim() == 'X' && returnColour(colour) == 'Cycling Colours') {
+                if (body) {
+                    if (body.toLowerCase().includes('not signed up for db')) {
                         const embed = new Discord.MessageEmbed()
                         .setColor([255,255,0])
                         .setAuthor('Database Check', serverInfo.logo)
-                        .addField("User", user)
-                        .addField("Information", `User has disabled their title.`)
-                        user.send(embed);
+                        .addField("Error", `It appears you have not signed up for our title service. Please click this link and makes sure you are logging in with the correct account.`)
+                        .addField("Link", 'http://www.alphaconsole.net/auth/index.php')
+                        user.send(embed)
+                    } else if (body.toLowerCase().includes('no title set')) {
+                        result = `No title set. Go to #set-title and set a title!`;
+                        const embed = new Discord.MessageEmbed()
+                        .setColor([255,255,0])
+                        .setAuthor('Database Check', serverInfo.logo)
+                        .addField("Error", `${result}`)
+                        user.send(embed)
                     } else {
-                        const embed = new Discord.MessageEmbed()
-                        .setColor([255,255,0])
-                        .setAuthor('Database Check', serverInfo.logo)
-                        .addField("User", user)
-                        .addField("Title", `${result}`)
-                        .addField("Colour", returnColour(colour));
-                        user.send(embed);
+                        var info = body.split(' ');
+                        var colour = info[info.length-1];
+                        for (let index = 0; index < info.length-1; index++) {
+                            result += info[index] + " ";
+                        }
+                        if (result.trim() == 'X' && returnColour(colour) == 'Cycling Colours') {
+                            const embed = new Discord.MessageEmbed()
+                            .setColor([255,255,0])
+                            .setAuthor('Database Check', serverInfo.logo)
+                            .addField("User", user)
+                            .addField("Information", `User has disabled their title.`)
+                            user.send(embed);
+                        } else {
+                            const embed = new Discord.MessageEmbed()
+                            .setColor([255,255,0])
+                            .setAuthor('Database Check', serverInfo.logo)
+                            .addField("User", user)
+                            .addField("Title", `${result}`)
+                            .addField("Colour", returnColour(colour));
+                            user.send(embed);
+                        }
                     }
+                } else {
+                    message.reply('There was an error. Please try again.');
                 }
             });
     }
