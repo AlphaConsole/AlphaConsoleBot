@@ -40,11 +40,23 @@ For a breakdown of event calls you can go to `src\events`
 
 If you are interested in contributing to this project it will require some setup. 
 
-You will need to edit `serverinfo.js` and fill in all the info with the server your testing on. 
-Also required is an API key from discord which you can create [here.](https://discordapp.com/developers/applications/me)
-Once you have a key you will need to put that into the `keys.js`.
+#### Tokens
+You will need to create a `tokens.js` file in `src/` file that looks like [this]("https://gist.github.com/HaydenMeloche/88ff8b1687a13633d2c0de87c0caea73.js) and fill in a Discord API key which can be generated from [here.](https://discordapp.com/developers/applications/me)
 
-If you have any questions feel free to message me on Discord, my ID is
+Due to security reasons the rest of `tokens.js` must be blank otherwise people could mess with our database (meaning you can't use some of the bots functionality like `!set title`).
+
+#### ServerInfo
+
+`serverInfo.js` contains all the channel ids. This may or may not need to be updated depending on what you are working on.
+
+#### Database
+
+This bot writes a lot into a SQLite database. A blank default one can be downloaded from here
+
+
+### Questions?
+
+Feel free to message me on Discord, my ID is
 
 <img src="https://i.imgur.com/wloHJJi.png" width="20%">
 
