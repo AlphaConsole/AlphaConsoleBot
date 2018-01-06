@@ -12,7 +12,7 @@ What is AlphaConsole?
 -------------
 AlphaConsole is the largest 3rd party mod for the popular PC game Rocket League with over 100k users.
 
-You can check out our site [here.](www.alphaconsole.net)
+You can check out our site [here.](http://www.alphaconsole.net)
 
 Unfortunately due to the nature of the program, most of AlphaConsole cannot be open source excluding the Discord bot in this repo.
 
