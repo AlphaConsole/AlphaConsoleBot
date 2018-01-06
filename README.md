@@ -54,6 +54,9 @@ Due to security reasons the rest of `tokens.js` must be blank otherwise people c
 This bot writes a lot into a SQLite database. A blank default one can be downloaded from here
 
 
+##### Please create a pull request into the `dev` branch :)
+
+
 ### Questions?
 
 Feel free to message me on Discord, my ID is
