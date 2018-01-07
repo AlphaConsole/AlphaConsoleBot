@@ -10,8 +10,8 @@ module.exports = {
 
         if (noAutoResponceChannel(message.channel.id, serverInfo)) return;
 
-        const warnBuffer = 3;
-        const maxBuffer = 5;
+        const warnBuffer = 7;
+        const maxBuffer = 10;
         const interval = 1000;
         const maxDuplicatesWarning = 4;
         const maxDuplicatesBan = 10;
