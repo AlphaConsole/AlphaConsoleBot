@@ -15,9 +15,9 @@ module.exports = {
                 
             }    
         }
-
-        if (oldMember.roles != newMember.roles) {
-            
+        //Not the best way to check difference but becase every time a role is added/removed 
+        //it has its own event, this will work.
+        if (oldMember.roles.array().length != newMember.roles.array().length) {
             var oldRoles = ""
             oldMember.roles.array().forEach(role => {
                 if (role.name != '@everyone') oldRoles += ", " + role.name;

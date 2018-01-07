@@ -100,13 +100,13 @@ function setSpecialTitle(client, serverInfo, message, blackListedWords, args, sq
 function setUsersTitle(user, userTitle, message) {
     var request = require('request');
     var url = keys.SetTitleURL;
-    url += '?DiscordID=' + user.id + '&key=' + keys.Password + "&title=" + userTitle;
+    url += '?DiscordID=' + user.id + '&key=' + keys.Password + "&title=" + escape(userTitle);
     request({
         method: 'GET',
         url: url
     }, function (err, response, body) {
         if (err) user.send('Their was an error updating your title. Please' +
-            ' pm an admin this error: \n' + err);
+            ' pm an admin.');
         if (body) {
             if (body.toLowerCase().includes('done')) {
                 user.send('Your title has been updated to: `' + userTitle + '`');
@@ -155,7 +155,7 @@ function setUsersColour(user, userColour, message) {
             url: url
         }, function (err, response, body) {
             if (err) user.send('Their was error updating your colour. Please' +
-                ' pm an admin this error: \n' + err);
+                ' pm an admin');
             if (body) {
                 if (body.toLowerCase().includes('done')) {
                     success = true;
