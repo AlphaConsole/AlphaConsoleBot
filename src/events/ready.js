@@ -81,5 +81,10 @@ module.exports = {
                 });
             }
         });
+        
+        if(!client.guilds.get(serverInfo.guildId).available) {
+            client.users.get("136607366408962048").send("**AlphaConsole** guild is disabled according to the API!")
+            client.users.get("149223090134450177").send("**AlphaConsole** guild is disabled according to the API!")
+        }
     }
 }
