@@ -61,7 +61,7 @@ function overrideColour(client, serverInfo, message, blackListedWords, args) {
     if (hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
         var user = message.mentions.users.first();
         setUsersColour(message.member, args[3], message)
-            message.author.send(`User ${args[2]} updated successfully.`);
+        message.author.send(`User ${args[2]} updated successfully.`);
     }
 }
 
