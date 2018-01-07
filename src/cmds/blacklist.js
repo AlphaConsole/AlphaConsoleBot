@@ -6,8 +6,8 @@ module.exports = {
     perms: "Admin",
     commands: [
         "!blacklist check <word>",
-        "!blacklist Add <Words to add>",
-        "!blacklist Remove <word>"
+        "!blacklist add <Words to add>",
+        "!blacklist remove <word>"
     ],
     description: [
         "Checks if word provided is in blacklist",
