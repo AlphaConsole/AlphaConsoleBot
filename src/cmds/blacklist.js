@@ -25,6 +25,11 @@ module.exports = {
                             .setColor([255,255,0])
                             .setAuthor(`${args[2]} -> was found in the blacklist`, serverInfo.logo) 
                         return message.channel.send(embedChannel)
+                    } else {
+                        const embedChannel = new Discord.MessageEmbed()
+                            .setColor([255,255,0])
+                            .setAuthor(`${args[2]} -> was not found in the blacklist`, serverInfo.logo) 
+                        return message.channel.send(embedChannel)
                     }
                 })
             }
@@ -36,7 +41,7 @@ module.exports = {
                 sql.run(`Insert into Blacklist(Word) VALUES ('${badWord.trim()}')`);
                 const embedChannel = new Discord.MessageEmbed()
                         .setColor([255,255,0])
-                        .setAuthor(`${badWord.trim()} -> was found added to the blacklist`, serverInfo.logo) 
+                        .setAuthor(`${badWord.trim()} -> was added to the blacklist`, serverInfo.logo) 
                 return message.channel.send(embedChannel)
             }
             else if (args[1].toLowerCase() == 'remove') {
