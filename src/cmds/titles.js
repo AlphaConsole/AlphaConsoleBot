@@ -52,9 +52,8 @@ function overrideTitle(client, serverInfo, message, blackListedWords, args) {
     if (hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
         var user = message.mentions.users.first();
         var userTitle = createTitle(message, args, 3); //make title
-        if(setUsersTitle(user, userTitle, message)) {
-            message.author.send(`User ${args[2]} updated sucessfully.`);
-        }
+        setUsersTitle(user, userTitle, message);
+        message.author.send(`User ${args[2]} updated sucessfully.`);
     }
 }
 
