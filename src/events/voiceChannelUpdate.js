@@ -19,7 +19,7 @@ module.exports = {
               }
             });
             if (Extra == 0) {
-              newMember.guild.createChannel("🎮 Game Channel", "voice", {parent: serverInfo.DynamicCat});
+              newMember.guild.createChannel("🎮 Game Channel", {type: "voice", parent: serverInfo.DynamicCat});
             }
           }
         }
@@ -42,7 +42,7 @@ module.exports = {
               }
             });
             if (Extra == 0) {
-              oldMember.guild.createChannel("🎮 Game Channel", "voice", {userLimit: 2, parent: serverInfo.DynamicCat});
+              oldMember.guild.createChannel("🎮 Game Channel", {type: "voice", parent: serverInfo.DynamicCat});
             }
           }
         }
