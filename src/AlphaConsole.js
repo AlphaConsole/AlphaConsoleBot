@@ -223,6 +223,10 @@ client.on('message', async message =>
                 require('./cmds/unlockdown.js').run(client, serverInfo, message, args)
             }
 
+            else if (args[0].toLowerCase() == "!blacklist") {
+                require('./cmds/blacklist.js').run(client, serverInfo, message, args, sql, blackListedWords)
+            } 
+
             //For commands with 2 args.
             else if (args.length == 2) {
                 if (args[0].toLowerCase() == '!get' && args[1].toLowerCase() == 'title') {
