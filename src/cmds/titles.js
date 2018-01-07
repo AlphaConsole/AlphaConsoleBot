@@ -229,7 +229,11 @@ function isValidColour(user, colour) {
             return true;
             break;
         default:
-            return false;
+            if (hasRole(user, 'Developer') || hasRole(user, 'Admin')) {
+                return true;
+            } else {
+                return false;
+            }
             break;
     }
 }
