@@ -2,6 +2,7 @@
 
 //const
 const Discord = require('discord.js');
+const keys = require("../src/tokens.js");
 const client = new Discord.Client();
 const sql = require("sqlite");
 sql.open("src/sqlite/Bot.db");
@@ -12,6 +13,7 @@ var SwearWordsSet = new Set();
 var AutoResponds = new Map();
 var Commands = [];
 var Events = [];
+var blackListedWords = [];
 //anti-spam
 var authors = [];
 var messagelog = [];
@@ -22,27 +24,12 @@ var serverInfoPath = process.argv.slice(2).pop().replace('-serverfile=', '');
 var serverInfo = require(serverInfoPath).serverInfo;
 
 //---------------------------//
-//      Bot Load             //
-//---------------------------//
-//Load blacklist
-const keys = require("../src/tokens.js");
-var request = require('request');
-var blackListedWords = [];
-request({
-    method: 'GET',
-    url: keys.BadWordsURL
-}, function(err, response, body) {
-    if (err) return console.error(err);
-    blackListedWords = body.split(/\r?\n/);
-});
-
-//---------------------------//
 //      Client Events        //
 //---------------------------//
 
 //Bot logs in
 client.on('ready', () => {
-    require('./events/ready.js').run(client, serverInfo, sql, AllowedLinksSet, AutoResponds, Commands, Events, SwearWordsSet);
+    require('./events/ready.js').run(client, serverInfo, sql, AllowedLinksSet, AutoResponds, Commands, Events, SwearWordsSet, blackListedWords);
 });
 
 //New member joins
