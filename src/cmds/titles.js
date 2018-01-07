@@ -52,18 +52,16 @@ function overrideTitle(client, serverInfo, message, blackListedWords, args) {
     if (hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
         var user = message.mentions.users.first();
         var userTitle = createTitle(message, args, 3); //make title
-        if(setUsersTitle(user, userTitle, message)) {
-            message.author.send(`User ${args[2]} updated sucessfully.`);
-        }
+        setUsersTitle(user, userTitle, message);
+        message.author.send(`User ${args[2]} updated sucessfully.`);
     }
 }
 
 function overrideColour(client, serverInfo, message, blackListedWords, args) {
     if (hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
         var user = message.mentions.users.first();
-        if (setUsersColour(message.member, args[3], message)) {
-            message.author.send(`User ${args[2]} updated successfully.`);
-        }
+        setUsersColour(message.member, args[3], message)
+        message.author.send(`User ${args[2]} updated successfully.`);
     }
 }
 
@@ -231,7 +229,11 @@ function isValidColour(user, colour) {
             return true;
             break;
         default:
-            return false;
+            if (hasRole(user, 'Developer') || hasRole(user, 'Admin')) {
+                return true;
+            } else {
+                return false;
+            }
             break;
     }
 }
