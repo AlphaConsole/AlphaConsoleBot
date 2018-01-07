@@ -221,7 +221,7 @@ function isValidColour(user, colour) {
             return true;
             break;
         case '6':
-            if (hasRole(user, 'Twitch Subs') || hasRole(user, 'Legacy') || isStaff(user)) {
+            if (hasRole(user, 'Twitch Sub') || hasRole(user, 'Legacy') || isStaff(user)) {
                 return true;
             } else {
                 return false;
