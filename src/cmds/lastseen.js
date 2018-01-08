@@ -37,7 +37,6 @@ module.exports = {
                 if (body) {
                     if (isNaN(user)) {
                         var dbTime = convertUnixTime(body.trim());
-                        var discordTime = convertUnixTime(user.lastMessage.createdTimestamp);
                         const embed = new Discord.MessageEmbed()
                         .setColor([255,255,0])
                         .setAuthor('Last Seen Check', serverInfo.logo)
