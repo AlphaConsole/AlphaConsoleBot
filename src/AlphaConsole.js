@@ -94,11 +94,10 @@ client.on('message', async message =>
 
             /// USER COMMANDS
             // Bot-Spam: Self-Assign role
-            if(message.channel.id.includes(serverInfo.BotSpam)) {
-                if (args[0].toLowerCase() == "!role") {
-                    require('./cmds/role.js').run(client, serverInfo, sql, message, args)
-                }
+            if (args[0].toLowerCase() == "!role") {
+                require('./cmds/role.js').run(client, serverInfo, sql, message, args)
             }
+            
 
             //Help command
             if (args[0].toLowerCase() == "!help" || args[0].toLowerCase() == "!h") {
