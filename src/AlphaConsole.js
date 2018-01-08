@@ -212,6 +212,10 @@ client.on('message', async message =>
             else if (args[0].toLowerCase() == "!purge") {
                 require('./cmds/purge.js').run(client, serverInfo, message, args)
             }
+
+            else if (args[0].toLowerCase() == "!listroles") {
+                require('./cmds/listroles.js').run(client, serverInfo, sql, message, args)
+            }
             
             /// ADMIN COMMANDS
             //Admin Bot Status
