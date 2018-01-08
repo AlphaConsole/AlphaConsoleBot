@@ -134,6 +134,11 @@ client.on('message', async message =>
                 require('./cmds/delcom.js').run(client, serverInfo, sql, message, args)
             }
 
+            //Staff Custom Commands list
+            else if (args[0].toLowerCase() == "!listcoms") {
+                require('./cmds/listcoms.js').run(client, serverInfo, sql, message, args)
+            }
+
             //Staff usercount command
             else if (args[0].toLowerCase() == "!usercount") {
                 require('./cmds/usercount.js').run(client, serverInfo, sql, message, args)
