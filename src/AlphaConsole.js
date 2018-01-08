@@ -94,11 +94,10 @@ client.on('message', async message =>
 
             /// USER COMMANDS
             // Bot-Spam: Self-Assign role
-            if(message.channel.id.includes(serverInfo.BotSpam)) {
-                if (args[0].toLowerCase() == "!role") {
-                    require('./cmds/role.js').run(client, serverInfo, sql, message, args)
-                }
+            if (args[0].toLowerCase() == "!role") {
+                require('./cmds/role.js').run(client, serverInfo, sql, message, args)
             }
+            
 
             //Help command
             if (args[0].toLowerCase() == "!help" || args[0].toLowerCase() == "!h") {
@@ -132,6 +131,11 @@ client.on('message', async message =>
             //Staff Custom Commands delete
             else if (args[0].toLowerCase() == "!delcom") {
                 require('./cmds/delcom.js').run(client, serverInfo, sql, message, args)
+            }
+
+            //Staff Custom Commands list
+            else if (args[0].toLowerCase() == "!listcoms") {
+                require('./cmds/listcoms.js').run(client, serverInfo, sql, message, args)
             }
 
             //Staff usercount command
@@ -207,6 +211,10 @@ client.on('message', async message =>
             //Moderator purge command
             else if (args[0].toLowerCase() == "!purge") {
                 require('./cmds/purge.js').run(client, serverInfo, message, args)
+            }
+
+            else if (args[0].toLowerCase() == "!listroles") {
+                require('./cmds/listroles.js').run(client, serverInfo, sql, message, args)
             }
             
             /// ADMIN COMMANDS
