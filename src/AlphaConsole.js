@@ -143,7 +143,10 @@ client.on('message', async message =>
                 require('./cmds/usercount.js').run(client, serverInfo, sql, message, args)
             }
 
-
+            //Last Seen
+            else if (args[0].toLowerCase() == "!lastseen") {
+                require('./cmds/lastseen.js').run(client, serverInfo, message ,args)
+            }
 
             /// SUPPORT COMMANDS
             //Support mute command
