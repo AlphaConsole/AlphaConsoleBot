@@ -7,24 +7,24 @@ module.exports = {
     commands: ["!update"],
     description: ["Updates the bot"],
 
-    run: async(client, serverInfo, sql, message, args) => {
+    run: async(client, serverInfo, message, args) => {
         
         if (hasRole(message.member, "Admin") || hasRole(message.member, "Developer") || hasRole(message.member, "Moderator") || hasRole(message.member, "Support") || hasRole(message.member, "Staff"))                                                                                                  // <---   If you would like to change role perms. Change [BontControl] to your role name
         {
-            message.channel.send('Begining update')
-            client.guilds.get(serverInfo.guildId).channels.get(serverInfo.setTitleChannel).overwritePermissions(message.guild.id, {
-                SEND_MESSAGES: false
-            });
-            client.guilds.get(serverInfo.guildId).channels.get(serverInfo.showcaseChannel).overwritePermissions(message.guild.id, {
-                SEND_MESSAGES: false
-            });
-            client.guilds.get(serverInfo.guildId).channels.get(serverInfo.suggestionsChannel).overwritePermissions(message.guild.id, {
-                SEND_MESSAGES: false
-            });
-            client.guilds.get(serverInfo.guildId).channels.get(serverInfo.setSpecialTitleChannel).overwritePermissions(message.guild.id, {
-                SEND_MESSAGES: false
-            });
-            message.channel.send('Channels locked. Executing shell commands...')
+            message.reply('Begining update');
+            // client.guilds.get(serverInfo.guildId).channels.get(serverInfo.setTitleChannel).overwritePermissions(message.guild.id, {
+            //     SEND_MESSAGES: false
+            // });
+            // client.guilds.get(serverInfo.guildId).channels.get(serverInfo.showcaseChannel).overwritePermissions(message.guild.id, {
+            //     SEND_MESSAGES: false
+            // });
+            // client.guilds.get(serverInfo.guildId).channels.get(serverInfo.suggestionsChannel).overwritePermissions(message.guild.id, {
+            //     SEND_MESSAGES: false
+            // });
+            // client.guilds.get(serverInfo.guildId).channels.get(serverInfo.setSpecialTitleChannel).overwritePermissions(message.guild.id, {
+            //     SEND_MESSAGES: false
+            // });
+            //message.channel.send('Channels locked. Executing shell commands...')
 
             //Shell commands
             shell.exec('git checkout .');

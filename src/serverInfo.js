@@ -14,5 +14,6 @@ module.exports.serverInfo = {
     setTitleChannel : '349645232910106625',
     setSpecialTitleChannel: '396350002886344714',
     staffChannel: '381844964780277762',
-    basementChannel: '381844964780277762'
+    basementChannel: '381844964780277762',
+    devChannel: '381844964780277762'
 }

@@ -225,7 +225,7 @@ client.on('message', async message =>
             else if (args[0].toLowerCase() == "!status") {
                 require('./cmds/status.js').run(client, serverInfo, sql, message, args)
             }
-
+            
             //Disables all channels which rely on the bot heavily. (#set-title, special title, etc)
             else if (args[0].toLowerCase() == "!lockdown") {
                 require('./cmds/lockdown.js').run(client, serverInfo, message, args)
@@ -236,6 +236,10 @@ client.on('message', async message =>
 
             else if (args[0].toLowerCase() == "!blacklist") {
                 require('./cmds/blacklist.js').run(client, serverInfo, message, args, sql, blackListedWords)
+            } 
+
+            else if (args[0].toLowerCase() == "!update") {
+                require('./cmds/update.js').run(client, serverInfo, message, args)
             } 
 
             //For commands with 2 args.
