@@ -50,9 +50,8 @@ module.exports = {
         //     SEND_MESSAGES: true
         // });
 
-        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.basementChannel).send(":robot: Bot logged in and ready :robot:");        
         console.log('AlphaConsole Bot logged in and ready.');
-        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.devChannel).send(":robot: Bot logged in and ready :robot:");        
+        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.basementChannel).send(":robot: Bot logged in and ready :robot:");        
         //client.guilds.get(serverInfo.guildId).channels.get(serverInfo.suggestionsChannel).messages.fetch();
         //client.guilds.get(serverInfo.guildId).channels.get(serverInfo.showcaseChannel).messages.fetch();
         //client.guilds.get("278333760666075136").channels.map(c => c.name).join(", ");
