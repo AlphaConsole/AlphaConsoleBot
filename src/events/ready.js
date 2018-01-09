@@ -37,18 +37,18 @@ module.exports = {
             });
         })
         
-        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.setTitleChannel).overwritePermissions(message.guild.id, {
-            SEND_MESSAGES: true
-        });
-        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.showcaseChannel).overwritePermissions(message.guild.id, {
-            SEND_MESSAGES: true
-        });
-        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.suggestionsChannel).overwritePermissions(message.guild.id, {
-            SEND_MESSAGES: true
-        });
-        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.setSpecialTitleChannel).overwritePermissions(message.guild.id, {
-            SEND_MESSAGES: true
-        });
+        // client.guilds.get(serverInfo.guildId).channels.get(serverInfo.setTitleChannel).overwritePermissions(message.guild.id, {
+        //     SEND_MESSAGES: true
+        // });
+        // client.guilds.get(serverInfo.guildId).channels.get(serverInfo.showcaseChannel).overwritePermissions(message.guild.id, {
+        //     SEND_MESSAGES: true
+        // });
+        // client.guilds.get(serverInfo.guildId).channels.get(serverInfo.suggestionsChannel).overwritePermissions(message.guild.id, {
+        //     SEND_MESSAGES: true
+        // });
+        // client.guilds.get(serverInfo.guildId).channels.get(serverInfo.setSpecialTitleChannel).overwritePermissions(message.guild.id, {
+        //     SEND_MESSAGES: true
+        // });
 
         console.log('AlphaConsole Bot logged in and ready.');
         client.guilds.get(serverInfo.guildId).channels.get(serverInfo.basementChannel).send(":robot: Bot logged in and ready :robot:");        
