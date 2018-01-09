@@ -50,8 +50,7 @@ module.exports = {
         //     SEND_MESSAGES: true
         // });
 
-        console.log('AlphaConsole Bot logged in and ready.');
-        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.basementChannel).send(":robot: Bot logged in and ready :robot:");        
+        
         //client.guilds.get(serverInfo.guildId).channels.get(serverInfo.suggestionsChannel).messages.fetch();
         //client.guilds.get(serverInfo.guildId).channels.get(serverInfo.showcaseChannel).messages.fetch();
         //client.guilds.get("278333760666075136").channels.map(c => c.name).join(", ");
@@ -100,5 +99,9 @@ module.exports = {
             client.users.get("136607366408962048").send("**AlphaConsole** guild is disabled according to the API!")
             client.users.get("149223090134450177").send("**AlphaConsole** guild is disabled according to the API!")
         }
+
+        console.log('AlphaConsole Bot logged in and ready.');
+        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.basementChannel).send(":robot: Bot logged in and ready :robot:");        
+        
     }
 }
