@@ -35,22 +35,32 @@ module.exports = {
                 url: url
             }, function (err, response, body) {
                 if (body) {
+                    var dbTime = convertUnixTime(body.trim());
                     if (isNaN(user)) {
-                        var dbTime = convertUnixTime(body.trim());
-                        const embed = new Discord.MessageEmbed()
-                        .setColor([255,255,0])
-                        .setAuthor('Last Seen Check', serverInfo.logo)
-                        .addField("User", user)
-                        .addField("Last Seen in DB", `${dbTime}`)
-                        .addField("Last Message on Discord", `${user.lastMessage}`)
-                        .addField("Date of Last Message", `${user.lastMessage.createdAt}`)
-                        message.channel.send(embed)
+                        if (user.lastMessage == null || user.lastMessage == undefined) {
+                            const embed = new Discord.MessageEmbed()
+                            .setColor([255,255,0])
+                            .setAuthor('Last Seen Check', serverInfo.logo)
+                            .addField("User", user)
+                            .addField("Last Seen in DB", `${dbTime}`)
+                            .addField('Discord Information', `Info could not be retrieved. Message was not cached`)
+                            message.channel.send(embed)
+                        } else {
+                            const embed = new Discord.MessageEmbed()
+                            .setColor([255,255,0])
+                            .setAuthor('Last Seen Check', serverInfo.logo)
+                            .addField("User", user)
+                            .addField("Last Seen in DB", `${dbTime}`)
+                            .addField("Last Message on Discord", `${user.lastMessage}`)
+                            .addField("Date of Last Message", `${user.lastMessage.createdAt}`)
+                            message.channel.send(embed)
+                        }
                     } else {
                         const embed = new Discord.MessageEmbed()
                         .setColor([255,255,0])
                         .setAuthor('Last Seen Check', serverInfo.logo)
                         .addField("User", user)
-                        .addField("Last Seen in DB", `${body}`)
+                        .addField("Last Seen in DB", `${dbTime}`)
                         message.channel.send(embed)
                     }
                     
