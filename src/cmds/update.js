@@ -11,7 +11,7 @@ module.exports = {
         
         if (hasRole(message.member, "Admin") || hasRole(message.member, "Developer") || hasRole(message.member, "Moderator") || hasRole(message.member, "Support") || hasRole(message.member, "Staff"))                                                                                                  // <---   If you would like to change role perms. Change [BontControl] to your role name
         {
-            message.channel.send('Begining update')
+            message.reply('Begining update');
             // client.guilds.get(serverInfo.guildId).channels.get(serverInfo.setTitleChannel).overwritePermissions(message.guild.id, {
             //     SEND_MESSAGES: false
             // });
