@@ -19,42 +19,70 @@ module.exports = {
         if (hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
             
             if (args[1].toLowerCase() == 'check') {
-                sql.get(`select * from Blacklist where Word = '${args[2]}'`).then(row => {
-                    if (row) {
-                        const embedChannel = new Discord.MessageEmbed()
-                            .setColor([255,255,0])
-                            .setAuthor(`${args[2]} -> was found in the blacklist`, serverInfo.logo) 
-                        return message.channel.send(embedChannel)
-                    } else {
-                        const embedChannel = new Discord.MessageEmbed()
-                            .setColor([255,255,0])
-                            .setAuthor(`${args[2]} -> was not found in the blacklist`, serverInfo.logo) 
-                        return message.channel.send(embedChannel)
-                    }
-                })
+
+                var badWord = makeWord(args);
+
+                if (blackListedWords.indexOf(badWord) > -1) {
+                    const embedChannel = new Discord.MessageEmbed()
+                        .setColor([255,255,0])
+                        .setAuthor(`${badWord} -> was found in the blacklist`, serverInfo.logo) 
+                    return message.channel.send(embedChannel)
+                } else {
+                    const embedChannel = new Discord.MessageEmbed()
+                        .setColor([255,255,0])
+                        .setAuthor(`${badWord} -> was not found in the blacklist`, serverInfo.logo) 
+                    return message.channel.send(embedChannel)
+                }              
             }
             else if (args[1].toLowerCase() == 'add') {
-                var badWord = '';
-                for (let index = 2; index < args.length; index++) {
-                    badWord += ' ' + args[index];
-                }
-                sql.run(`Insert into Blacklist(Word) VALUES ('${badWord.trim()}')`);
-                const embedChannel = new Discord.MessageEmbed()
+
+                var badWord = makeWord(args);
+                var index = blackListedWords.indexOf(badWord);
+
+                if (index == -1) {
+                    blackListedWords.push(badWord);
+                    sql.run(`Insert into Blacklist(Word) VALUES ('${badWord}')`);
+                    const embedChannel = new Discord.MessageEmbed()
                         .setColor([255,255,0])
-                        .setAuthor(`${badWord.trim()} -> was added to the blacklist`, serverInfo.logo) 
-                return message.channel.send(embedChannel)
+                        .setAuthor(`${badWord} -> was added to the blacklist`, serverInfo.logo) 
+                    return message.channel.send(embedChannel)
+                } else {
+                    const embedChannel = new Discord.MessageEmbed()
+                        .setColor([255,255,0])
+                        .setAuthor(`${badWord} -> is already in the blacklist`, serverInfo.logo) 
+                    return message.channel.send(embedChannel)
+                }
             }
             else if (args[1].toLowerCase() == 'remove') {
-                sql.run(`Delete from Blacklist where Word = '${args[2]}'`);
-                const embedChannel = new Discord.MessageEmbed()
-                        .setColor([255,255,0])
-                        .setAuthor(`${args[2]} -> was removed from the blacklist`, serverInfo.logo) 
-                return message.channel.send(embedChannel)
-            }
 
+                var badWord = makeWord(args);
+                
+                var index = blackListedWords.indexOf(badWord);
+                if (index > -1) {
+                    blackListedWords.splice(index, 1);
+                    sql.run(`Delete from Blacklist where Word = '${badWord}'`);
+                    const embedChannel = new Discord.MessageEmbed()
+                        .setColor([255,255,0])
+                        .setAuthor(`${badWord} -> was removed from the blacklist`, serverInfo.logo) 
+                    return message.channel.send(embedChannel)
+                } else {
+                    const embedChannel = new Discord.MessageEmbed()
+                        .setColor([255,255,0])
+                        .setAuthor(`Error. Word not found in cached list.`, serverInfo.logo) 
+                    return message.channel.send(embedChannel)
+                }
+            }
         }
     }
 
+}
+
+function makeWord(args) {
+    var badWord = '';
+    for (let index = 2; index < args.length; index++) {
+        badWord += ' ' + args[index];
+    }
+    return badWord.trim();
 }
 
 
