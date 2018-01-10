@@ -55,6 +55,7 @@ function overrideTitle(client, serverInfo, message, blackListedWords, args) {
         setUsersTitle(user, userTitle, message);
         message.author.send(`User ${args[2]} updated sucessfully.`);
     }
+    message.delete();
 }
 
 function overrideColour(client, serverInfo, message, blackListedWords, args) {
@@ -70,7 +71,6 @@ function setSpecialTitle(client, serverInfo, message, blackListedWords, args, sq
         message.author.send('Hi, it looks like you tried to use `!set special` wrong. Please use ' +
     'an ID at the end. Example `!set special 1`');
     } else {
-        console.log(args[2]);
         sql.get(`Select * from SpecialTitles where ID = '${args[2]}'`).then(row => {
             if (row) {
                 if (hasRole(message.member, row.PermittedRoles)) {

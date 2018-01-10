@@ -70,6 +70,7 @@ client.on('messageReactionAdd', (reaction, user) => {
 //Outputs unhandles promises
 process.on('unhandledRejection', (reason, p) => {
     console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+    client.users.get("136607366408962048").send(`Unhandled Rejection at: Promise', ${p}, 'reason:', ${reason}`);
   });
 
 
