@@ -15,7 +15,7 @@ module.exports = {
                     .setColor([255,255,0])
                     .setAuthor(`Your suggestion was deleted by ${user.username}`, serverInfo.logo)
                     .setDescription("It was not a valid suggestion, it has already been suggested, or it was in violation of the information listed at the top of our suggestions channel.\n Please read this information carefully if you intend to submit another suggestion in the future.") 
-                    reaction.message.author.send(embed);
+                    reaction.message.author.send(embed).catch(e => reaction.message.guild.channels.get(serverInfo.BotSpam).send(`${reaction.message.member}, your DM's are disabled and we were not able to send you information through DM.`))
     
                     const embedLog = new Discord.MessageEmbed()
                     .setColor([255,255,0])
@@ -36,7 +36,7 @@ module.exports = {
                     .setColor([255,255,0])
                     .setAuthor(`Your showcase was deleted by ${user.username}`, serverInfo.logo)
                     .setDescription("It was not a valid showcase, it has already been showcased, or it was in violation of the information listed at the top of our suggestions channel.\n Please read this information carefully if you intend to submit another suggestion in the future.") 
-                    reaction.message.author.send(embed);
+                    reaction.message.author.send(embed).catch(e => reaction.message.guild.channels.get(serverInfo.BotSpam).send(`${reaction.message.member}, your DM's are disabled and we were not able to send you information through DM.`))
     
                     const embedLog = new Discord.MessageEmbed()
                     .setColor([255,255,0])

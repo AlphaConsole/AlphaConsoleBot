@@ -65,7 +65,7 @@ module.exports = {
                     }
                     
                 } else {
-                    message.reply('Their was an error. Please try again.');
+                    message.reply('There was an error. Please try again.');
                 }
             });
 

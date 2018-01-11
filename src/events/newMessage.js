@@ -37,7 +37,7 @@ module.exports = {
         // !ToggleLinks Functionality && check for swear words
         var messageAllowed = true;
 
-        if(!hasRole(message.member, 'staff') && !hasRole(message.member, "Moderator") && !hasRole(message.member, "Admin") && !hasRole(message.member, "Developer") && !hasRole(message.member, "Community Helper")) {      
+        if(!hasRole(message.member, 'Staff') && !hasRole(message.member, "Moderator") && !hasRole(message.member, "Admin") && !hasRole(message.member, "Developer") && !hasRole(message.member, "Community Helper")) {      
             if (!AllowedLinksSet.has(message.channel.id)) {
                 args.forEach(word => {
                     if(new RegExp("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})").test(word)) {
@@ -67,7 +67,7 @@ module.exports = {
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
                 .setAuthor("Only images allowed in Showcase channel.", serverInfo.logo) 
-                return message.author.send(embed);
+                return message.author.send(embed).catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
             }
 
             //Let's first check if the user even exists in the db
@@ -92,7 +92,7 @@ module.exports = {
                                         const embed = new Discord.MessageEmbed()
                                         .setColor([255,255,0])
                                         .setAuthor("Your suggestion has been removed since you can only send in once every 5 minutes!", serverInfo.logo) 
-                                        message.author.send(embed);
+                                        message.author.send(embed).catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
                                     }
                                 } else if(message.channel.id == serverInfo.showcaseChannel) {
                                     if (row.Showcase < new Date().getTime()) {
@@ -109,7 +109,7 @@ module.exports = {
                                         const embed = new Discord.MessageEmbed()
                                         .setColor([255,255,0])
                                         .setAuthor("Your Showcase has been removed since you can only send in once every 5 minutes!", serverInfo.logo) 
-                                        message.author.send(embed);
+                                        message.author.send(embed).catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
                                     }
                                 }
                             });
@@ -131,7 +131,7 @@ module.exports = {
                                 const embed = new Discord.MessageEmbed()
                                 .setColor([255,255,0])
                                 .setAuthor("Your suggestion has been removed since you can only send in suggestions once every 5 minutes!", serverInfo.logo) 
-                                message.author.send(embed);
+                                message.author.send(embed).catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
                             }
                         } else if(message.channel.id == serverInfo.showcaseChannel) {
                             if (row.Showcase < new Date().getTime()) {
@@ -147,7 +147,7 @@ module.exports = {
                                 const embed = new Discord.MessageEmbed()
                                 .setColor([255,255,0])
                                 .setAuthor("Your Showcase has been removed since you can only send in suggestions once every 5 minutes!", serverInfo.logo) 
-                                message.author.send(embed);
+                                message.author.send(embed).catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
                             }
                         }
                     });
@@ -189,7 +189,7 @@ module.exports = {
                    
                     sql.get(`select * from BetaSteamIDS where DiscordID = '${message.mentions.users.first().id}'`).then(row => {
                         if (row) {
-                            message.author.send("Your account is already signed up for the beta.")
+                            message.author.send("Your account is already signed up for the beta.").catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
                         } else {
                             message.author.send(`__Is this information correct?__\n\nDiscord user: **${message.mentions.users.first().tag}**\nSteamID64: **${args[2]}**\nSteam Link: **<${args[4]}>**\n\nIf this is correct, please respond with **yes**.\nOtherwise respond with **no**.`).then(msg => {
                                 msg.channel.awaitMessages(response => response.content.toLowerCase() === 'yes' || response.content.toLowerCase() === 'no', {max: 1, time: 30000, errors: ['time']}).then(collected => {
@@ -197,6 +197,20 @@ module.exports = {
                                         message.channel.send(`**${message.mentions.users.first().tag}** | ${args[2]} | <${args[4]}>`)
                                         message.author.send("You have succesfully been added to the Beta Testers!")   
                                         sql.run(`Insert into BetaSteamIDS (DiscordID, SteamID64, SteamLink) VALUES ('${message.mentions.users.first().id}','${args[2]}','${args[4]}')`) 
+
+                                        sql.get(`select * from misc where message = 'steamid'`).then(row => {
+                                            if (row) {
+                                                message.channel.messages.fetch(row.value).then(msg => {
+                                                    if (msg) {
+                                                        msg.delete();
+                                                    }
+
+                                                    message.channel.send("**__Read the Pins of this channel for all info__**\n\n__Format:__\n```\n@tag | SteamID64 | SteamURL\n```").then(m => {
+                                                        sql.run(`update misc set value = '${m.id}' where message = 'steamid'`);
+                                                    })
+                                                })
+                                            }
+                                        })
                                     } else {
                                         message.author.send("You have not been added to the Beta list.")
                                     }
@@ -204,15 +218,15 @@ module.exports = {
                                 .catch(() => {
                                     message.author.send("You have not confirmed with **yes** within 30 seconds and you have not been added to the list.")
                                 })
-                            })    
+                            }).catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))   
         
                         }
                     })
-                                   } else {
-                    message.author.send("The person you mentioned is not yourself!")
+                } else {
+                    message.author.send("The person you mentioned is not yourself!").catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
                 }
             } else {
-                message.author.send("Your input was incorrect. Please use the following format:\n`@User | SteamID64 | SteamURL`")
+                message.author.send("Your input was incorrect. Please use the following format:\n`@User | SteamID64 | SteamURL`").catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
             }
 
         }
