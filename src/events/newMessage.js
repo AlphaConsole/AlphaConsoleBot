@@ -197,6 +197,20 @@ module.exports = {
                                         message.channel.send(`**${message.mentions.users.first().tag}** | ${args[2]} | <${args[4]}>`)
                                         message.author.send("You have succesfully been added to the Beta Testers!")   
                                         sql.run(`Insert into BetaSteamIDS (DiscordID, SteamID64, SteamLink) VALUES ('${message.mentions.users.first().id}','${args[2]}','${args[4]}')`) 
+
+                                        sql.get(`select * from misc where message = 'steamid'`).then(row => {
+                                            if (row) {
+                                                message.channel.messages.fetch(row.value).then(msg => {
+                                                    if (msg) {
+                                                        msg.delete();
+                                                    }
+
+                                                    message.channel.send("**__Read the Pins of this channel for all info__**\n\n__Format:__\n```\n@tag | SteamID64 | SteamURL\n```").then(m => {
+                                                        sql.run(`update misc set value = '${m.id}' where message = 'steamid'`);
+                                                    })
+                                                })
+                                            }
+                                        })
                                     } else {
                                         message.author.send("You have not been added to the Beta list.")
                                     }
