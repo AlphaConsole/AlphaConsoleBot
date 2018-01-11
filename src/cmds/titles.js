@@ -29,7 +29,7 @@ module.exports = {
 function setTitle(client, serverInfo, message, blackListedWords, args) {
     var userTitle = createTitle(message, args, 2); //make title
     if (userTitle.replace(/[^::]/g, "").length > 5) {
-        message.author.send('AlphaConsole does not support more than 5 rotations in your custom title. Please try again.');
+        message.author.send('AlphaConsole does not support more than 5 rotations in your custom title. Please try again.').catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
     } else {
         var invalidTitle = isValidTitle(message, blackListedWords, userTitle); //check if title is valid
         if (!invalidTitle) {
@@ -53,7 +53,7 @@ function overrideTitle(client, serverInfo, message, blackListedWords, args) {
         var user = message.mentions.users.first();
         var userTitle = createTitle(message, args, 3); //make title
         setUsersTitle(user, userTitle, message);
-        message.author.send(`User ${args[2]} updated sucessfully.`);
+        message.author.send(`User ${args[2]} updated sucessfully.`).catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
     }
     message.delete();
 }
@@ -62,24 +62,24 @@ function overrideColour(client, serverInfo, message, blackListedWords, args) {
     if (hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
         var user = message.mentions.users.first();
         setUsersColour(message.member, args[3], message)
-        message.author.send(`User ${args[2]} updated successfully.`);
+        message.author.send(`User ${args[2]} updated successfully.`).catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
     }
 }
 
 function setSpecialTitle(client, serverInfo, message, blackListedWords, args, sql) {
     if (isNaN(args[2])) {
         message.author.send('Hi, it looks like you tried to use `!set special` wrong. Please use ' +
-    'an ID at the end. Example `!set special 1`');
+    'an ID at the end. Example `!set special 1`').catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
     } else {
         sql.get(`Select * from SpecialTitles where ID = '${args[2]}'`).then(row => {
             if (row) {
                 if (hasRole(message.member, row.PermittedRoles)) {
                     setUsersTitle(message.author, row.Title);
                 } else {
-                    message.author.send('Sorry, you do not have permission to the title you have choosen.');
+                    message.author.send('Sorry, you do not have permission to the title you have choosen.').catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
                 }
             } else {
-                message.author.send('You have choosen an ID that is not available. Try again!');
+                message.author.send('You have choosen an ID that is not available. Try again!').catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
             }
         }).catch(err => console.log(err))
     }
@@ -131,7 +131,7 @@ function setUsersColour(user, userColour, message) {
         colours.forEach(element => {
             if (!isValidColour(user, element)){
                 message.author.send('Hi, you have either chosen an invalid colour or a colour you do not have access to.'
-            + '\nSubscribe to our twitch for access to more colours! \nhttps://www.twitch.tv/alphaconsole');
+            + '\nSubscribe to our twitch for access to more colours! \nhttps://www.twitch.tv/alphaconsole').catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
                 validColour = false;
         }
         });
@@ -139,7 +139,7 @@ function setUsersColour(user, userColour, message) {
     } else {
         if (!isValidColour(user, userColour)) {
             message.author.send('Hi, you have either chosen an invalid colour or a colour you do not have access to.'
-            + '\nSubscribe to our twitch for access to more colours! \nhttps://www.twitch.tv/alphaconsole');
+            + '\nSubscribe to our twitch for access to more colours! \nhttps://www.twitch.tv/alphaconsole').catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
             validColour = false;
         }
     }

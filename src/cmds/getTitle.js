@@ -17,7 +17,7 @@ module.exports = {
                 url: url
             }, function (err, response, body) {
                 var result = "";
-                if (err) message.author.send('Their was an error. Send root this -> ' + err);
+                if (err) message.author.send('Their was an error. Send root this -> ' + err).catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
                 if (body) {
                     if (body.toLowerCase().includes('not signed up for db')) {
                         const embed = new Discord.MessageEmbed()

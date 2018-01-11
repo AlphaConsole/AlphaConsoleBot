@@ -67,7 +67,7 @@ module.exports = {
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
                 .setAuthor("Only images allowed in Showcase channel.", serverInfo.logo) 
-                return message.author.send(embed);
+                return message.author.send(embed).catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
             }
 
             //Let's first check if the user even exists in the db
@@ -92,7 +92,7 @@ module.exports = {
                                         const embed = new Discord.MessageEmbed()
                                         .setColor([255,255,0])
                                         .setAuthor("Your suggestion has been removed since you can only send in once every 5 minutes!", serverInfo.logo) 
-                                        message.author.send(embed);
+                                        message.author.send(embed).catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
                                     }
                                 } else if(message.channel.id == serverInfo.showcaseChannel) {
                                     if (row.Showcase < new Date().getTime()) {
@@ -109,7 +109,7 @@ module.exports = {
                                         const embed = new Discord.MessageEmbed()
                                         .setColor([255,255,0])
                                         .setAuthor("Your Showcase has been removed since you can only send in once every 5 minutes!", serverInfo.logo) 
-                                        message.author.send(embed);
+                                        message.author.send(embed).catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
                                     }
                                 }
                             });
@@ -131,7 +131,7 @@ module.exports = {
                                 const embed = new Discord.MessageEmbed()
                                 .setColor([255,255,0])
                                 .setAuthor("Your suggestion has been removed since you can only send in suggestions once every 5 minutes!", serverInfo.logo) 
-                                message.author.send(embed);
+                                message.author.send(embed).catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
                             }
                         } else if(message.channel.id == serverInfo.showcaseChannel) {
                             if (row.Showcase < new Date().getTime()) {
@@ -147,7 +147,7 @@ module.exports = {
                                 const embed = new Discord.MessageEmbed()
                                 .setColor([255,255,0])
                                 .setAuthor("Your Showcase has been removed since you can only send in suggestions once every 5 minutes!", serverInfo.logo) 
-                                message.author.send(embed);
+                                message.author.send(embed).catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
                             }
                         }
                     });
@@ -189,7 +189,7 @@ module.exports = {
                    
                     sql.get(`select * from BetaSteamIDS where DiscordID = '${message.mentions.users.first().id}'`).then(row => {
                         if (row) {
-                            message.author.send("Your account is already signed up for the beta.")
+                            message.author.send("Your account is already signed up for the beta.").catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
                         } else {
                             message.author.send(`__Is this information correct?__\n\nDiscord user: **${message.mentions.users.first().tag}**\nSteamID64: **${args[2]}**\nSteam Link: **<${args[4]}>**\n\nIf this is correct, please respond with **yes**.\nOtherwise respond with **no**.`).then(msg => {
                                 msg.channel.awaitMessages(response => response.content.toLowerCase() === 'yes' || response.content.toLowerCase() === 'no', {max: 1, time: 30000, errors: ['time']}).then(collected => {
@@ -204,15 +204,15 @@ module.exports = {
                                 .catch(() => {
                                     message.author.send("You have not confirmed with **yes** within 30 seconds and you have not been added to the list.")
                                 })
-                            })    
+                            }).catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))   
         
                         }
                     })
-                                   } else {
-                    message.author.send("The person you mentioned is not yourself!")
+                } else {
+                    message.author.send("The person you mentioned is not yourself!").catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
                 }
             } else {
-                message.author.send("Your input was incorrect. Please use the following format:\n`@User | SteamID64 | SteamURL`")
+                message.author.send("Your input was incorrect. Please use the following format:\n`@User | SteamID64 | SteamURL`").catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
             }
 
         }
