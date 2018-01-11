@@ -37,7 +37,7 @@ module.exports = {
         // !ToggleLinks Functionality && check for swear words
         var messageAllowed = true;
 
-        if(!hasRole(message.member, 'staff') && !hasRole(message.member, "Moderator") && !hasRole(message.member, "Admin") && !hasRole(message.member, "Developer") && !hasRole(message.member, "Community Helper")) {      
+        if(!hasRole(message.member, 'Staff') && !hasRole(message.member, "Moderator") && !hasRole(message.member, "Admin") && !hasRole(message.member, "Developer") && !hasRole(message.member, "Community Helper")) {      
             if (!AllowedLinksSet.has(message.channel.id)) {
                 args.forEach(word => {
                     if(new RegExp("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})").test(word)) {
