@@ -44,7 +44,7 @@ function setTitle(client, serverInfo, message, blackListedWords, args) {
 }
 
 function setColour(client, serverInfo, message, blackListedWords, args) {
-    var success = setUsersColour(message.member, args[2], message);
+    var success = setUsersColour(message.member, args[2], message, args);
     
 }
 
@@ -61,7 +61,7 @@ function overrideTitle(client, serverInfo, message, blackListedWords, args) {
 function overrideColour(client, serverInfo, message, blackListedWords, args) {
     if (hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
         var user = message.mentions.users.first();
-        setUsersColour(message.member, args[3], message)
+        setUsersColour(message.member, args[3], message, args)
         message.author.send(`User ${args[2]} updated successfully.`).catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
     }
     message.delete();
@@ -127,7 +127,7 @@ function setUsersTitle(user, userTitle, message, args) {
  * @param {string} userTitle 
  * @param {message object} message 
  */
-function setUsersColour(user, userColour, message) {
+function setUsersColour(user, userColour, message, args) {
     var validColour = true;
     if (userColour.includes('::')) {
         var colours = userColour.split('::');
