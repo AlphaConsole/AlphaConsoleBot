@@ -109,14 +109,14 @@ function setUsersTitle(user, userTitle, message, args) {
         if (body) {
             if (args[0].toLowerCase() == "!set") {
                 if (body.toLowerCase().includes('done')) {
-                    user.send('Your title has been updated to: `' + userTitle + '`');
+                    user.send('Your title has been updated to: `' + userTitle + '`').catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`));
                 } else if (body.toLowerCase().includes('the user does not exist')) {
                     user.send('Hi, in order to use our custom title service you must authorize your discord account. \n'
-                        + "Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.")
+                        + "Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.").catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`));
                 }
             }
         } else {
-            user.send('There was an error. Please try again. If this problem continues please contact an admin.');
+            user.send('There was an error. Please try again. If this problem continues please contact an admin.').catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`));
         }
     });
 }
@@ -161,14 +161,14 @@ function setUsersColour(user, userColour, message, args) {
                 if (args[0].toLowerCase() == "!set") {
                     if (body.toLowerCase().includes('done')) {
                         success = true;
-                        user.send('Your colour has been updated to: `' + userColour + '`');
+                        user.send('Your colour has been updated to: `' + userColour + '`').catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`));
                     } else if (body.toLowerCase().includes('the user does not exist')) {
                         user.send('Hi, in order to use our custom title service you must authorize your discord account. \n'
-                            + "Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.")
+                            + "Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.").catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`));
                     }
                 }   
             } else {
-                user.send('There was an error. Please try again. If this problem continues please contact an admin.');
+                user.send('There was an error. Please try again. If this problem continues please contact an admin.').catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`));
             }
         });
     }
