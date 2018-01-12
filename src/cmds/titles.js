@@ -34,7 +34,7 @@ function setTitle(client, serverInfo, message, blackListedWords, args) {
         var invalidTitle = isValidTitle(message, blackListedWords, userTitle); //check if title is valid
         if (!invalidTitle) {
             //Make web req.
-            setUsersTitle(message.author, userTitle, message);
+            setUsersTitle(message.author, userTitle, message, args);
         } else {
             //DM user and say invalid.
             message.member.send("Your custom title was not set because it contained a blacklisted phrase. \n"
@@ -52,7 +52,7 @@ function overrideTitle(client, serverInfo, message, blackListedWords, args) {
     if (hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
         var user = message.mentions.users.first();
         var userTitle = createTitle(message, args, 3); //make title
-        setUsersTitle(user, userTitle, message);
+        setUsersTitle(user, userTitle, message, args);
         message.author.send(`User ${args[2]} updated sucessfully.`).catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
     }
     message.delete();
@@ -75,7 +75,7 @@ function setSpecialTitle(client, serverInfo, message, blackListedWords, args, sq
         sql.get(`Select * from SpecialTitles where ID = '${args[2]}'`).then(row => {
             if (row) {
                 if (hasRole(message.member, row.PermittedRoles)) {
-                    setUsersTitle(message.author, row.Title);
+                    setUsersTitle(message.author, row.Title, args);
                 } else {
                     message.author.send('Sorry, you do not have permission to the title you have choosen.').catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
                 }
@@ -96,7 +96,7 @@ function setSpecialTitle(client, serverInfo, message, blackListedWords, args, sq
  * @param {string} userTitle 
  * @param {message object} message 
  */
-function setUsersTitle(user, userTitle, message) {
+function setUsersTitle(user, userTitle, message, args) {
     var request = require('request');
     var url = keys.SetTitleURL;
     url += '?DiscordID=' + user.id + '&key=' + keys.Password + "&title=" + escape(userTitle);
