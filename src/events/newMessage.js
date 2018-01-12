@@ -275,10 +275,12 @@ function sentiment(message) {
     var sent = sentiment(message.content);
     if (sent['comparative'].toString().replace('.', '').replace('-', '').length > 2 || sent['score'] == 0) {
         return;
+    } else if (message.content.toLowerCase().includes('thanks')) {
+        message.reply('No problem!');
     } else if (sent['score'] >= 2 ) {
         message.reply('Thanks!');
     } else  if (sent['score'] <= -2){
-        message.reply(':(');
+        message.channel.send(':worried:');
     }
 }
 
