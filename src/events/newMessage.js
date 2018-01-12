@@ -288,7 +288,7 @@ function sentiment(message) {
     if (message2send != '') {
         message.channel.startTyping();
         setTimeout(() => {
-        if (message2send == ':worried:') {
+        if (message2send != ':worried:') {
             message.reply(message2send);
         } else {
             message.channel.send(message2send);
