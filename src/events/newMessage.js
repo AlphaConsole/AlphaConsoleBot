@@ -275,19 +275,28 @@ module.exports = {
 function sentiment(message) {
     var sentiment = require('sentiment');
     var sent = sentiment(message.content);
-    message.channel.startTyping();
-    setTimeout(() => {
-        if (sent['comparative'].toString().replace('.', '').replace('-', '').length > 2 || sent['score'] == 0) {
-            return;
-        } else if (message.content.toLowerCase().includes('thanks')) {
-            message.reply('No problem!');
-        } else if (sent['score'] >= 2 ) {
-            message.reply('Thanks!');
-        } else  if (sent['score'] <= -2){
-            message.channel.send(':worried:');
-        }
+    var message2send = '';
+    if (sent['comparative'].toString().replace('.', '').replace('-', '').length > 2 || sent['score'] == 0) {
+        return;
+    } else if (message.content.toLowerCase().includes('thanks')) {
+        message = 'No problem!';
+    } else if (sent['score'] >= 2 ) {
+        message2send ='Thanks!';
+    } else  if (sent['score'] <= -2){
+        message2send = ':worried:';
+    }
+    if (message2send != "") {
+        message.channel.startTyping();
+        setTimeout(() => {
+        if (message2send == ':worried:') {
+            message.reply(message2send);
+        } else {
+            message.channel.send(message2send);
+        } 
         message.channel.stopTyping();
     }, Math.random() * (1 - 2) + 1 * 1000);
+    }
+    
 }
 
 //Functions used to check if a player has the desired role
