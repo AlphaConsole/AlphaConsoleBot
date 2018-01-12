@@ -64,6 +64,7 @@ function overrideColour(client, serverInfo, message, blackListedWords, args) {
         setUsersColour(message.member, args[3], message)
         message.author.send(`User ${args[2]} updated successfully.`).catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
     }
+    message.delete();
 }
 
 function setSpecialTitle(client, serverInfo, message, blackListedWords, args, sql) {
@@ -106,11 +107,13 @@ function setUsersTitle(user, userTitle, message) {
         if (err) user.send('Their was an error updating your title. Please' +
             ' pm an admin.');
         if (body) {
-            if (body.toLowerCase().includes('done')) {
-                user.send('Your title has been updated to: `' + userTitle + '`');
-            } else if (body.toLowerCase().includes('the user does not exist')) {
-                user.send('Hi, in order to use our custom title service you must authorize your discord account. \n'
-                    + "Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.")
+            if (args[0].toLowerCase() == "!set") {
+                if (body.toLowerCase().includes('done')) {
+                    user.send('Your title has been updated to: `' + userTitle + '`');
+                } else if (body.toLowerCase().includes('the user does not exist')) {
+                    user.send('Hi, in order to use our custom title service you must authorize your discord account. \n'
+                        + "Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.")
+                }
             }
         } else {
             user.send('There was an error. Please try again. If this problem continues please contact an admin.');
@@ -155,13 +158,15 @@ function setUsersColour(user, userColour, message) {
             if (err) user.send('Their was error updating your colour. Please' +
                 ' pm an admin');
             if (body) {
-                if (body.toLowerCase().includes('done')) {
-                    success = true;
-                    user.send('Your colour has been updated to: `' + userColour + '`');
-                } else if (body.toLowerCase().includes('the user does not exist')) {
-                    user.send('Hi, in order to use our custom title service you must authorize your discord account. \n'
-                        + "Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.")
-                }
+                if (args[0].toLowerCase() == "!set") {
+                    if (body.toLowerCase().includes('done')) {
+                        success = true;
+                        user.send('Your colour has been updated to: `' + userColour + '`');
+                    } else if (body.toLowerCase().includes('the user does not exist')) {
+                        user.send('Hi, in order to use our custom title service you must authorize your discord account. \n'
+                            + "Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.")
+                    }
+                }   
             } else {
                 user.send('There was an error. Please try again. If this problem continues please contact an admin.');
             }
