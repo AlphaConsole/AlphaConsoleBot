@@ -15,7 +15,7 @@ module.exports = {
             if (args[1] == undefined) {
                 message.reply('Need a parameter');
                 return;
-            } else if (isNaN(args[1])) {
+            } else if (isNaN(args[1]) && message.mentions.users.first() != undefined) {
                 //discord
                 url += '?DiscordID=' + message.mentions.users.first().id;
                 user = message.mentions.users.first();
@@ -27,28 +27,52 @@ module.exports = {
                 url += '?SteamID=' + args[1];
                 user = args[1];
             } else {
-                message.reply('Incorrect parameter');
-                return;
+                const embed = new Discord.MessageEmbed()
+                            .setColor([255,255,0])
+                            .setAuthor('Incorrect parameter. Please use mention/discordID/steamID', serverInfo.logo)
+                return message.channel.send(embed)
             }
             request({
                 method: 'GET',
                 url: url
             }, function (err, response, body) {
                 if (body) {
-                    if (body.toLowerCase().includes('not signed up for db')) {
+
+                    if (body.toLowerCase().includes('db')) {
                         const embed = new Discord.MessageEmbed()
                             .setColor([255,255,0])
-                            .setAuthor('User was not found in database.', serverInfo.logo)
-                        message.channel.send(embed)
-                    } else {
-                        var dbTime = convertUnixTime(body.trim());
+                            .setAuthor('User not found in db.', serverInfo.logo)
+                        return message.channel.send(embed)
+                    }
+                    var dbTime = convertUnixTime(body.trim());
+                    if (isNaN(user)) {
+                        if (user.lastMessage == null || user.lastMessage == undefined) {
                             const embed = new Discord.MessageEmbed()
                             .setColor([255,255,0])
                             .setAuthor('Last Seen Check', serverInfo.logo)
                             .addField("User", user)
                             .addField("Last Seen in DB", `${dbTime}`)
+                            .addField('Discord Information', `Info could not be retrieved. Message was not cached`)
+                            message.channel.send(embed)
+                        } else {
+                            const embed = new Discord.MessageEmbed()
+                            .setColor([255,255,0])
+                            .setAuthor('Last Seen Check', serverInfo.logo)
+                            .addField("User", user)
+                            .addField("Last Seen in DB", `${dbTime}`)
+                            .addField("Last Message on Discord", `${user.lastMessage}`)
+                            .addField("Date of Last Message", `${user.lastMessage.createdAt}`)
+                            message.channel.send(embed)
+                        }
+                    } else {
+                        const embed = new Discord.MessageEmbed()
+                        .setColor([255,255,0])
+                        .setAuthor('Last Seen Check', serverInfo.logo)
+                        .addField("User", user)
+                        .addField("Last Seen in DB", `${dbTime}`)
                         message.channel.send(embed)
                     }
+                    
                 } else {
                     message.reply('There was an error. Please try again.');
                 }
