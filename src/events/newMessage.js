@@ -5,10 +5,9 @@ module.exports = {
     description: "Checks for custom commands, auto responds and links on a new message",
     
     run: async(client, serverInfo, sql, message, args, AllowedLinksSet, AutoResponds, SwearWordsSet) => {
-
         // Custom Commands
         if (message.content.startsWith("!")) {
-            sql.get(`Select * from Commands where Command = '${mysql_real_escape_string(message.content.substring(1).toLowerCase())}'`).then(command => {
+            sql.get(`Select * from Commands where Command = '${mysql_real_escape_string(args[0].substring(1).toLowerCase())}'`).then(command => {
                 if (command) {
                     //Let's first check if the user even exists in the db
                     sql.get(`select * from Members where DiscordID = '${message.author.id}'`).then(row => {
@@ -17,13 +16,21 @@ module.exports = {
                                 .catch(err => console.log(err));
                                 sql.get(`select * from Members where DiscordID = '${message.author.id}'`).then(row => {
                                     if (row.ccCooldown < new Date().getTime()) {
-                                        message.channel.send(command.Response)
+                                        if (message.mentions.users.first() == undefined) {
+                                            message.channel.send(command.Response);
+                                        } else {
+                                            message.channel.send(message.mentions.users.first() + ' ' + command.Response);
+                                        }
                                         sql.run(`update Members set ccCooldown = '${new Date().getTime() + 5000}' where DiscordID = '${message.author.id}'`);
                                     }
                                 });
                         } else {
                             if (row.ccCooldown < new Date().getTime()) {
-                                message.channel.send(command.Response)
+                                if (message.mentions.users.first() == undefined) {
+                                    message.channel.send(command.Response);
+                                } else {
+                                    message.channel.send(message.mentions.users.first() + ' ' + command.Response);
+                                }
                                 sql.run(`update Members set ccCooldown = '${new Date().getTime() + 5000}' where DiscordID = '${message.author.id}'`);
                             }
                         }
