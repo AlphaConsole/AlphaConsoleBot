@@ -259,7 +259,9 @@ module.exports = {
         message.mentions.users.forEach(user => {
             if (user.id == "236911139529687040" || user.id == 328632005627478019)  {
                 //message.react(":pingsock:389550360924127233")
+                if (!args[1].includes('!')){ 
                 sentiment(message);
+                }
             }
         });
 
