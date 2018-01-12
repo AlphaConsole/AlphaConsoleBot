@@ -257,10 +257,28 @@ module.exports = {
 
         // Add reaction when bot is mentioned
         message.mentions.users.forEach(user => {
-            if (user.id == "236911139529687040") {
-                message.react(":pingsock:389550360924127233")
+            if (user.id == "236911139529687040" || user.id == 328632005627478019)  {
+                //message.react(":pingsock:389550360924127233")
+                sentiment(message);
             }
         });
+
+        if (args.indexOf("bot") > -1 && message.mentions.users.first() == undefined) {
+            sentiment(message);
+        }
+
+    }
+}
+
+function sentiment(message) {
+    var sentiment = require('sentiment');
+    var sent = sentiment(message.content);
+    if (sent['comparative'].toString().replace('.', '').replace('-', '').length > 2 || sent['score'] == 0) {
+        return;
+    } else if (sent['score'] >= 2 ) {
+        message.reply('Thanks!');
+    } else  if (sent['score'] <= -2){
+        message.reply(':(');
     }
 }
 
