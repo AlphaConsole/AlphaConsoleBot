@@ -44,28 +44,6 @@ module.exports = {
         // !ToggleLinks Functionality && check for swear words
         var messageAllowed = true;
 
-        if(!hasRole(message.member, 'Staff') && !hasRole(message.member, "Moderator") && !hasRole(message.member, "Admin") && !hasRole(message.member, "Developer") && !hasRole(message.member, "Community Helper")) {      
-            if (!AllowedLinksSet.has(message.channel.id)) {
-                args.forEach(word => {
-                    if(new RegExp("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})").test(word)) {
-                        if (!word.includes("imgur.com") && !word.includes("reddit.com") && !word.includes("gyazo.com") && !word.includes("prntscr.com")) {
-                            messageAllowed = false;
-                        }
-                    }
-                });
-
-                if (messageAllowed == false) {
-                    message.delete();
-                }
-            }
-
-            for (let word of SwearWordsSet) {   
-                if (message.content.toLowerCase().includes(word.toLowerCase())) {
-                    return message.delete();
-                }
-            }
-        }
-
         // #Showcase & #Suggestion channels
         if (message.channel.id == serverInfo.suggestionsChannel || message.channel.id == serverInfo.showcaseChannel) {
 
@@ -260,6 +238,29 @@ module.exports = {
                 
                 sql.run(`Update CurrentStats set Value = '${newVal}' where Type = 'messagesgeneral'`).catch(e => console.log(e))
             })    
+        }
+
+
+        if(!hasRole(message.member, 'Staff') && !hasRole(message.member, "Moderator") && !hasRole(message.member, "Admin") && !hasRole(message.member, "Developer") && !hasRole(message.member, "Community Helper")) {      
+            if (!AllowedLinksSet.has(message.channel.id)) {
+                args.forEach(word => {
+                    if(new RegExp("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})").test(word)) {
+                        if (!word.includes("imgur.com") && !word.includes("reddit.com") && !word.includes("gyazo.com") && !word.includes("prntscr.com")) {
+                            messageAllowed = false;
+                        }
+                    }
+                });
+
+                if (messageAllowed == false) {
+                    message.delete();
+                }
+            }
+
+            for (let word of SwearWordsSet) {   
+                if (message.content.toLowerCase().includes(word.toLowerCase())) {
+                    return message.delete();
+                }
+            }
         }
 
         // Add reaction when bot is mentioned
