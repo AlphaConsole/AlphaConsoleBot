@@ -55,11 +55,8 @@ module.exports = {
         // });
 
         
-        //client.guilds.get(serverInfo.guildId).channels.get(serverInfo.suggestionsChannel).messages.fetch();
-        //client.guilds.get(serverInfo.guildId).channels.get(serverInfo.showcaseChannel).messages.fetch();
-        //client.guilds.get("278333760666075136").channels.map(c => c.name).join(", ");
-        //console.log(client.guilds.get("278333760666075136").channels.get("358833347486810112").name);
-        //client.guilds.get("278333760666075136").channels.get("358833347486810112").messages.fetch();
+        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.suggestionsChannel).messages.fetch();
+        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.showcaseChannel).messages.fetch();
 
         serverInfo.logo = client.guilds.get(serverInfo.guildId).iconURL({format:"png"});
 

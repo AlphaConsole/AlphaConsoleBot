@@ -53,7 +53,7 @@ function overrideTitle(client, serverInfo, message, blackListedWords, args) {
         var user = message.mentions.users.first();
         var userTitle = createTitle(message, args, 3); //make title
         setUsersTitle(user, userTitle, message, args);
-        message.author.send(`User ${args[2]} updated sucessfully.`).catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
+        message.author.send(`User ${args[2]} updated successfully.`).catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
     }
     message.delete();
 }

@@ -19,7 +19,7 @@ module.exports = {
               }
             });
             if (Extra == 0) {
-              newMember.guild.createChannel("🎮 Game Channel", {type: "voice", parent: serverInfo.DynamicCat});
+              newMember.guild.channels.create("🎮 Game Channel", {type: "voice", parent: serverInfo.DynamicCat});
             }
           }
         }
@@ -35,14 +35,15 @@ module.exports = {
                   if (Extra == 1) {
                     if (channel) {
                       channel.delete();
-                    }              } else {
+                    }              
+                  } else {
                     Extra = 1;
                   }
                 }
               }
             });
             if (Extra == 0) {
-              oldMember.guild.createChannel("🎮 Game Channel", {type: "voice", parent: serverInfo.DynamicCat});
+              oldMember.guild.channels.create("🎮 Game Channel", {type: "voice", parent: serverInfo.DynamicCat});
             }
           }
         }
