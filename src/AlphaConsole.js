@@ -19,6 +19,7 @@ var authors = [];
 var messagelog = [];
 var warned = [];
 var banned = [];
+var permits = [];
 //server information
 var serverInfoPath = process.argv.slice(2).pop().replace('-serverfile=', '');
 var serverInfo = require(serverInfoPath).serverInfo;
@@ -89,7 +90,7 @@ client.on('message', async message =>
         await message.guild.members.fetch(message.author.id).then(m => {
             message.member = m;
 
-            require('./events/newMessage.js').run(client, serverInfo, sql, message, args, AllowedLinksSet, AutoResponds, SwearWordsSet)
+            require('./events/newMessage.js').run(client, serverInfo, sql, message, args, AllowedLinksSet, AutoResponds, SwearWordsSet, permits)
             require('./events/spamCheck.js').run(client, serverInfo, message, authors, messagelog, warned, banned, sql)
 
 
@@ -210,6 +211,11 @@ client.on('message', async message =>
             //Moderator togglelinks command
             else if (args[0].toLowerCase() == "!togglelinks") {
                 require('./cmds/togglelinks.js').run(client, serverInfo, sql, message, args, AllowedLinksSet)
+            }
+
+            //Moderator permit command
+            else if (args[0].toLowerCase() == "!permit") {
+                require('./cmds/permit.js').run(client, serverInfo, sql, message, args, permits)
             }
 
             //Moderator purge command
