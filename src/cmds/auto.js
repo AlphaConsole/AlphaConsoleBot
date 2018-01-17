@@ -42,7 +42,7 @@ module.exports = {
                     words = messageSplit[0].trim()
                     response = messageSplit[1].trim()
                     
-                    sql.run(`insert into AutoResponds(Word, Response) VALUES ('${words}', '${response}')`)
+                    sql.run(`insert into AutoResponds(Word, Response) VALUES ('${mysql_real_escape_string(words)}', '${mysql_real_escape_string(response)}')`)
 
                     const embed = new Discord.MessageEmbed()
                     .setColor([255,255,0])
