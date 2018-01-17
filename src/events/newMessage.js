@@ -4,7 +4,7 @@ module.exports = {
     title: "newMessage",
     description: "Checks for custom commands, auto responds and links on a new message",
     
-    run: async(client, serverInfo, sql, message, args, AllowedLinksSet, AutoResponds, SwearWordsSet) => {
+    run: async(client, serverInfo, sql, message, args, AllowedLinksSet, AutoResponds, SwearWordsSet, permits) => {
         // Custom Commands
         if (message.content.startsWith("!")) {
             sql.get(`Select * from Commands where Command = '${mysql_real_escape_string(args[0].substring(1).toLowerCase())}'`).then(command => {
@@ -43,28 +43,6 @@ module.exports = {
 
         // !ToggleLinks Functionality && check for swear words
         var messageAllowed = true;
-
-        if(!hasRole(message.member, 'Staff') && !hasRole(message.member, "Moderator") && !hasRole(message.member, "Admin") && !hasRole(message.member, "Developer") && !hasRole(message.member, "Community Helper")) {      
-            if (!AllowedLinksSet.has(message.channel.id)) {
-                args.forEach(word => {
-                    if(new RegExp("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})").test(word)) {
-                        if (!word.includes("imgur.com") && !word.includes("reddit.com") && !word.includes("gyazo.com") && !word.includes("prntscr.com")) {
-                            messageAllowed = false;
-                        }
-                    }
-                });
-
-                if (messageAllowed == false) {
-                    message.delete();
-                }
-            }
-
-            for (let word of SwearWordsSet) {   
-                if (message.content.toLowerCase().includes(word.toLowerCase())) {
-                    return message.delete();
-                }
-            }
-        }
 
         // #Showcase & #Suggestion channels
         if (message.channel.id == serverInfo.suggestionsChannel || message.channel.id == serverInfo.showcaseChannel) {
@@ -260,6 +238,28 @@ module.exports = {
                 
                 sql.run(`Update CurrentStats set Value = '${newVal}' where Type = 'messagesgeneral'`).catch(e => console.log(e))
             })    
+        }
+
+        if(!hasRole(message.member, 'Staff') && !hasRole(message.member, "Moderator") && !hasRole(message.member, "Admin") && !hasRole(message.member, "Developer") && !hasRole(message.member, "Community Helper")) {      
+            if (!AllowedLinksSet.has(message.channel.id)) {
+                args.forEach(word => {
+                    if(new RegExp("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})").test(word)) {
+                        if (!word.includes("imgur.com") && !word.includes("reddit.com") && !word.includes("gyazo.com") && !word.includes("prntscr.com")) {
+                            if (permits[message.author.id] && permits[message.author.id].channel == message.channel.id) {
+                                if (permits[message.author.id].until < new Date().getTime()) return message.delete();
+                            } else {
+                                return message.delete();
+                            }
+                        }
+                    }
+                });
+            }
+
+            for (let word of SwearWordsSet) {   
+                if (message.content.toLowerCase().includes(word.toLowerCase())) {
+                    return message.delete();
+                }
+            }
         }
 
         // Add reaction when bot is mentioned
