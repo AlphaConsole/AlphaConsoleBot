@@ -14,9 +14,6 @@ module.exports = {
                 message+= args[index] + " ";
             }
             client.guilds.get(serverInfo.guildId).channels.get(channelID).send(message);
-            message.author.sendMessage('Sent.');
-        } else {
-            message.author.sendMessage('Nice try.');
-        }
+        } 
     }
 }
