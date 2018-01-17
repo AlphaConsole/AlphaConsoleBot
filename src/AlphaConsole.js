@@ -261,6 +261,8 @@ client.on('message', async message =>
 
         if (args[0].toLowerCase() == "!help" || args[0].toLowerCase() == "!h") {
             require('./cmds/help.js').run(client, serverInfo, message, args, Commands)
+        } else if (args[0].toLowerCase() == "!s") {
+            require('./cmds/sendmessage.js').run(client, serverInfo, message, args)
         }
 
     }
