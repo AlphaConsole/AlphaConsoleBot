@@ -31,6 +31,7 @@ var serverInfo = require(serverInfoPath).serverInfo;
 //Bot logs in
 client.on('ready', () => {
     require('./events/ready.js').run(client, serverInfo, sql, AllowedLinksSet, AutoResponds, Commands, Events, SwearWordsSet, blackListedWords);
+    require('./events/TitleCleanUp.js').run(client, serverInfo, sql);
 });
 
 //New member joins
@@ -284,10 +285,12 @@ var j = schedule.scheduleJob({second: 1}, function(){
 
 var j = schedule.scheduleJob({minute: 1}, function(){
     require('./events/StatusUpdate.js').run(client, serverInfo, sql);
+    require('./events/TitleCleanUp.js').run(client, serverInfo, sql);
 });
 
 var j = schedule.scheduleJob({minute: 31}, function(){
     require('./events/StatusUpdate.js').run(client, serverInfo, sql);
+    require('./events/TitleCleanUp.js').run(client, serverInfo, sql);
 });
 
 var j = schedule.scheduleJob({hour: 9, minute: 40}, function(){
