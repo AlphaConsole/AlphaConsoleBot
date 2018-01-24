@@ -33,7 +33,7 @@ module.exports = {
                 if (role.name != '@everyone') newRolesID += " " + role.id;
             });
 
-            if (oldRoles.includes('Twitch Sub') && !newRoles.includes('Twitch Sub')) {
+            if (oldRoles.includes('Twitch Sub') && !newRoles.includes('Twitch Sub') && !isStaff(newMember)) {
                 var request = require('request');
                 var url = keys.SetTitleURL;
                 user = newMember;
@@ -94,7 +94,24 @@ module.exports = {
     }
 };
 
+function isStaff(user) {
+    if (hasRole(user, "Developer") ||hasRole(user, "Admin") || hasRole(user, "Moderator") || hasRole(user, "Support")) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
+function pluck(array) {
+    return array.map(function (item) { return item["name"]; });
+}
+function hasRole(mem, role) {
+    if (pluck(mem.roles).includes(role)) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 function mysql_real_escape_string (str) {
     return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {

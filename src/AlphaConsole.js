@@ -31,17 +31,18 @@ var serverInfo = require(serverInfoPath).serverInfo;
 //Bot logs in
 client.on('ready', () => {
     require('./events/ready.js').run(client, serverInfo, sql, AllowedLinksSet, AutoResponds, Commands, Events, SwearWordsSet, blackListedWords);
+    require('./events/TitleCleanUp.js').run(client, serverInfo, sql);
 });
 
 //New member joins
 client.on('guildMemberAdd', (member) => {
     require('./events/newMember.js').run(client, serverInfo, member, sql);
-}); 
+});
 
 //User Left / kicked
 client.on('guildMemberRemove', (member) => {
     require('./events/guildMemberRemove.js').run(client, serverInfo, member, sql);
-}); 
+});
 
 //Voice users update
 client.on('voiceStateUpdate', (oldMember, newMember) => {
@@ -99,7 +100,11 @@ client.on('message', async message =>
             if (args[0].toLowerCase() == "!role") {
                 require('./cmds/role.js').run(client, serverInfo, sql, message, args)
             }
-            
+
+            if (args[0].toLowerCase() == "!serverinfo") {
+                require('./cmds/serverInfo.js').run(client, serverInfo, sql, message, args)
+            }
+
 
             //Help command
             if (args[0].toLowerCase() == "!help" || args[0].toLowerCase() == "!h") {
@@ -226,13 +231,13 @@ client.on('message', async message =>
             else if (args[0].toLowerCase() == "!listroles") {
                 require('./cmds/listroles.js').run(client, serverInfo, sql, message, args)
             }
-            
+
             /// ADMIN COMMANDS
             //Admin Bot Status
             else if (args[0].toLowerCase() == "!status") {
                 require('./cmds/status.js').run(client, serverInfo, sql, message, args)
             }
-            
+
             //Disables all channels which rely on the bot heavily. (#set-title, special title, etc)
             else if (args[0].toLowerCase() == "!lockdown") {
                 require('./cmds/lockdown.js').run(client, serverInfo, message, args)
@@ -243,11 +248,11 @@ client.on('message', async message =>
 
             else if (args[0].toLowerCase() == "!blacklist") {
                 require('./cmds/blacklist.js').run(client, serverInfo, message, args, sql, blackListedWords)
-            } 
+            }
 
             else if (args[0].toLowerCase() == "!update") {
                 require('./cmds/update.js').run(client, serverInfo, message, args)
-            } 
+            }
 
             //For commands with 2 args.
             else if (args.length == 2) {
@@ -273,7 +278,7 @@ client.on('message', async message =>
 
     }
 
-    
+
 })
 
 var schedule = require('node-schedule');
@@ -284,10 +289,12 @@ var j = schedule.scheduleJob({second: 1}, function(){
 
 var j = schedule.scheduleJob({minute: 1}, function(){
     require('./events/StatusUpdate.js').run(client, serverInfo, sql);
+    require('./events/TitleCleanUp.js').run(client, serverInfo, sql);
 });
 
 var j = schedule.scheduleJob({minute: 31}, function(){
     require('./events/StatusUpdate.js').run(client, serverInfo, sql);
+    require('./events/TitleCleanUp.js').run(client, serverInfo, sql);
 });
 
 var j = schedule.scheduleJob({hour: 9, minute: 40}, function(){

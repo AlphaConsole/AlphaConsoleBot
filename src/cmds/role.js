@@ -40,8 +40,11 @@ module.exports = {
                     if (theMember) {
                         var rolename = ""
                         for (let i = 2; i < args.length; i++) {
-                            rolename = args[i] + " "
+                            rolename += args[i] + " "
                         }
+
+                        console.log(rolename)
+
                         theRole = message.guild.roles.find(r => r.name.toLowerCase() == rolename.trim().toLowerCase())
                         if (theRole) {
                             const embed = new Discord.MessageEmbed()
