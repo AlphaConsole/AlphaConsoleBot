@@ -16,9 +16,14 @@ module.exports = {
 
             var now = new Date();
             var timeDiff = Math.abs(now.getTime() - creationDate.getTime());
-            var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
+            var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
-            console.log(guild.features)
+            if (!guild.region || guild.region.length < 1) console.log("Region failed")
+            if (!guild.channels.array().filter(c => c.type.toLowerCase() == "text").length) console.log("Text Channels failed")
+            if (!guild.channels.array().filter(c => c.type.toLowerCase() == "voice").length) console.log("voice Channels failed")
+            if (!guild.roles.size) console.log("Roles failed")
+            if (!guild.owner.user.tag || guild.owner.user.tag.length < 1) console.log("Owner failed")
+            if (!guild.emojis.map(m => m.toString()).join(" ") || guild.emojis.map(m => m.toString()).join(" ").length < 1) console.log("Emojis failed")
             
             const embed = new Discord.MessageEmbed()
             .setColor([255,255,0])
