@@ -102,7 +102,7 @@ client.on('message', async message =>
             }
 
             if (args[0].toLowerCase() == "!serverinfo") {
-                require('./cmds/serverInfo.js').run(client, serverInfo, sql, message, args)
+                require('./cmds/serverinfo.js').run(client, serverInfo, sql, message, args)
             }
 
 
