@@ -105,6 +105,10 @@ client.on('message', async message =>
                 require('./cmds/serverinfo.js').run(client, serverInfo, sql, message, args)
             }
 
+            if (args[0].toLowerCase() == "!roleinfo") {
+                require('./cmds/roleinfo.js').run(client, serverInfo, sql, message, args)
+            }
+
 
             //Help command
             if (args[0].toLowerCase() == "!help" || args[0].toLowerCase() == "!h") {
