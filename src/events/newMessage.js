@@ -162,7 +162,11 @@ module.exports = {
                 }
             }
             if (message.content.includes('discord.gg/') || message.content.includes('discordapp.com/invite/')) {
-                return message.delete();
+                if (permits[message.author.id] && permits[message.author.id].channel == message.channel.id) {
+                    if (permits[message.author.id].until < new Date().getTime()) return message.delete();
+                } else {
+                    return message.delete();
+                }
             }
         }
 
