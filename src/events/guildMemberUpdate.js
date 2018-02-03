@@ -47,6 +47,8 @@ module.exports = {
                 +' subscriber features has been removed and your title colour has been reset. If you subscribe again you will have access to those ' +
             ' features again. \n<https://www.twitch.tv/alphaconsole> \nHave a great day!');
 
+            sql.run(`delete from BetaSteamIDS where DiscordID = '${oldMember.id}'`);
+
             const embedlog = new Discord.MessageEmbed()
             .setColor([255,255,0])
             .setAuthor('Title Colour Auto Reset', serverInfo.logo)
