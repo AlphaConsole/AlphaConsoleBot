@@ -35,8 +35,9 @@ module.exports = {
                         user.send(embed)
                     } else {
                         var info = body.split(' ');
-                        var colour = info[info.length-1];
-                        for (let index = 0; index < info.length-1; index++) {
+                        var colour = info[info.length-2];
+                        var steamID = info[info.length-1];
+                        for (let index = 0; index < info.length-2; index++) {
                             result += info[index] + " ";
                         }
                         if (result.trim() == 'X' && returnColour(colour) == 'Cycling Colours') {
@@ -44,6 +45,7 @@ module.exports = {
                             .setColor([255,255,0])
                             .setAuthor('Database Check', serverInfo.logo)
                             .addField("User", user)
+                            .addField("Steam Profile",  `https://steamcommunity.com/profiles/${steamID}`)
                             .addField("Information", `User has disabled their title.`)
                             user.send(embed);
                         } else {
@@ -51,6 +53,7 @@ module.exports = {
                             .setColor([255,255,0])
                             .setAuthor('Database Check', serverInfo.logo)
                             .addField("User", user)
+                            .addField("Steam Profile",  `https://steamcommunity.com/profiles/${steamID}`)
                             .addField("Title", `${result}`)
                             .addField("Colour", returnColour(colour));
                             user.send(embed);
