@@ -256,7 +256,9 @@ client.on('message', async message =>
 
             else if (args[0].toLowerCase() == "!update") {
                 require('./cmds/update.js').run(client, serverInfo, message, args)
-            } else if (args[0].toLowerCase() == "!betaids") {
+            }
+             
+            else if (args[0].toLowerCase() == "!betaids") {
                 require('./cmds/betaids.js').run(client, serverInfo, message, args, sql)
             }
 

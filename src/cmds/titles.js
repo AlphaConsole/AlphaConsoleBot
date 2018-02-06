@@ -80,7 +80,7 @@ function setSpecialTitle(client, serverInfo, message, blackListedWords, args, sq
                     message.author.send('Sorry, you do not have permission to the title you have choosen.').catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
                 }
             } else {
-                message.author.send('You have choosen an ID that is not available. Try again!').catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
+                message.author.send('You have chosen an ID that is not available. Try again!').catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
             }
         }).catch(err => console.log(err))
     }
