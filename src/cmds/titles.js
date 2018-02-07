@@ -61,7 +61,7 @@ function overrideTitle(client, serverInfo, message, blackListedWords, args) {
 function overrideColour(client, serverInfo, message, blackListedWords, args) {
     if (hasRole(message.member, "Moderator") || hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
         var user = message.mentions.users.first();
-        setUsersColour(message.member, args[3], message, args)
+        setUsersColour(user, args[3], message, args)
         message.author.send(`User ${args[2]} updated successfully.`).catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
     }
     message.delete();
@@ -77,7 +77,7 @@ function setSpecialTitle(client, serverInfo, message, blackListedWords, args, sq
                 if (hasRole(message.member, row.PermittedRoles)) {
                     setUsersTitle(message.author, row.Title, args);
                 } else {
-                    message.author.send('Sorry, you do not have permission to the title you have choosen.').catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
+                    message.author.send('Sorry, you do not have permission to the title you have chosen.').catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
                 }
             } else {
                 message.author.send('You have chosen an ID that is not available. Try again!').catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
@@ -151,6 +151,7 @@ function setUsersColour(user, userColour, message, args) {
         var request = require('request');
         var url = keys.SetTitleURL;
         url += '?DiscordID=' + user.id + '&key=' + keys.Password + "&color=" + userColour;
+        console.log(url);
         request({
             method: 'GET',
             url: url
@@ -170,9 +171,10 @@ function setUsersColour(user, userColour, message, args) {
             } else {
                 user.send('There was an error. Please try again. If this problem continues please contact an admin.').catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`));
             }
+            console.log(body);
         });
     }
-        
+       
     return success;
 }
 

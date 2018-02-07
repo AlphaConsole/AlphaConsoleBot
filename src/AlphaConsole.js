@@ -271,7 +271,9 @@ client.on('message', async message =>
 
             //Keep #Set-title clean
             if (message.channel.id == serverInfo.setTitleChannel || message.channel.id == serverInfo.setSpecialTitleChannel) {
-                message.delete().catch(console.error);
+                if (args[0].toLowerCase() != "!override") {
+                    message.delete().catch(console.error);
+                }
             }
         });
 

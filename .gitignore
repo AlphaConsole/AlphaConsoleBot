@@ -63,3 +63,4 @@ src/tokens.js
 .vscode/launch.json
 src/sqlite/AlphaConsole.db
 src/sqlite/Bot.db
+.vs
