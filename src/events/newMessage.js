@@ -269,7 +269,7 @@ module.exports = {
         // Add reaction when bot is mentioned
         message.mentions.users.forEach(user => {
             if (user.id == "236911139529687040" || user.id == 328632005627478019)  {
-                //message.react(":pingsock:389550360924127233")
+                //message.react(":pingsock:412448216848662548")
                 if (!args[1].includes('!')){ 
                 sentiment(message);
                 }
