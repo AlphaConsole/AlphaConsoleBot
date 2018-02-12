@@ -116,7 +116,7 @@ function mysql_real_escape_string (str) {
  * @param {user} user 
  */
 function isStaff(user) {
-    if (hasRole(user, "Developer") || hasRole(user, "Admin") || hasRole(user, "Moderator") || hasRole(user, "Support") || hasRole(user, "Twitch Mod")) {
+    if (hasRole(user, "Staff") {
         return true;
     } else {
         return false;
