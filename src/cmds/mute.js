@@ -40,7 +40,13 @@ module.exports = {
                 }
 
                 // timeArg should now be a number
-
+                if(timeArg == ""){
+                    // Tried to trick system with only a time unit, so it would not have a number... cheeki breeki ~Nameless
+                    const embed = new Discord.MessageEmbed()
+                    .setColor([255,255,0])
+                    .setAuthor('You did not specify a length of time. Please use 0 for permament mute', serverInfo.logo) 
+                    return message.channel.send(embed)
+                }
 
                 if (!isNumber(timeArg)) {
                     const embed = new Discord.MessageEmbed()
