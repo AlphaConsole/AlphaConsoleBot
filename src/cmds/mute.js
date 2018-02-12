@@ -20,22 +20,27 @@ module.exports = {
             if (args.length > 2) {
 
                 var timeArg = args[2].toLowerCase(); // Lower case it so it's easier to check
+                var originalTime = args[2].toLowerCase();
                 var timeunitDisplay = "hours"; //Default time unit string representation for messages and logs.
 
-                if(timeArg.contains("d")){ // Days is selected explicitly
-                    timeArg.replace("d", "");
+                if(timeArg.includes("d")){ // Days is selected explicitly
+                    timeArg = timeArg.replace("d", "");
+                    originalTime = originalTime.replace("d", "");
                     timeunitDisplay = "days"; // Change time unit to days
 
-                }else if(timeArg.contains("h")){ // Hours is selected explicitly
-                    timeArg.replace("h", "");
+                }else if(timeArg.includes("h")){ // Hours is selected explicitly
+                    timeArg = timeArg.replace("h", "");
+                    originalTime = originalTime.replace("h", "");
                     timeunitDisplay = "hours"; // Change time unit to hours
 
-                }else if(timeArg.contains("m")){ // Minutes is selected explicitly
-                    timeArg.replace("m", "");
+                }else if(timeArg.includes("m")){ // Minutes is selected explicitly
+                    timeArg = timeArg.replace("m", "");
+                    originalTime = originalTime.replace("m", "");
                     timeunitDisplay = "minutes"; // Change time unit to minutes
 
-                }else if(timeArg.contains("s")){ // Seconds is selected explicitly...for some reason...
-                    timeArg.replace("s", "");
+                }else if(timeArg.includes("s")){ // Seconds is selected explicitly...for some reason...
+                    timeArg = timeArg.replace("s", "");
+                    originalTime = originalTime.replace("s", "");
                     timeunitDisplay = "seconds"; // Change time unit to seconds
                 }
 
@@ -51,7 +56,7 @@ module.exports = {
                 if (!isNumber(timeArg)) {
                     const embed = new Discord.MessageEmbed()
                     .setColor([255,255,0])
-                    .setAuthor('${timeArg} is not a valid number. Please use 0 for permament mute', serverInfo.logo) 
+                    .setAuthor(`${timeArg} is not a valid number. Please use 0 for permament mute`, serverInfo.logo) 
                     return message.channel.send(embed)
                 }
 
@@ -152,7 +157,7 @@ module.exports = {
                         }
                     }).catch(err => console.log(err))
 
-                    await sql.run(`Insert into logs(Action, Member, Moderator, value, Reason, Time, ChannelID) VALUES('mute', '${MutedUser.id}', '${message.author.id}', ${mysql_real_escape_string(timeArg)},'${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}', '${message.channel.id}')`)
+                    await sql.run(`Insert into logs(Action, Member, Moderator, value, Reason, Time, ChannelID) VALUES('mute', '${MutedUser.id}', '${message.author.id}', ${timeArg},'${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}', '${message.channel.id}')`)
                     .then(() => {
                         var CaseID = "Error";
                         sql.get(`select * from logs where Member = '${MutedUser.id}' order by ID desc`).then(roww => {
@@ -163,14 +168,14 @@ module.exports = {
                             //Make a notice & Log it to the log-channel
                             const embed = new Discord.MessageEmbed()
                             .setColor([255,255,0])
-                            .setAuthor(`${message.mentions.users.first().tag} has been muted for ${timeArg} ${timeunitDisplay}. Case number: ${CaseID}`, serverInfo.logo) 
+                            .setAuthor(`${message.mentions.users.first().tag} has been muted for ${originalTime} ${timeunitDisplay}. Case number: ${CaseID}`, serverInfo.logo) 
                             message.channel.send(embed) //Remove this line if you don't want it to be public.
 
         
                             const embedlog = new Discord.MessageEmbed()
                             .setColor([255,255,0])
                             .setAuthor(`Case ${CaseID} | User Mute`, serverInfo.logo)
-                            .setDescription(`${message.guild.members.get(message.mentions.users.first().id)} (${message.mentions.users.first().id}) has been muted for ${timeArg} ${timeunitDisplay} by ${message.member}`)
+                            .setDescription(`${message.guild.members.get(message.mentions.users.first().id)} (${message.mentions.users.first().id}) has been muted for ${originalTime} ${timeunitDisplay} by ${message.member}`)
                             .setTimestamp()
                             .addField("Reason", TheReason)
                             message.guild.channels.get(serverInfo.modlogChannel).send(embedlog).then(msg => {
