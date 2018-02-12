@@ -3,7 +3,7 @@ AlphaConsole Discord Bot
 
 
 This is the official Discord bot for the [AlphaConsole Discord Server](https://discordapp.com/invite/alphaconsole). 
-This bot serves the over 100k members we currently have in our Discord (2nd largest  worldwide).
+This bot serves the over 130k members we currently have in our Discord (2nd largest  worldwide).
 
 ----------
 
@@ -61,7 +61,7 @@ This bot writes a lot into a SQLite database. A blank default one can be downloa
 
 Feel free to message me on Discord, my ID is
 
-<img src="https://i.imgur.com/wloHJJi.png" width="20%">
+<img src="https://i.imgur.com/gPrtZaA.png" width="20%">
 
 ----------
 
