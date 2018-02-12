@@ -69,6 +69,11 @@ client.on('messageReactionAdd', (reaction, user) => {
     require('./events/messageReactionAdd.js').run(client, serverInfo, reaction, user);
 });
 
+//Message Updated - Run checks for links / blacklisted. Spam check not needed since it's not a new message.
+client.on('messageUpdate', async (originalMessage, newMessage) => {
+    messageProcess(newMessage);
+});
+
 //Outputs unhandles promises
 process.on('unhandledRejection', (reason, p) => {
     console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
@@ -82,6 +87,18 @@ process.on('unhandledRejection', (reason, p) => {
 
 client.on('message', async message =>
 {
+    //Note from Nameless,
+    // Calls function below to process the message, this means it can be used in messageUpdate event just above to
+    // run the exact same checks for commands, words, all sorts when edited.
+
+    messageProcess(message);
+});
+
+//--------------------------//
+//   DO MESSAGE FUNCTIONS   //
+//--------------------------//
+
+async function messageProcess(message){
     if (message.author.bot) return;
 
     var args = message.content.split(/[ ]+/);
@@ -288,8 +305,9 @@ client.on('message', async message =>
 
     }
 
+    return;
 
-})
+}
 
 var schedule = require('node-schedule');
 
