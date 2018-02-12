@@ -6,7 +6,7 @@ module.exports = {
     title: "newMessage",
     description: "Checks for custom commands, auto responds and links on a new message",
     
-    run: async(client, serverInfo, sql, message, args, AllowedLinksSet, AutoResponds, SwearWordsSet) => {
+    run: async(client, serverInfo, sql, message, args, AllowedLinksSet, AutoResponds, SwearWordsSet, permits) => {
         // Custom Commands
         if (message.content.startsWith("!")) {
             sql.get(`Select * from Commands where Command = '${mysql_real_escape_string(args[0].substring(1).toLowerCase())}'`).then(command => {
@@ -163,8 +163,12 @@ module.exports = {
                     }
                 }
             }
-            if (message.content.includes('discord.gg/') || message.content.includes('discordapp.com/invite/')) {
-                return message.delete();
+            if (message.content.includes('discord.gg/') || message.content.includes('discordapp.com/invite/') && message.channel.parentID != "360838298677149720") {
+                if (permits[message.author.id] && permits[message.author.id].channel == message.channel.id) {
+                    if (permits[message.author.id].until < new Date().getTime()) return message.delete();
+                } else {
+                    return message.delete();
+                }
             }
         }
 
@@ -243,19 +247,19 @@ module.exports = {
         }
 
 
-         if(!hasRole(message.member, 'Staff') && !hasRole(message.member, "Moderator") && !hasRole(message.member, "Admin") && !hasRole(message.member, "Developer") && !hasRole(message.member, "Community Helper") && !hasRole(message.member, "Links")) {      
+         if(!hasRole(message.member, 'Staff') && !hasRole(message.member, "Moderator") && !hasRole(message.member, "Admin") && !hasRole(message.member, "Developer") && !hasRole(message.member, "Community Helper") && !hasRole(message.member, "Links") && message.channel.parentID != "360838298677149720") {      
             if (!AllowedLinksSet.has(message.channel.id)) {
                 args.forEach(word => {
                     if(new RegExp("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})").test(word)) {
                         if (!word.includes("imgur.com") && !word.includes("reddit.com") && !word.includes("gyazo.com") && !word.includes("prntscr.com")) {
-                            messageAllowed = false;
-                    } 
-            }
+                            if (permits[message.author.id] && permits[message.author.id].channel == message.channel.id) {
+                                if (permits[message.author.id].until < new Date().getTime()) return message.delete();
+                            } else {
+                                return message.delete();
+                            }
+                        }
+                    }
                 });
-
-                if (messageAllowed == false) {
-                    message.delete();
-                }
             }
 
             for (let word of SwearWordsSet) {   
@@ -268,7 +272,7 @@ module.exports = {
         // Add reaction when bot is mentioned
         message.mentions.users.forEach(user => {
             if (user.id == "236911139529687040" || user.id == 328632005627478019)  {
-                //message.react(":pingsock:389550360924127233")
+                //message.react(":pingsock:412448216848662548")
                 if (!args[1].includes('!')){ 
                 sentiment(message);
                 }

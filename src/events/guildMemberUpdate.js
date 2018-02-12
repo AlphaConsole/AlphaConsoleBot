@@ -33,7 +33,7 @@ module.exports = {
                 if (role.name != '@everyone') newRolesID += " " + role.id;
             });
 
-            if (oldRoles.includes('Twitch Sub') && !newRoles.includes('Twitch Sub')) {
+            if (oldRoles.includes('Twitch Sub') && !newRoles.includes('Twitch Sub') && !isStaff(newMember)) {
                 var request = require('request');
                 var url = keys.SetTitleURL;
                 user = newMember;
@@ -46,6 +46,8 @@ module.exports = {
                 oldMember.send('Hi, your Twitch Subscription to AlphaConsole has ended therefor your access to the' 
                 +' subscriber features has been removed and your title colour has been reset. If you subscribe again you will have access to those ' +
             ' features again. \n<https://www.twitch.tv/alphaconsole> \nHave a great day!');
+
+            sql.run(`delete from BetaSteamIDS where DiscordID = '${oldMember.id}'`);
 
             const embedlog = new Discord.MessageEmbed()
             .setColor([255,255,0])
@@ -65,6 +67,19 @@ module.exports = {
                 "Various Discord server enhancements such as nickname perms\n\n" +
                 
                 "You will keep these benefits for as long as you are subscribed, and you will have a 3 day window to resubscribe if your subscription runs out. Thank you again for your subscription and your extra level of support for AlphaConsole!")
+            }
+            
+
+            // Legacy role added, and not in old roles.
+            if (newRoles.includes('Legacy') && !oldRoles.includes('Legacy')) {
+                newMember.send("Congratulations on becoming a Legacy member! :smile: You now have access to several benefits including:\n\n" +
+
+                "Green & Purple title colors\n" +
+                "Our beta program (Please read `#beta-info` and the pin in `#beta-steam-ids` carefully!)\n" +
+                "The `#subs-and-legacy` text channel and priority support\n" +
+                "Various Discord server enhancements such as nickname perms\n\n" +
+                
+                "You will keep these benefits forever! Thank you for your support of AlphaConsole!")
             }
             
         
@@ -94,7 +109,24 @@ module.exports = {
     }
 };
 
+function isStaff(user) {
+    if (hasRole(user, "Developer") ||hasRole(user, "Admin") || hasRole(user, "Moderator") || hasRole(user, "Support")) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
+function pluck(array) {
+    return array.map(function (item) { return item["name"]; });
+}
+function hasRole(mem, role) {
+    if (pluck(mem.roles).includes(role)) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 function mysql_real_escape_string (str) {
     return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
