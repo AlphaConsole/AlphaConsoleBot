@@ -1,5 +1,7 @@
 const Discord = require('discord.js');
 
+// Barbo, idk what I'm doing. - Vezqi
+
 module.exports = {
     title: "newMessage",
     description: "Checks for custom commands, auto responds and links on a new message",
@@ -244,7 +246,8 @@ module.exports = {
             })    
         }
 
-        if(!hasRole(message.member, 'Staff') && !hasRole(message.member, "Moderator") && !hasRole(message.member, "Admin") && !hasRole(message.member, "Developer") && !hasRole(message.member, "Community Helper") && message.channel.parentID != "360838298677149720") {      
+
+         if(!hasRole(message.member, 'Staff') && !hasRole(message.member, "Moderator") && !hasRole(message.member, "Admin") && !hasRole(message.member, "Developer") && !hasRole(message.member, "Community Helper") && !hasRole(message.member, "Links") && message.channel.parentID != "360838298677149720") {      
             if (!AllowedLinksSet.has(message.channel.id)) {
                 args.forEach(word => {
                     if(new RegExp("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})").test(word)) {
@@ -269,7 +272,7 @@ module.exports = {
         // Add reaction when bot is mentioned
         message.mentions.users.forEach(user => {
             if (user.id == "236911139529687040" || user.id == 328632005627478019)  {
-                //message.react(":pingsock:389550360924127233")
+                //message.react(":pingsock:412448216848662548")
                 if (!args[1].includes('!')){ 
                 sentiment(message);
                 }

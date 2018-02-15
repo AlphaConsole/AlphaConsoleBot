@@ -3,7 +3,7 @@ const Discord = require('discord.js');
 module.exports = {
     title: "mute",
     perms: "Support",
-    commands: ["!Mute <@tag> <Hours> <?Reason>"],
+    commands: ["!Mute <@tag> <Length[TimeUnit(d,h,m,s) - default: h]> <?Reason>"],
     description: ["Mutes the person for the given amount of times. If time is 0 then the person is permanently muted"],
     
     run: async(client, serverInfo, sql, message ,args) => {
@@ -19,12 +19,70 @@ module.exports = {
 
             if (args.length > 2) {
 
-                if (!isNumber(args[2])) {
+                var timeArg = args[2].toLowerCase(); // Lower case it so it's easier to check
+                var originalTime = args[2].toLowerCase();
+                var timeunitDisplay = "hours"; //Default time unit string representation for messages and logs.
+
+                if(timeArg.includes("d")){ // Days is selected explicitly
+                    timeArg = timeArg.replace("d", "");
+                    timeunitDisplay = "days"; // Change time unit to days
+
+                }else if(timeArg.includes("h")){ // Hours is selected explicitly
+                    timeArg = timeArg.replace("h", "");
+                    timeunitDisplay = "hours"; // Change time unit to hours
+
+                }else if(timeArg.includes("m")){ // Minutes is selected explicitly
+                    timeArg = timeArg.replace("m", "");
+                    timeunitDisplay = "minutes"; // Change time unit to minutes
+
+                }else if(timeArg.includes("s")){ // Seconds is selected explicitly...for some reason...
+                    timeArg = timeArg.replace("s", "");
+                    timeunitDisplay = "seconds"; // Change time unit to seconds
+                }
+
+                // timeArg should now be a number
+                if(timeArg == ""){
+                    // Tried to trick system with only a time unit, so it would not have a number... cheeki breeki ~Nameless
                     const embed = new Discord.MessageEmbed()
                     .setColor([255,255,0])
-                    .setAuthor('Those hours are not known. Please use 0 for permament mute', serverInfo.logo) 
+                    .setAuthor('You did not specify a length of time. Please use 0 for permanent mute', serverInfo.logo) 
                     return message.channel.send(embed)
                 }
+
+                if (!isNumber(timeArg)) {
+                    const embed = new Discord.MessageEmbed()
+                    .setColor([255,255,0])
+                    .setAuthor(`${timeArg} is not a valid number. Please use 0 for permanent mute`, serverInfo.logo) 
+                    return message.channel.send(embed)
+                }
+
+                // Only change this once now, slightly more efficient than replacing also saves 4 lines of code I guess
+                originalTime = timeArg;
+
+                switch(timeunitDisplay){
+                    case "days":
+                    timeArg = (timeArg * 86400000); // 86400000 milliseconds in 1 day
+                    break;
+
+                    case "hours":
+                    timeArg = (timeArg * 3600000); // 3600000 milliseconds in 1 hour
+                    break;
+
+                    case "minutes":
+                    timeArg = (timeArg * 60000); // 60000 milliseconds in 1 minute
+                    break;
+
+                    case "seconds":
+                    timeArg = (timeArg * 1000); // 1000 milliseconds in 1 second
+                    break;
+
+                    default:
+                        // Shouldn't get here...
+                        break;
+                }
+
+
+
                 //First add the Muted Role to the user
                 let MutedRole = message.guild.roles.find('name', 'Muted');
                 let MutedUser = message.guild.member(message.mentions.users.first().id);
@@ -41,9 +99,9 @@ module.exports = {
                 }
 
                 
-                if (args[2] == 0) {
+                if (timeArg == 0) {
 
-                    sql.run(`Insert into logs(Action, Member, Moderator, value, Reason, Time, ChannelID) VALUES('mute', '${MutedUser.id}', '${message.author.id}', ${mysql_real_escape_string(args[2])},'${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}', '${message.channel.id}')`)
+                    sql.run(`Insert into logs(Action, Member, Moderator, value, Reason, Time, ChannelID) VALUES('mute', '${MutedUser.id}', '${message.author.id}', ${mysql_real_escape_string(timeArg)},'${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}', '${message.channel.id}')`)
                     .then(() => {
                         var CaseID = "Error";
                         sql.get(`select * from logs where Member = '${message.mentions.users.first().id}' order by ID desc`).then(roww => {
@@ -79,8 +137,8 @@ module.exports = {
                             var today = new Date().getTime();
                             sql.run(`Insert into Members(DiscordID, Username, JoinedDate)VALUES('${message.mentions.users.first().id}', '${mysql_real_escape_string(message.mentions.users.first().username)}', '${today}')`)
                                 .then(() => {
-                                    //Calculate the extra hours to be added
-                                    MutedUntil = new Date().getTime() + args[2] * 3600000; //args is the amount of hours. 3600000 transfers it to ms
+                                    //Calculate the extra time to be added
+                                    MutedUntil = new Date().getTime() + timeArg; //timeArg is the amount of time, already converted to milliseconds.
 
                                     //Update Database with the newest time of when to be muted to
                                     sql.run(`Update Members set MutedUntil = ${MutedUntil} where DiscordID = '${message.mentions.users.first().id}'`)
@@ -88,8 +146,8 @@ module.exports = {
                                 })
                                 .catch(err => console.log(err));
                         } else {
-                            //Calculate the extra hours to be added
-                            MutedUntil = new Date().getTime() + args[2] * 3600000; //args is the amount of hours. 3600000 transfers it to ms
+                            //Calculate the extra time to be added
+                            MutedUntil = new Date().getTime() + timeArg; //timeArg is the amount of time, already converted to milliseconds.
 
                             //Update Database with the newest time of when to be muted to
                             sql.run(`Update Members set MutedUntil = ${MutedUntil} where DiscordID = '${message.mentions.users.first().id}'`)
@@ -98,7 +156,7 @@ module.exports = {
                         }
                     }).catch(err => console.log(err))
 
-                    await sql.run(`Insert into logs(Action, Member, Moderator, value, Reason, Time, ChannelID) VALUES('mute', '${MutedUser.id}', '${message.author.id}', ${mysql_real_escape_string(args[2])},'${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}', '${message.channel.id}')`)
+                    await sql.run(`Insert into logs(Action, Member, Moderator, value, Reason, Time, ChannelID) VALUES('mute', '${MutedUser.id}', '${message.author.id}', ${timeArg},'${mysql_real_escape_string(TheReason)}', '${new Date().getTime()}', '${message.channel.id}')`)
                     .then(() => {
                         var CaseID = "Error";
                         sql.get(`select * from logs where Member = '${MutedUser.id}' order by ID desc`).then(roww => {
@@ -109,14 +167,14 @@ module.exports = {
                             //Make a notice & Log it to the log-channel
                             const embed = new Discord.MessageEmbed()
                             .setColor([255,255,0])
-                            .setAuthor(`${message.mentions.users.first().tag} has been muted for ${args[2]} hours. Case number: ${CaseID}`, serverInfo.logo) 
+                            .setAuthor(`${message.mentions.users.first().tag} has been muted for ${originalTime} ${timeunitDisplay}. Case number: ${CaseID}`, serverInfo.logo) 
                             message.channel.send(embed) //Remove this line if you don't want it to be public.
 
         
                             const embedlog = new Discord.MessageEmbed()
                             .setColor([255,255,0])
                             .setAuthor(`Case ${CaseID} | User Mute`, serverInfo.logo)
-                            .setDescription(`${message.guild.members.get(message.mentions.users.first().id)} (${message.mentions.users.first().id}) has been muted for ${args[2]} hours by ${message.member}`)
+                            .setDescription(`${message.guild.members.get(message.mentions.users.first().id)} (${message.mentions.users.first().id}) has been muted for ${originalTime} ${timeunitDisplay} by ${message.member}`)
                             .setTimestamp()
                             .addField("Reason", TheReason)
                             message.guild.channels.get(serverInfo.modlogChannel).send(embedlog).then(msg => {
@@ -132,7 +190,7 @@ module.exports = {
             } else {
                 const embed = new Discord.MessageEmbed()
                 .setColor([255,255,0])
-                .setAuthor('__Command wrongly build:__ `!Mute @user [Time in hours] [?Reason]`', serverInfo.logo) 
+                .setAuthor('!Mute <@tag> <Length[TimeUnit(d,h,m,s) - default: h]> <?Reason>', serverInfo.logo) 
                 return message.channel.send(embed)
             }
         }
