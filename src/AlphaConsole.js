@@ -32,6 +32,7 @@ var serverInfo = require(serverInfoPath).serverInfo;
 client.on('ready', () => {
     require('./events/ready.js').run(client, serverInfo, sql, AllowedLinksSet, AutoResponds, Commands, Events, SwearWordsSet, blackListedWords);
     require('./events/TitleCleanUp.js').run(client, serverInfo, sql);
+    require('./events/updatePartners.js').run(client, serverInfo, sql);
 });
 
 //New member joins
@@ -66,7 +67,7 @@ client.on('messageDelete', (message) => {
 
 //React has been added
 client.on('messageReactionAdd', (reaction, user) => {
-    require('./events/messageReactionAdd.js').run(client, serverInfo, reaction, user);
+    require('./events/messageReactionAdd.js').run(client, serverInfo, reaction, user, sql);
 });
 
 //Message Updated - Run checks for links / blacklisted. Spam check not needed since it's not a new message.
@@ -277,6 +278,11 @@ async function messageProcess(message){
              
             else if (args[0].toLowerCase() == "!betaids") {
                 require('./cmds/betaids.js').run(client, serverInfo, message, args, sql)
+            }
+            
+            //Admin partner command - only works in serverInfo.editPartnerChannel
+            else if (args[0].toLowerCase() == "!partner"){
+                require('./cmds/partner.js').run(client, serverInfo, sql, message, args)
             }
 
             //For commands with 2 args.
