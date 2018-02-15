@@ -21,7 +21,7 @@ module.exports = {
 
         message.delete(500); // Delete the message, we don't need it
 
-        if (hasRole(message.member, "Admin")) { 
+        if (hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) { 
             // Ensure this user is permitted to do this, keep it deleted either way just incase the channel permissions 
             // get messed up and people somehow figure out the command, makes sure chat doesn't get spammed
 

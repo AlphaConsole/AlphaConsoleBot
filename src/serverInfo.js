@@ -15,5 +15,8 @@ module.exports.serverInfo = {
     setSpecialTitleChannel: '396350002886344714',
     staffChannel: '381844964780277762',
     basementChannel: '381844964780277762',
-    devChannel: '381844964780277762'
+    devChannel: '381844964780277762',
+    editPartnerChannel: '413841364032159764', // Channel for !partner command
+    partnerChannel: '413841399306518530', // Channel bot uses to list the partners, and watch their respective reactions
+    partnerEmoji: '413844472103829505' // Emoji used for partner reactions
 }
