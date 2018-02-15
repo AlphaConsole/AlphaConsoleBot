@@ -25,22 +25,18 @@ module.exports = {
 
                 if(timeArg.includes("d")){ // Days is selected explicitly
                     timeArg = timeArg.replace("d", "");
-                    originalTime = originalTime.replace("d", "");
                     timeunitDisplay = "days"; // Change time unit to days
 
                 }else if(timeArg.includes("h")){ // Hours is selected explicitly
                     timeArg = timeArg.replace("h", "");
-                    originalTime = originalTime.replace("h", "");
                     timeunitDisplay = "hours"; // Change time unit to hours
 
                 }else if(timeArg.includes("m")){ // Minutes is selected explicitly
                     timeArg = timeArg.replace("m", "");
-                    originalTime = originalTime.replace("m", "");
                     timeunitDisplay = "minutes"; // Change time unit to minutes
 
                 }else if(timeArg.includes("s")){ // Seconds is selected explicitly...for some reason...
                     timeArg = timeArg.replace("s", "");
-                    originalTime = originalTime.replace("s", "");
                     timeunitDisplay = "seconds"; // Change time unit to seconds
                 }
 
@@ -59,6 +55,9 @@ module.exports = {
                     .setAuthor(`${timeArg} is not a valid number. Please use 0 for permanent mute`, serverInfo.logo) 
                     return message.channel.send(embed)
                 }
+
+                // Only change this once now, slightly more efficient than replacing also saves 4 lines of code I guess
+                originalTime = timeArg;
 
                 switch(timeunitDisplay){
                     case "days":
