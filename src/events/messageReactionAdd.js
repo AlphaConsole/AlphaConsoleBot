@@ -52,7 +52,7 @@ module.exports = {
     
                 }
             }
-        }else if(reaction._emoji.id == serverInfo.partnerEmoji){
+        }else if(reaction._emoji.name == serverInfo.partnerEmoji){
             // ADDED FOR MESSAGING USER THE PARTNER INFORMATIONS
             if(reaction.message.channel.id == serverInfo.partnerChannel && !user.bot){
                 // Reacted to message, remove reaction, send messages
