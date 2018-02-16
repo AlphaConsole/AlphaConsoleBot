@@ -75,7 +75,8 @@ function setSpecialTitle(client, serverInfo, message, blackListedWords, args, sq
         sql.get(`Select * from SpecialTitles where ID = '${args[2]}'`).then(row => {
             if (row) {
                 if (hasRole(message.member, row.PermittedRoles)) {
-                    setUsersTitle(message.author, row.Title, args);
+                    setUsersTitle(message.author, row.Title, message, args);
+                    setUsersColour(message.author, row.Color, message, args);
                 } else {
                     message.author.send('Sorry, you do not have permission to the title you have chosen.').catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
                 }
@@ -140,7 +141,7 @@ function setUsersColour(user, userColour, message, args) {
         });
         
     } else {
-        if (!isValidColour(user, userColour)) {
+        if (!isValidColour(user, userColour) && args[1].toLowerCase() != "special") {
             message.author.send('Hi, you have either chosen an invalid colour or a colour you do not have access to.'
             + '\nSubscribe to our twitch for access to more colours! \nhttps://www.twitch.tv/alphaconsole').catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
             validColour = false;
@@ -151,7 +152,6 @@ function setUsersColour(user, userColour, message, args) {
         var request = require('request');
         var url = keys.SetTitleURL;
         url += '?DiscordID=' + user.id + '&key=' + keys.Password + "&color=" + userColour;
-        console.log(url);
         request({
             method: 'GET',
             url: url
@@ -171,7 +171,6 @@ function setUsersColour(user, userColour, message, args) {
             } else {
                 user.send('There was an error. Please try again. If this problem continues please contact an admin.').catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`));
             }
-            console.log(body);
         });
     }
        

@@ -17,6 +17,12 @@ module.exports = {
     
     run: async(client, serverInfo, message, args, sql, blackListedWords) => {
         if (hasRole(message.member, "Admin") || hasRole(message.member, "Developer")) {
+            if(args.length < 2){
+                const embedChannel = new Discord.MessageEmbed()
+                        .setColor([255,255,0])
+                        .setAuthor(`Incorrect Usage: !blacklist <check|add|remove> <word>`, serverInfo.logo) 
+                    return message.channel.send(embedChannel)
+            }
             
             if (args[1].toLowerCase() == 'check') {
 
