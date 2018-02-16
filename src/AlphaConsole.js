@@ -32,7 +32,7 @@ var serverInfo = require(serverInfoPath).serverInfo;
 client.on('ready', () => {
     require('./events/ready.js').run(client, serverInfo, sql, AllowedLinksSet, AutoResponds, Commands, Events, SwearWordsSet, blackListedWords);
     require('./events/TitleCleanUp.js').run(client, serverInfo, sql);
-    require('./events/updatePartners.js').run(client, serverInfo, sql);
+    //require('./events/updatePartners.js').run(client, serverInfo, sql);
 });
 
 //New member joins
