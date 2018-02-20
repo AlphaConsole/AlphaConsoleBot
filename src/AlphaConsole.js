@@ -250,8 +250,14 @@ async function messageProcess(message){
                 require('./cmds/purge.js').run(client, serverInfo, message, args)
             }
 
+            //Moderator listroles command
             else if (args[0].toLowerCase() == "!listroles") {
                 require('./cmds/listroles.js').run(client, serverInfo, sql, message, args)
+            }
+
+            //Moderator nick command
+            else if (args[0].toLowerCase() == "!nick") {
+                require('./cmds/nick.js').run(client, serverInfo, sql, message, args)
             }
 
             /// ADMIN COMMANDS
