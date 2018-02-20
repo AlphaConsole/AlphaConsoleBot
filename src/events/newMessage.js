@@ -18,20 +18,25 @@ module.exports = {
                                 .catch(err => console.log(err));
                                 sql.get(`select * from Members where DiscordID = '${message.author.id}'`).then(row => {
                                     if (row.ccCooldown < new Date().getTime()) {
-                                        if (message.mentions.users.first() == undefined) {
+
+                                        var theUser = message.mentions.users.first() ? message.mentions.users.first() : args[1];
+
+                                        if (message.guild.members.get(theUser)) {
                                             message.channel.send(command.Response);
                                         } else {
-                                            message.channel.send(message.mentions.users.first() + ' ' + command.Response);
+                                            message.channel.send(theUser + ' ' + command.Response);
                                         }
                                         sql.run(`update Members set ccCooldown = '${new Date().getTime() + 5000}' where DiscordID = '${message.author.id}'`);
                                     }
                                 });
                         } else {
                             if (row.ccCooldown < new Date().getTime()) {
-                                if (message.mentions.users.first() == undefined) {
-                                    message.channel.send(command.Response);
+                                var getID = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
+
+                                if (theUser = message.guild.members.get(getID)) {
+                                    message.channel.send(theUser + ' ' + command.Response);
                                 } else {
-                                    message.channel.send(message.mentions.users.first() + ' ' + command.Response);
+                                    message.channel.send(command.Response);
                                 }
                                 sql.run(`update Members set ccCooldown = '${new Date().getTime() + 5000}' where DiscordID = '${message.author.id}'`);
                             }
