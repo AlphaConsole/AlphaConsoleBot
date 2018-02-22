@@ -28,7 +28,7 @@ module.exports = {
 
 function setTitle(client, serverInfo, message, blackListedWords, args) {
     var userTitle = createTitle(message, args, 2); //make title
-    if (userTitle.replace(/[^::]/g, "").length > 5) {
+    if (userTitle.replace(/[^::]/g, "").length > 10) {
         message.author.send('AlphaConsole does not support more than 5 rotations in your custom title. Please try again.').catch(e => message.guild.channels.get(serverInfo.BotSpam).send(`${message.member}, your DM's are disabled and we were not able to send you information through DM.`))
     } else {
         var invalidTitle = isValidTitle(message, blackListedWords, userTitle); //check if title is valid
