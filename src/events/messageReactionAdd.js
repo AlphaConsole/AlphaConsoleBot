@@ -78,6 +78,13 @@ module.exports = {
                     reaction.message.guild.channels.get(serverInfo.BotSpam).send(`${reaction.message.member}, your DM's are disabled, so we can't send you the information you requested about one of our Partners!`);
                 }
             }
+        } else  if (reaction._emoji.name == "🎉") {
+            var theRole = reaction.message.guild.roles.get(serverInfo.legacyrole);
+            let member = client.guilds.get(serverInfo.guildId).members.get(user.id);
+
+            if (member.roles.has(theRole.id)) {
+                reaction.users.remove(user);
+            }
         }
     }
 }

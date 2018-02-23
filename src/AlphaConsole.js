@@ -285,6 +285,14 @@ async function messageProcess(message){
             else if (args[0].toLowerCase() == "!betaids") {
                 require('./cmds/betaids.js').run(client, serverInfo, message, args, sql)
             }
+
+            else if (args[0].toLowerCase() == "!startgiveaway") {
+                require('./cmds/startgiveaway.js').run(client, serverInfo, message, args, sql)
+            }
+
+            else if (args[0].toLowerCase() == "!togglelegacy") {
+                require('./cmds/togglelegacy.js').run(client, serverInfo, message, args, sql)
+            }
             
             //Admin partner command - only works in serverInfo.editPartnerChannel
             else if (args[0].toLowerCase() == "!partner"){
@@ -323,22 +331,30 @@ async function messageProcess(message){
 
 var schedule = require('node-schedule');
 
-var j = schedule.scheduleJob({second: 1}, function(){
+var a = schedule.scheduleJob({second: 1}, function(){
     require('./events/minuteCheck.js').run(client, serverInfo, sql);
 });
 
-var j = schedule.scheduleJob({minute: 1}, function(){
+var b = schedule.scheduleJob({minute: 1}, function(){
     require('./events/StatusUpdate.js').run(client, serverInfo, sql);
     require('./events/TitleCleanUp.js').run(client, serverInfo, sql);
 });
 
-var j = schedule.scheduleJob({minute: 31}, function(){
+var b = schedule.scheduleJob({minute: 31}, function(){
     require('./events/StatusUpdate.js').run(client, serverInfo, sql);
     require('./events/TitleCleanUp.js').run(client, serverInfo, sql);
 });
 
-var j = schedule.scheduleJob({hour: 9, minute: 40}, function(){
+var c = schedule.scheduleJob({hour: 9, minute: 40}, function(){
     require('./events/DailyStats.js').run(client, serverInfo, sql);
+});
+
+var d = schedule.scheduleJob({date: 1, hour: 17}, function(){
+    require('./events/legacygiveaway.js').run(client, serverInfo, sql);
+});
+
+var e = schedule.scheduleJob({date: 16, hour: 17}, function(){
+    require('./events/legacygiveaway.js').run(client, serverInfo, sql);
 });
 
 client.login(require('./tokens.js').TestBotToken);

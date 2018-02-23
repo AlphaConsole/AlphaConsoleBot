@@ -57,6 +57,7 @@ module.exports = {
         
         client.guilds.get(serverInfo.guildId).channels.get(serverInfo.suggestionsChannel).messages.fetch();
         client.guilds.get(serverInfo.guildId).channels.get(serverInfo.showcaseChannel).messages.fetch();
+        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.giveawaychannel).messages.fetch();
 
         serverInfo.logo = client.guilds.get(serverInfo.guildId).iconURL({format:"png"});
 
