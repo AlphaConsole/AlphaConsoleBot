@@ -35,7 +35,7 @@ module.exports = {
             .addField("Voice Channels", guild.channels.array().filter(c => c.type.toLowerCase() == "voice").length, true)
             .addField("Roles", guild.roles.size, true)
             .addField("Owner", guild.owner.user.tag, true)
-            .addField("Emojis", guild.emojis.map(m => m.toString()).join(" "))
+            //.addField("Emojis", guild.emojis.map(m => m.toString()).join(" "))
             message.channel.send(embed)
         }
     }
