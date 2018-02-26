@@ -57,18 +57,14 @@ module.exports = {
                     StatusText += args[i] + " ";
                 }        
 
-                sql.all("Select * from Statuses").then(rows => {
+                await sql.all("Select * from Statuses").then(rows => {
                     if (rows.length == 0) {
-                        if (StatusText.trim() == "counter") {
-                            client.user.setActivity(`with ${client.guilds.get(serverInfo.guildId).memberCount} users`, {url: "https://www.twitch.tv/alphaconsole"});
-                        } else {
-                            client.user.setActivity(StatusText, {type: StatusType, url: "https://www.twitch.tv/alphaconsole"});
-                        }
+                            client.user.setActivity(StatusText.replace("counter", client.guilds.get(serverInfo.guildId).memberCount), {type: StatusType, url: "https://www.twitch.tv/alphaconsole"});
                     }
                 });
 
 
-                sql.run(`Insert into Statuses(StatusType, StatusText) VALUES ('${mysql_real_escape_string(StatusType)}', '${mysql_real_escape_string(StatusText)}')`).then(() => {
+                await sql.run(`Insert into Statuses(StatusType, StatusText) VALUES ('${mysql_real_escape_string(StatusType)}', '${mysql_real_escape_string(StatusText)}')`).then(() => {
                     const embed = new Discord.MessageEmbed()
                     .setColor([255,255,0])
                     .setAuthor("Status added to the list.", serverInfo.logo)
