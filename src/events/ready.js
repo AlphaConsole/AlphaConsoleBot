@@ -9,11 +9,8 @@ module.exports = {
     run: async(client, serverInfo, sql, AllowedLinksSet, AutoResponds, Commands, Events, SwearWordsSet, blackListedWords) => {
         sql.get(`select * from Statuses where Active = 1`).then(row => {
             if (row) {
-                if (row.StatusText.toLowerCase() == "counter") {
-                    client.user.setActivity(`with ${client.guilds.get(serverInfo.guildId).memberCount} members`, {url: "https://www.twitch.tv/alphaconsole"});
-                } else {
-                    client.user.setActivity(row.StatusText, {type: row.StatusType, url: "https://www.twitch.tv/alphaconsole"});
-                }
+                client.user.setActivity(row.StatusText.replace("counter", client.guilds.get(serverInfo.guildId).memberCount), {type: row.StatusType, url: "https://www.twitch.tv/alphaconsole"});
+                console.log("Status set to: " + row.StatusText.replace("counter", client.guilds.get(serverInfo.guildId).memberCount))
             }
         })
 
