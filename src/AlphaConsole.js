@@ -75,6 +75,10 @@ client.on('messageUpdate', async (originalMessage, newMessage) => {
     messageProcess(newMessage);
 });
 
+client.on('guildBanAdd', (guild, user) => {
+    require('./events/banAdd.js').run(client, serverInfo, user, sql);
+})
+
 //Outputs unhandles promises
 process.on('unhandledRejection', (reason, p) => {
     console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
