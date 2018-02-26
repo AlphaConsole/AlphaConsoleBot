@@ -60,7 +60,7 @@ module.exports = {
                 sql.all("Select * from Statuses").then(rows => {
                     if (rows.length == 0) {
                         if (StatusText.trim() == "counter") {
-                            client.user.setActivity(`with ${client.guilds.get(serverInfo.guildId).memberCount} members`, {url: "https://www.twitch.tv/alphaconsole"});
+                            client.user.setActivity(`with ${client.guilds.get(serverInfo.guildId).memberCount} users`, {url: "https://www.twitch.tv/alphaconsole"});
                         } else {
                             client.user.setActivity(StatusText, {type: StatusType, url: "https://www.twitch.tv/alphaconsole"});
                         }
@@ -83,7 +83,7 @@ module.exports = {
 
                     sql.all("Select * from Statuses").then(rows => {
                         if (rows.length == 0) {
-                            client.user.setActivity(`with ${message.guild.memberCount} members`, {url: "https://www.twitch.tv/alphaconsole"});
+                            client.user.setActivity(`with ${message.guild.memberCount} users`, {url: "https://www.twitch.tv/alphaconsole"});
                         }
                     });
                 })
@@ -95,7 +95,7 @@ module.exports = {
                         .setColor([255,255,0])
                         .setAuthor("Status list reset.", serverInfo.logo)
                         message.channel.send(embed)
-                        client.user.setActivity(`with ${message.guild.memberCount} members`, {url: "https://www.twitch.tv/alphaconsole"});
+                        client.user.setActivity(`with ${message.guild.memberCount} users`, {url: "https://www.twitch.tv/alphaconsole"});
                     })
                 })
 
