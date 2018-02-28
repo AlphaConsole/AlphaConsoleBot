@@ -9,48 +9,59 @@ module.exports = {
         if (reaction._emoji.name == "❌") {
             if (hasRole(client.guilds.get(serverInfo.guildId).members.get(user.id), "Developer") || hasRole(client.guilds.get(serverInfo.guildId).members.get(user.id), "Admin")) {
 
-                if (reaction.message.channel.id == serverInfo.suggestionsChannel) {
-                    reaction.message.delete();
-                    const embed = new Discord.MessageEmbed()
-                    .setColor([255,255,0])
-                    .setAuthor(`Your suggestion was deleted by ${user.username}`, serverInfo.logo)
-                    .setDescription("It was not a valid suggestion, it has already been suggested, or it was in violation of the information listed at the top of our suggestions channel.\n Please read this information carefully if you intend to submit another suggestion in the future.") 
-                    reaction.message.author.send(embed).catch(e => reaction.message.guild.channels.get(serverInfo.BotSpam).send(`${reaction.message.member}, your DM's are disabled and we were not able to send you information through DM.`))
-    
-                    const embedLog = new Discord.MessageEmbed()
-                    .setColor([255,255,0])
-                    .setAuthor(`SUGGESTION DELETED`, serverInfo.logo)
-                    .addField(`Suggested by `, `${reaction.message.member} (${reaction.message.author.id})`)
-    
-                    if (reaction.message.content.length != 0) {
-                        embedLog.addField(`Content`, `${reaction.message.content}`)
-                    }
-                    embedLog.addField(`Channel`, `${reaction.message.channel}`)
-                    embedLog.addField(`Deleted by`, `${user.username}`)
-                    reaction.message.guild.channels.get(serverInfo.aclogChannel).send(embedLog)
-    
-                }
-                if (reaction.message.channel.id == serverInfo.showcaseChannel) {
-                    reaction.message.delete();
-                    const embed = new Discord.MessageEmbed()
-                    .setColor([255,255,0])
-                    .setAuthor(`Your showcase was deleted by ${user.username}`, serverInfo.logo)
-                    .setDescription("It was not a valid showcase, it has already been showcased, or it was in violation of the information listed at the top of our suggestions channel.\n Please read this information carefully if you intend to submit another suggestion in the future.") 
-                    reaction.message.author.send(embed).catch(e => reaction.message.guild.channels.get(serverInfo.BotSpam).send(`${reaction.message.member}, your DM's are disabled and we were not able to send you information through DM.`))
-    
-                    const embedLog = new Discord.MessageEmbed()
-                    .setColor([255,255,0])
-                    .setAuthor(`SHOWCASE DELETED`, serverInfo.logo)
-                    .addField(`Showcased by `, `${reaction.message.member} (${reaction.message.author.id})`)
-    
-                    if (reaction.message.content.length != 0) {
-                        embedLog.addField(`Content`, `${reaction.message.content}`)
-                    }
-                    embedLog.addField(`Channel`, `${reaction.message.channel}`)
-                    embedLog.addField(`Deleted by`, `${user.username}`)
-                    reaction.message.guild.channels.get(serverInfo.aclogChannel).send(embedLog)
-    
-                }
+                user.send(`Please respond with the reason why you deleted the message. \n**This reason will be logged & sent to the user** \nYou have 30 seconds to respond.`).then(msg => {
+                    msg.channel.awaitMessages(response => response.content,
+                    {max: 1, time: 30000, errors: ['time']}).then(collected => {
+
+                        let reason = collected.first().content;
+
+                        if (reaction.message.channel.id == serverInfo.suggestionsChannel) {
+                            reaction.message.delete();
+                            const embed = new Discord.MessageEmbed()
+                            .setColor([255,255,0])
+                            .setAuthor(`Your suggestion was deleted by ${user.username}`, serverInfo.logo)
+                            .setDescription("Reason: " + reason) 
+                            reaction.message.author.send(embed).catch(e => reaction.message.guild.channels.get(serverInfo.BotSpam).send(`${reaction.message.member}, your DM's are disabled and we were not able to send you information through DM.`))
+            
+                            const embedLog = new Discord.MessageEmbed()
+                            .setColor([255,255,0])
+                            .setAuthor(`SUGGESTION DELETED`, serverInfo.logo)
+                            .addField(`Suggested by `, `${reaction.message.member} (${reaction.message.author.id})`)
+            
+                            if (reaction.message.content.length != 0) {
+                                embedLog.addField(`Content`, `${reaction.message.content}`)
+                            }
+                            embedLog.addField(`Channel`, `${reaction.message.channel}`)
+                            embedLog.addField(`Deleted by`, `${user.username}`)
+                            embedLog.addField("Reason:" , reason);
+                            reaction.message.guild.channels.get(serverInfo.aclogChannel).send(embedLog)
+            
+                        }
+
+
+                        if (reaction.message.channel.id == serverInfo.showcaseChannel) {
+                            reaction.message.delete();
+                            const embed = new Discord.MessageEmbed()
+                            .setColor([255,255,0])
+                            .setAuthor(`Your showcase was deleted by ${user.username}`, serverInfo.logo)
+                            .setDescription("Reason: " + reason) 
+                            reaction.message.author.send(embed).catch(e => reaction.message.guild.channels.get(serverInfo.BotSpam).send(`${reaction.message.member}, your DM's are disabled and we were not able to send you information through DM.`))
+            
+                            const embedLog = new Discord.MessageEmbed()
+                            .setColor([255,255,0])
+                            .setAuthor(`SHOWCASE DELETED`, serverInfo.logo)
+                            .addField(`Showcased by `, `${reaction.message.member} (${reaction.message.author.id})`)
+            
+                            if (reaction.message.content.length != 0) {
+                                embedLog.addField(`Content`, `${reaction.message.content}`)
+                            }
+                            embedLog.addField(`Channel`, `${reaction.message.channel}`)
+                            embedLog.addField(`Deleted by`, `${user.username}`)
+                            embedLog.addField('Reason: ' , reason)
+                            reaction.message.guild.channels.get(serverInfo.aclogChannel).send(embedLog)
+            
+                        }
+                })});
             }
         }else if(reaction._emoji.name == serverInfo.partnerEmoji){
             // ADDED FOR MESSAGING USER THE PARTNER INFORMATIONS
