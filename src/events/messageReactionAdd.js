@@ -9,6 +9,9 @@ module.exports = {
         if (reaction._emoji.name == "❌") {
             if (hasRole(client.guilds.get(serverInfo.guildId).members.get(user.id), "Developer") || hasRole(client.guilds.get(serverInfo.guildId).members.get(user.id), "Admin")) {
 
+                if (reaction.message.channel.id != serverInfo.suggestionsChannel &&
+                    reaction.message.channel.id != serverInfo.showcaseChannel) {return;}
+
                 user.send(`Please respond with the reason why you deleted the message. \n**This reason will be logged & sent to the user** \nYou have 30 seconds to respond.`).then(msg => {
                     msg.channel.awaitMessages(response => response.content,
                     {max: 1, time: 30000, errors: ['time']}).then(collected => {
