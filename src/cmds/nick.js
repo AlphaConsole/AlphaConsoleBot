@@ -35,6 +35,10 @@ module.exports = {
           }
 
           member.setNickname(newName);
+          const embed = new Discord.MessageEmbed()
+            .setColor([255, 255, 0])
+            .setAuthor("Nickname updated.", serverInfo.logo);
+          return message.channel.send(embed);
         })
         .catch(e => {
           const embed = new Discord.MessageEmbed()
