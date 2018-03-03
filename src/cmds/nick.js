@@ -1,47 +1,47 @@
 const Discord = require("discord.js");
 
 module.exports = {
-  title: "lockdown",
-  perms: "Admin",
-  commands: ["!lockdown"],
-  description: ["Disables all channels which rely on the bot heavily."],
+  title: "nick",
+  perms: "Moderator",
+  commands: ["!nick <@tag or id> <Nickname>"],
+  description: ["Changes the nickname of the user"],
 
-  run: async (client, serverInfo, message, args) => {
+  run: async (client, serverInfo, sql, message, args) => {
     if (
+      hasRole(message.member, "Moderator") ||
       hasRole(message.member, "Admin") ||
       hasRole(message.member, "Developer")
     ) {
-      client.guilds
-        .get(serverInfo.guildId)
-        .channels.get(serverInfo.setTitleChannel)
-        .overwritePermissions(message.guild.id, {
-          SEND_MESSAGES: false
+      if (args.length < 3) {
+        const embed = new Discord.MessageEmbed()
+          .setColor([255, 255, 0])
+          .setAuthor(
+            "Please include the user and his new nickname",
+            serverInfo.logo
+          );
+        return message.channel.send(embed);
+      }
+
+      var userID = message.mentions.users.first()
+        ? message.mentions.users.first().id
+        : args[1];
+
+      message.guild.members
+        .fetch(userID)
+        .then(member => {
+          var newName = "";
+          for (let i = 2; i < args.length; i++) {
+            newName += args[i] + " ";
+          }
+
+          member.setNickname(newName);
+        })
+        .catch(e => {
+          const embed = new Discord.MessageEmbed()
+            .setColor([255, 255, 0])
+            .setAuthor("Provided user not found.", serverInfo.logo);
+          return message.channel.send(embed);
         });
-      client.guilds
-        .get(serverInfo.guildId)
-        .channels.get(serverInfo.showcaseChannel)
-        .overwritePermissions(message.guild.id, {
-          SEND_MESSAGES: false
-        });
-      client.guilds
-        .get(serverInfo.guildId)
-        .channels.get(serverInfo.suggestionsChannel)
-        .overwritePermissions(message.guild.id, {
-          SEND_MESSAGES: false
-        });
-      client.guilds
-        .get(serverInfo.guildId)
-        .channels.get(serverInfo.setSpecialTitleChannel)
-        .overwritePermissions(message.guild.id, {
-          SEND_MESSAGES: false
-        });
-      const embedChannel = new Discord.MessageEmbed()
-        .setColor([255, 255, 0])
-        .setAuthor(
-          "All bot reliant channels have been locked down.",
-          serverInfo.logo
-        );
-      return message.channel.send(embedChannel);
     }
   }
 };
