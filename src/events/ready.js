@@ -59,20 +59,20 @@ module.exports = {
       });
     });
 
-    // client.guilds.get(serverInfo.guildId).channels.get(serverInfo.setTitleChannel).overwritePermissions(message.guild.id, {
-    //     SEND_MESSAGES: true
-    // });
-    // client.guilds.get(serverInfo.guildId).channels.get(serverInfo.showcaseChannel).overwritePermissions(message.guild.id, {
-    //     SEND_MESSAGES: true
-    // });
-    // client.guilds.get(serverInfo.guildId).channels.get(serverInfo.suggestionsChannel).overwritePermissions(message.guild.id, {
-    //     SEND_MESSAGES: true
-    // });
-    // client.guilds.get(serverInfo.guildId).channels.get(serverInfo.setSpecialTitleChannel).overwritePermissions(message.guild.id, {
-    //     SEND_MESSAGES: true
-    // });
+    /* client.guilds.get(serverInfo.guildId).channels.get(serverInfo.setTitleChannel).overwritePermissions(message.guild.id, {
+        SEND_MESSAGES: true
+    });
+    client.guilds.get(serverInfo.guildId).channels.get(serverInfo.showcaseChannel).overwritePermissions(message.guild.id, {
+        SEND_MESSAGES: true
+    });
+    client.guilds.get(serverInfo.guildId).channels.get(serverInfo.suggestionsChannel).overwritePermissions(message.guild.id, {
+        SEND_MESSAGES: true
+    });
+    client.guilds.get(serverInfo.guildId).channels.get(serverInfo.setSpecialTitleChannel).overwritePermissions(message.guild.id, {
+        SEND_MESSAGES: true
+    }); */
 
-    client.guilds
+    /* client.guilds
       .get(serverInfo.guildId)
       .channels.get(serverInfo.suggestionsChannel)
       .messages.fetch();
@@ -83,7 +83,7 @@ module.exports = {
     client.guilds
       .get(serverInfo.guildId)
       .channels.get(serverInfo.giveawaychannel)
-      .messages.fetch();
+      .messages.fetch(); */
 
     serverInfo.logo = client.guilds
       .get(serverInfo.guildId)
@@ -125,19 +125,19 @@ module.exports = {
       }
     });
 
-    if (!client.guilds.get(serverInfo.guildId).available) {
+    /* if (!client.guilds.get(serverInfo.guildId).available) {
       client.users
         .get("136607366408962048")
         .send("**AlphaConsole** guild is disabled according to the API!");
       client.users
         .get("149223090134450177")
         .send("**AlphaConsole** guild is disabled according to the API!");
-    }
+      } */
 
     console.log("AlphaConsole Bot logged in and ready.");
-    client.guilds
-      .get(serverInfo.guildId)
-      .channels.get(serverInfo.basementChannel)
-      .send(":robot: Bot logged in and ready :robot:");
+    // client.guilds
+    //   .get(serverInfo.guildId)
+    //   .channels.get(serverInfo.basementChannel)
+    //   .send(":robot: Bot logged in and ready :robot:");
   }
 };
