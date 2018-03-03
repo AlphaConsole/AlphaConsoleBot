@@ -44,7 +44,7 @@ client.on("ready", () => {
     SwearWordsSet,
     blackListedWords
   );
-  require("./events/TitleCleanUp.js").run(client, serverInfo, sql);
+  //require("./events/TitleCleanUp.js").run(client, serverInfo, sql);
   //require('./events/updatePartners.js').run(client, serverInfo, sql);
 });
 
