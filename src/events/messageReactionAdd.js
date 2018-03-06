@@ -124,9 +124,9 @@ module.exports = {
                     .send(embedLog);
                 }
               })
-			.catch(collected => {
-				//DRY overrated	tbh		
-				let reason;
+            .catch(collected => {
+                //DRY overrated	tbh		
+                let reason;
                 if (reaction.message.channel.id == serverInfo.suggestionsChannel) {
 				  reason = "Not a valid suggestion, already been suggested, or in violation of the information listed at the top of our suggestions channel."
                   reaction.message.delete();
