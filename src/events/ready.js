@@ -133,6 +133,9 @@ module.exports = {
         .get("149223090134450177")
         .send("**AlphaConsole** guild is disabled according to the API!");
       } */
+    
+	//Should be a loop to get them all but I couldn't make it work with it being async... 100 should be enough anyway.
+	client.guilds.get(serverInfo.guildId).channels.get(serverInfo.suggestionsChannel).messages.fetch({limit: 100})
 
     console.log("AlphaConsole Bot logged in and ready.");
     // client.guilds
