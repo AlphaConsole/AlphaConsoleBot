@@ -109,13 +109,13 @@ module.exports = {
         }
 
         if (timeArg == 0) {
+          console.log(timeArg);
           sql
             .run(
               `Insert into logs(Action, Member, Moderator, value, Reason, Time, ChannelID) VALUES('mute', '${
                 MutedUser.id
-              }', '${message.author.id}', ${mysql_real_escape_string(
-                timeArg
-              )},'${mysql_real_escape_string(
+              }', '${message.author.id}', ${timeArg},
+              '${mysql_real_escape_string(
                 TheReason
               )}', '${new Date().getTime()}', '${message.channel.id}')`
             )
