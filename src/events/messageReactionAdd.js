@@ -124,7 +124,7 @@ module.exports = {
                     .send(embedLog);
                 }
               })
-            .catch(collected => {
+              .catch(collected => {
                 //DRY overrated	tbh		
                 let reason;
                 if (reaction.message.channel.id == serverInfo.suggestionsChannel) {
@@ -212,7 +212,7 @@ module.exports = {
                     .get(serverInfo.aclogChannel)
                     .send(embedLog);
                 }
-            });			  
+              });			  
           });
       }
     } else if (reaction._emoji.name == serverInfo.partnerEmoji) {
