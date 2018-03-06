@@ -109,7 +109,6 @@ module.exports = {
         }
 
         if (timeArg == 0) {
-          console.log(timeArg);
           sql
             .run(
               `Insert into logs(Action, Member, Moderator, value, Reason, Time, ChannelID) VALUES('mute', '${
