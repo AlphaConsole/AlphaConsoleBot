@@ -123,7 +123,96 @@ module.exports = {
                     .get(serverInfo.aclogChannel)
                     .send(embedLog);
                 }
-              });
+              })
+              .catch(collected => {
+                //DRY overrated	tbh		
+                let reason;
+                if (reaction.message.channel.id == serverInfo.suggestionsChannel) {
+				  reason = "Not a valid suggestion, already been suggested, or in violation of the information listed at the top of our suggestions channel."
+                  reaction.message.delete();
+                  const embed = new Discord.MessageEmbed()
+                    .setColor([255, 255, 0])
+                    .setAuthor(
+                      `Your suggestion was deleted by ${user.username}`,
+                      serverInfo.logo
+                    )
+                    .setDescription("Reason: " + reason);
+                  reaction.message.author
+                    .send(embed)
+                    .catch(e =>
+                      reaction.message.guild.channels
+                        .get(serverInfo.BotSpam)
+                        .send(
+                          `${
+                            reaction.message.member
+                          }, your DM's are disabled and we were not able to send you information through DM.`
+                        )
+                    );
+
+                  const embedLog = new Discord.MessageEmbed()
+                    .setColor([255, 255, 0])
+                    .setAuthor(`SUGGESTION DELETED`, serverInfo.logo)
+                    .addField(
+                      `Suggested by `,
+                      `${reaction.message.member} (${
+                        reaction.message.author.id
+                      })`
+                    );
+
+                  if (reaction.message.content.length != 0) {
+                    embedLog.addField(`Content`, `${reaction.message.content}`);
+                  }
+                  embedLog.addField(`Channel`, `${reaction.message.channel}`);
+                  embedLog.addField(`Deleted by`, `${user.username}`);
+                  embedLog.addField("Reason:", reason);
+                  reaction.message.guild.channels
+                    .get(serverInfo.aclogChannel)
+                    .send(embedLog);
+                }
+
+                if (reaction.message.channel.id == serverInfo.showcaseChannel) {
+                  reason = "Unrelated to the channel's purpose."
+				  reaction.message.delete();
+                  const embed = new Discord.MessageEmbed()
+                    .setColor([255, 255, 0])
+                    .setAuthor(
+                      `Your showcase was deleted by ${user.username}`,
+                      serverInfo.logo
+                    )
+                    .setDescription("Reason: " + reason);
+                  reaction.message.author
+                    .send(embed)
+                    .catch(e =>
+                      reaction.message.guild.channels
+                        .get(serverInfo.BotSpam)
+                        .send(
+                          `${
+                            reaction.message.member
+                          }, your DM's are disabled and we were not able to send you information through DM.`
+                        )
+                    );
+
+                  const embedLog = new Discord.MessageEmbed()
+                    .setColor([255, 255, 0])
+                    .setAuthor(`SHOWCASE DELETED`, serverInfo.logo)
+                    .addField(
+                      `Showcased by `,
+                      `${reaction.message.member} (${
+                        reaction.message.author.id
+                      })`
+                    );
+
+                  if (reaction.message.content.length != 0) {
+                    embedLog.addField(`Content`, `${reaction.message.content}`);
+                  }
+                  embedLog.addField(`Channel`, `${reaction.message.channel}`);
+                  embedLog.addField(`Deleted by`, `${user.username}`);
+                  embedLog.addField("Reason: ", reason);
+                  reaction.message.guild.channels
+                    .get(serverInfo.aclogChannel)
+                    .send(embedLog);
+                }
+              });			  
           });
       }
     } else if (reaction._emoji.name == serverInfo.partnerEmoji) {
