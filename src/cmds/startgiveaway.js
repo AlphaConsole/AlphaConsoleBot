@@ -44,7 +44,8 @@ module.exports = {
                       .then(member => member.addRole(serverInfo.legacyrole));
                   }
                 });
-            });
+            })
+            .catch(e => console.log("Previous giveaway not found!"))
           }
         });
 
@@ -79,7 +80,7 @@ module.exports = {
           });
           await giveawayChannel.send("", {
             files: [
-              "https://cdn.discordapp.com/attachments/381877174610821130/395685201562435584/ACBorder.png"
+              "https://cdn.discordapp.com/attachments/278333760666075136/363379858039898112/ACBorder.png"
             ]
           });
 
@@ -109,7 +110,7 @@ module.exports = {
                     );
                     await giveawayChannel.send("", {
                       files: [
-                        "https://cdn.discordapp.com/attachments/381877174610821130/395685201562435584/ACBorder.png"
+                        "https://cdn.discordapp.com/attachments/278333760666075136/363379858039898112/ACBorder.png"
                       ]
                     });
                   } else {
@@ -154,7 +155,7 @@ module.exports = {
                     );
                     await giveawayChannel.send("", {
                       files: [
-                        "https://cdn.discordapp.com/attachments/381877174610821130/395685201562435584/ACBorder.png"
+                        "https://cdn.discordapp.com/attachments/278333760666075136/363379858039898112/ACBorder.png"
                       ]
                     });
                   }

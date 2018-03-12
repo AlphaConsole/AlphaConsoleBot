@@ -6,7 +6,7 @@ module.exports.serverInfo = {
   serverlogChannel: "364569370065895424",
   modlogChannel: "371462852063789068",
   DynamicCat: "355924371367395329",
-  BotSpam: "356867946053894144",
+  BotSpam: "420659899744124928",
   EventsRole: "389234045709582337",
   suggestionsChannel: "352855430315376640",
   showcaseChannel: "358833347486810112",

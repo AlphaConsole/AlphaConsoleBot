@@ -80,21 +80,46 @@ function overrideTitle(client, serverInfo, message, blackListedWords, args) {
     hasRole(message.member, "Admin") ||
     hasRole(message.member, "Developer")
   ) {
-    var user = message.mentions.users.first();
-    var userTitle = createTitle(message, args, 3); //make title
-    setUsersTitle(user, userTitle, message, args);
-    message.author
-      .send(`User ${args[2]} updated successfully.`)
-      .catch(e =>
-        message.guild.channels
-          .get(serverInfo.BotSpam)
-          .send(
-            `${
-              message.member
-            }, your DM's are disabled and we were not able to send you information through DM.`
-          )
-      );
+    let id;
+    if (message.mentions.users.first() == null) {
+      id = args[2];
+    } else {
+      id = message.mentions.users.first().id;
+    }
+
+    var title = "";
+    for (let word = 3; word < args.length; word++) {
+      title += args[word] + " ";
+    }
+
+    var request = require("request");
+    var url = keys.SetTitleURL;
+    url +=
+      "?DiscordID=" +
+       id +
+      "&key=" +
+      keys.Password +
+      "&title=" +
+      title.trim();
+    request(
+      {
+        method: "GET",
+        url: url
+      },
+      function(err, response, body) {
+        if (err)
+          user.send(
+            "Their was an error updating your title. Please" + " pm an admin."
+          );
+        if (body) {
+          if (body.toLowerCase().includes("done")) {
+            message.author.send(`User <@${id}> updated sucessfully`);
+          } else {
+            message.author.send("There appears to have been an error.")
+          }
+      }});
   }
+  
   message.delete();
 }
 
@@ -104,19 +129,39 @@ function overrideColour(client, serverInfo, message, blackListedWords, args) {
     hasRole(message.member, "Admin") ||
     hasRole(message.member, "Developer")
   ) {
-    var user = message.mentions.users.first();
-    setUsersColour(user, args[3], message, args);
-    message.author
-      .send(`User ${args[2]} updated successfully.`)
-      .catch(e =>
-        message.guild.channels
-          .get(serverInfo.BotSpam)
-          .send(
-            `${
-              message.member
-            }, your DM's are disabled and we were not able to send you information through DM.`
-          )
-      );
+    let id;
+    if (message.mentions.users.first() == null) {
+      id = args[2];
+    } else {
+      id = message.mentions.users.first().id;
+    }
+
+    var request = require("request");
+    var url = keys.SetTitleURL;
+    url +=
+      "?DiscordID=" +
+       id +
+      "&key=" +
+      keys.Password +
+      "&color=" +
+      args[3];
+    request(
+      {
+        method: "GET",
+        url: url
+      },
+      function(err, response, body) {
+        if (err)
+          user.send(
+            "Their was an error updating your title. Please" + " pm an admin."
+          );
+        if (body) {
+          if (body.toLowerCase().includes("done")) {
+            message.author.send(`User <@${id}> updated sucessfully`);
+          } else {
+            message.author.send("There appears to have been an error.")
+          }
+      }});
   }
   message.delete();
 }

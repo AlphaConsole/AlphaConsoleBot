@@ -18,7 +18,7 @@ module.exports = {
       const embed = new Discord.MessageEmbed()
         .setColor([255, 255, 0])
         .setAuthor(
-          `AlphaConsole has ${message.guild.memberCount} members.`,
+          `AlphaConsole has ${message.guild.memberCount} members + (50k prune).`,
           serverInfo.logo
         );
       message.channel.send(embed);
