@@ -2,28 +2,36 @@ const Discord = require("discord.js");
 
 module.exports = {
   title: "send message",
-  perms: "Root",
+  perms: "Developers",
   commands: ["!betaids"],
-  description: ["Sends a message"],
+  description: ["Sends ids for whitelist"],
 
-  run: async (client, serverInfo, message, args, sql) => {
-    if (isStaff(message.member)) {
+  run: async (client, serverInfo, message, args, sql, keys) => {
+    if (hasRole(message.member, "Developer")) {
       let output = "";
-      let count = 0;
-      sql.all("Select SteamID64 from BetaSteamIDS").then(rows => {
-        rows.forEach(row => {
-          if (!isNaN(row.SteamID64)) {
-            output += `\`Whitelist.insert(std::pair<__int64, int>(${
-              row.SteamID64
-            }, 0));\` \n`;
-            count++;
-            if (count % 20 == 0) {
-              message.author.send(output);
-              output = "";
+      message.guild.members.fetch()
+      .then(members => {
+        members.forEach(function(value, key) {
+            if (hasRole(value, "Twitch Sub") || hasRole(value, "Legacy") || hasRole(value, "Beta")) {
+              var request = require("request");
+              var url = keys.GetSteamIDURL;
+              url += "?DiscordID=" + key;
+              request(
+                {
+                  method: "GET",
+                  url: url
+                },
+                function(err, response, body) { 
+                    if (body) {
+                      if (body != "not linked") {
+                        //output += `${body},`;
+                        console.log(body);
+                      }
+                    }
+                });
             }
-          }
         });
-        message.author.send(output);
+        output = output.slice(0, -1);
       });
     }
   }

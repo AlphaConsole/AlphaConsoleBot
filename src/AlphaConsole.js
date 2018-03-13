@@ -380,7 +380,8 @@ async function messageProcess(message) {
           serverInfo,
           message,
           args,
-          sql
+          sql,
+          keys
         );
       } else if (args[0].toLowerCase() == "!startgiveaway") {
         require("./cmds/startgiveaway.js").run(
