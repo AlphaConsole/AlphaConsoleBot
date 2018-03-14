@@ -1,33 +1,75 @@
 const Discord = require("discord.js");
 
+var fs = require("fs");
+
 module.exports = {
   title: "send message",
-  perms: "Root",
+  perms: "Developers",
   commands: ["!betaids"],
-  description: ["Sends a message"],
+  description: ["Sends ids for whitelist"],
 
-  run: async (client, serverInfo, message, args, sql) => {
-    if (isStaff(message.member)) {
-      let output = "";
-      let count = 0;
-      sql.all("Select SteamID64 from BetaSteamIDS").then(rows => {
-        rows.forEach(row => {
-          if (!isNaN(row.SteamID64)) {
-            output += `\`Whitelist.insert(std::pair<__int64, int>(${
-              row.SteamID64
-            }, 0));\` \n`;
-            count++;
-            if (count % 20 == 0) {
-              message.author.send(output);
-              output = "";
-            }
+  run: async (client, serverInfo, message, args, sql, keys) => {
+    if (
+      hasRole(message.member, "Developer") ||
+      hasRole(message.member, "Admin")
+    ) {
+      let output = [];
+      let memberCount = 10;
+      message.guild.members.fetch().then(members => {
+        memberCount = members.length;
+        members.forEach(function(value, key, members) {
+          if (hasAccessToBeta(value)) {
+            var request = require("request");
+            var url = keys.GetSteamIDURL;
+            url += "?DiscordID=" + key;
+            request(
+              {
+                method: "GET",
+                url: url
+              },
+              function(err, response, body) {
+                if (body) {
+                  if (body != "not linked") {
+                    output.push(body);
+                  }
+                }
+              }
+            );
           }
         });
-        message.author.send(output);
       });
+
+      while (output.length < memberCount) {
+        await sleep(1000);
+      }
+      var fs = require("fs");
+      try {
+        fs.writeFileSync("./id.csv", output.join(), "utf-8");
+      } catch (e) {
+        console.log(e);
+      }
+      message.reply({ files: [new Discord.MessageAttachment("./id.csv")] });
     }
   }
 };
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function hasAccessToBeta(user) {
+  return (
+    hasRole(user, "Twitch Sub") ||
+    hasRole(user, "Legacy") ||
+    hasRole(user, "Beta") ||
+    hasRole(user, "Twitch Sub") ||
+    hasRole(user, "Partner") ||
+    hasRole(user, "Partner+") ||
+    hasRole(user, "YouTube Partner") ||
+    hasRole(user, "Twitch Partner") ||
+    hasRole(user, "Developer")
+  );
+}
 
 function isStaff(user) {
   if (

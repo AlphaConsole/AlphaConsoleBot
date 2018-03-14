@@ -64,3 +64,4 @@ src/tokens.js
 src/sqlite/AlphaConsole.db
 src/sqlite/Bot.db
 .vs
+id.csv
