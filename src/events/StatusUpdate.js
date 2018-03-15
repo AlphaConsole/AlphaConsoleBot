@@ -10,6 +10,7 @@ module.exports = {
           { url: "https://www.twitch.tv/alphaconsole" }
         );
       } else {
+        if (rows.length == 1) return;
         if (rows[rows.length - 1].Active == 1) {
           sql
             .run(
