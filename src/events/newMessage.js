@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-
+const keys = require("../tokens.js");
 // Barbo, idk what I'm doing. - Vezqi
 
 module.exports = {
@@ -334,144 +334,102 @@ module.exports = {
     }
 
     if (message.channel.id == serverInfo.betaSteamIDS) {
-      message.delete();
-
-      if (args.length == 5 && message.mentions.users.first()) {
-        if (
-          message.mentions.users.first().id == message.author.id ||
-          hasRole(message.member, "Admin") ||
-          hasRole(message.member, "Developer")
-        ) {
-          sql
-            .get(
-              `select * from BetaSteamIDS where DiscordID = '${
-                message.mentions.users.first().id
-              }'`
-            )
-            .then(row => {
-              if (row) {
-                message.author
-                  .send("Your account is already signed up for the beta.")
-                  .catch(e =>
-                    message.guild.channels
-                      .get(serverInfo.BotSpam)
-                      .send(
-                        `${
-                          message.member
-                        }, your DM's are disabled and we were not able to send you information through DM.`
-                      )
-                  );
-              } else {
-                message.author
-                  .send(
-                    `__Is this information correct?__\n\nDiscord user: **${
-                      message.mentions.users.first().tag
-                    }**\nSteamID64: **${args[2]}**\nSteam Link: **<${
-                      args[4]
-                    }>**\n\nIf this is correct, please respond with **yes**.\nOtherwise respond with **no**.`
-                  )
-                  .then(msg => {
-                    msg.channel
-                      .awaitMessages(
-                        response =>
-                          response.content.toLowerCase() === "yes" ||
-                          response.content.toLowerCase() === "no",
-                        { max: 1, time: 30000, errors: ["time"] }
-                      )
-                      .then(collected => {
-                        if (collected.first().content.toLowerCase() == "yes") {
-                          message.channel.send(
-                            `**${message.mentions.users.first().tag}** | ${
-                              args[2]
-                            } | <${args[4]}>`
-                          );
-                          message.author.send(
-                            "You have succesfully been added to the Beta Testers!"
-                          );
-                          sql.run(
-                            `Insert into BetaSteamIDS (DiscordID, SteamID64, SteamLink) VALUES ('${
-                              message.mentions.users.first().id
-                            }','${args[2]}','${args[4]}')`
-                          );
-
-                          sql
-                            .get(`select * from misc where message = 'steamid'`)
-                            .then(row => {
-                              if (row) {
-                                message.channel.messages
-                                  .fetch(row.value)
-                                  .then(msg => {
-                                    if (msg) {
-                                      msg.delete();
-                                    }
-
-                                    message.channel
-                                      .send(
-                                        "**__Read the Pins of this channel for all info__**\n\n__Format:__\n```\n@tag | SteamID64 | SteamURL\n```"
-                                      )
-                                      .then(m => {
-                                        sql.run(
-                                          `update misc set value = '${
-                                            m.id
-                                          }' where message = 'steamid'`
-                                        );
-                                      });
-                                  });
-                              }
-                            });
-                        } else {
-                          message.author.send(
-                            "You have not been added to the Beta list."
-                          );
-                        }
-                      })
-                      .catch(() => {
-                        message.author.send(
-                          "You have not confirmed with **yes** within 30 seconds and you have not been added to the list."
-                        );
-                      });
-                  })
-                  .catch(e =>
-                    message.guild.channels
-                      .get(serverInfo.BotSpam)
-                      .send(
-                        `${
-                          message.member
-                        }, your DM's are disabled and we were not able to send you information through DM.`
-                      )
-                  );
-              }
-            });
-        } else {
-          message.author
-            .send("The person you mentioned is not yourself!")
-            .catch(e =>
-              message.guild.channels
-                .get(serverInfo.BotSpam)
-                .send(
-                  `${
-                    message.member
-                  }, your DM's are disabled and we were not able to send you information through DM.`
-                )
-            );
-        }
-      } else {
-        message.author
-          .send(
-            "Your input was incorrect. Please use the following format:\n`@User | SteamID64 | SteamURL`"
-          )
-          .catch(e =>
-            message.guild.channels
-              .get(serverInfo.BotSpam)
-              .send(
-                `${
-                  message.member
-                }, your DM's are disabled and we were not able to send you information through DM.`
-              )
-          );
-      }
+      message.delete();             
+          
+			//maybe move this to commands so you can force a user aswell
+			//Maybe question if it's the correct URL??
+			function setBeta(member, steamID){
+				var request = require("request");
+				var url = keys.SetBetaURL;
+				url +=
+					"?DiscordID=" +
+					member.id +
+					"&key=" +
+					keys.Password +
+					"&SteamID=" +
+					steamID;
+				request(
+					{
+						method: "GET",
+						url: url
+					},
+					function(err, response, body) {
+						if (err)
+							member.send("An error occured. Please try again later.");
+						if (body) {
+							member.send(body);
+					}});				
+			}			
+			
+			function getSteamID(args){
+				if(args.length != 1) {
+					message.author.send("Your input is incorrect. Valid inputs are: Steam link, SteamID64 or Steam Custom URL.");
+					return;
+				} else {
+					var incorrectInput = false;
+					var steamID = args[0];
+					var shouldQuerySteamAPI = false;				
+					if(steamID.includes("steamcommunity.com")){
+						var splited = steamID.split("/").filter(v=>v!='');
+						var commIndex = splited.indexOf("steamcommunity.com");				
+						if(splited.length > commIndex + 2) {				
+							var field = splited[commIndex+1];
+							if(!(field == "id" || field == "profiles")){
+								message.author.send("Your input is incorrect. Valid inputs are: Steam link, SteamID64 or Steam Custom URL.");
+								return;
+							return;							
+							} else {							
+								steamID = splited[commIndex+2];
+							}
+						} else {
+							message.author.send("Your input is incorrect. Valid inputs are: Steam link, SteamID64 or Steam Custom URL.");
+							return;
+						}
+					} else {
+						if(steamID.match(/^[a-z0-9]+$/i) === null) incorrectInput = true;					
+					}					
+					if(!steamID.match(/^7\d{16}$/)) shouldQuerySteamAPI= true;
+					if(shouldQuerySteamAPI) {
+						var request = require("request");
+						var url = keys.SteamAPIURL;
+						url += '?key=' + keys.SteamAPIKey + '&vanityurl=' + steamID;
+						request({	method: "GET", url: url	},
+							function(err, response, body) {
+								if(err) {
+									message.author.send("An error occured. Please try again later.");
+									return;
+								}else {
+									if (body) {
+										var jsonObject = JSON.parse(body);
+										if(jsonObject != null && jsonObject.response && jsonObject.response.success){
+											if(jsonObject.response.success == 1) {													
+													steamID = jsonObject.response.steamid;
+													setBeta(message.author, steamID);
+											} else {
+												message.author.send("Your input is incorrect. Valid inputs are: Steam link, SteamID64 or Steam Custom URL.");
+												return;
+											}
+										} else {
+											message.author.send("An error occured. Please try again later.");
+											return;
+										}
+																
+									} else {
+										message.author.send("An error occured. Please try again later.");
+										return;
+									}
+								}
+							}
+						);
+					}	else {					
+						setBeta(message.author, steamID);		
+					}						
+				}			
+			}
+			getSteamID(args);			
     }
-
+		
+		
     if (
       message.channel.id == serverInfo.setTitleChannel ||
       message.channel.id == serverInfo.setSpecialTitleChannel
