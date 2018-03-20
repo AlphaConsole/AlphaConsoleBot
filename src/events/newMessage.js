@@ -71,11 +71,14 @@ module.exports = {
                     });
                 } else {
                   if (row.ccCooldown < new Date().getTime()) {
-                    var getID = message.mentions.users.first()
-                      ? message.mentions.users.first().id
-                      : args[1];
 
-                    if ((theUser = message.guild.members.get(getID))) {
+                    var getID;
+                    if (message.mentions.users.first() != undefined) {
+                       getID = message.mentions.users.first();
+                    }
+
+                    if (getID != null) {
+                      theUser = message.guild.members.get(getID);
                       message.channel.send(theUser + " " + command.Response);
                     } else {
                       message.channel.send(command.Response);
