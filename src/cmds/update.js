@@ -10,10 +10,7 @@ module.exports = {
   run: async (client, serverInfo, message, args) => {
     if (
       hasRole(message.member, "Admin") ||
-      hasRole(message.member, "Developer") ||
-      hasRole(message.member, "Moderator") ||
-      hasRole(message.member, "Support") ||
-      hasRole(message.member, "Staff")
+      hasRole(message.member, "Developer")
     ) {
       // <---   If you would like to change role perms. Change [BontControl] to your role name
       message.reply("Begining update");

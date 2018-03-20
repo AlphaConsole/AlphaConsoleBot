@@ -32,7 +32,6 @@ module.exports = {
       }
     } else {
       if (
-        hasRole(message.member, "Moderator") ||
         hasRole(message.member, "Admin") ||
         hasRole(message.member, "Developer")
       ) {
