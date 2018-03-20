@@ -453,7 +453,7 @@ var a = schedule.scheduleJob({ second: 1 }, function() {
   require("./events/minuteCheck.js").run(client, serverInfo, sql);
 });
 
-var b = schedule.scheduleJob({ minute: 1 }, function() {
+var aa = schedule.scheduleJob({ minute: 1 }, function() {
   require("./events/StatusUpdate.js").run(client, serverInfo, sql);
   require("./events/TitleCleanUp.js").run(client, serverInfo, sql);
 });
