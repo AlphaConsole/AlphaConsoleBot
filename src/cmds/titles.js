@@ -502,7 +502,9 @@ function isValidColour(user, colour) {
     case "2":
       if (
         hasRole(user, "Twitch Sub") ||
-        hasRole(user, "Legacy") ||
+        hasRole(user, "Legacy") || 
+        hasRole(user, "Org Partner") ||
+        hasRole(user, "Partner+") ||
         isStaff(user)
       ) {
         return true;
@@ -519,6 +521,8 @@ function isValidColour(user, colour) {
       if (
         hasRole(user, "Twitch Sub") ||
         hasRole(user, "Legacy") ||
+        hasRole(user, "Org Partner") ||
+        hasRole(user, "Partner+") ||
         isStaff(user)
       ) {
         return true;

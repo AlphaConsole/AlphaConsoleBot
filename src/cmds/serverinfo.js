@@ -25,9 +25,10 @@ module.exports = {
       message.channel.id == serverInfo.BotSpam ||
       message.channel.id == serverInfo.basementChannel ||
       message.channel.id == serverInfo.staffChannel ||
-      message.channel.id == "378420714941972480"
+      message.channel.id == "378420714941972480" || 
+      hasRole(message.member, "Admin")
     ) {
-      var guild = client.guilds.get(serverInfo.guildId);
+      var guild = message.guild;
       var creationDate = new Date(guild.createdTimestamp);
 
       var now = new Date();
@@ -87,8 +88,8 @@ module.exports = {
           true
         )
         .addField("Roles", guild.roles.size, true)
-        .addField("Owner", guild.owner.user.tag, true);
-      //.addField("Emojis", guild.emojis.map(m => m.toString()).join(" "))
+        .addField("Owner", guild.owner.user, true)
+        //.addField("Emojis", guild.emojis.map(m => m.toString()).join(""))
       message.channel.send(embed);
     }
   }
