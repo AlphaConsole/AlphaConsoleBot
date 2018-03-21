@@ -53,10 +53,9 @@ module.exports = {
                     .then(row => {
                       if (row.ccCooldown < new Date().getTime()) {
                         var theUser = message.mentions.users.first()
-                          ? message.mentions.users.first()
-                          : args[1];
+                          
 
-                        if (message.guild.members.get(theUser)) {
+                        if (theUser == undefined) {
                           message.channel.send(command.Response);
                         } else {
                           message.channel.send(
