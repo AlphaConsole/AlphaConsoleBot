@@ -53,10 +53,9 @@ module.exports = {
                     .then(row => {
                       if (row.ccCooldown < new Date().getTime()) {
                         var theUser = message.mentions.users.first()
-                          ? message.mentions.users.first()
-                          : args[1];
+                          
 
-                        if (message.guild.members.get(theUser)) {
+                        if (theUser == undefined) {
                           message.channel.send(command.Response);
                         } else {
                           message.channel.send(
@@ -72,13 +71,12 @@ module.exports = {
                 } else {
                   if (row.ccCooldown < new Date().getTime()) {
 
-                    var getID;
+                    var theUser;
                     if (message.mentions.users.first() != undefined) {
-                       getID = message.mentions.users.first();
+                       theUser = message.mentions.users.first();
                     }
 
-                    if (getID != null) {
-                      theUser = message.guild.members.get(getID);
+                    if (theUser != undefined) {
                       message.channel.send(theUser + " " + command.Response);
                     } else {
                       message.channel.send(command.Response);
