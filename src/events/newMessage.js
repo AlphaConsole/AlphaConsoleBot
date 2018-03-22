@@ -71,13 +71,12 @@ module.exports = {
                 } else {
                   if (row.ccCooldown < new Date().getTime()) {
 
-                    var getID;
+                    var theUser;
                     if (message.mentions.users.first() != undefined) {
-                       getID = message.mentions.users.first();
+                       theUser = message.mentions.users.first();
                     }
 
-                    if (getID != undefined) {
-                      theUser = message.guild.members.get(getID);
+                    if (theUser != undefined) {
                       message.channel.send(theUser + " " + command.Response);
                     } else {
                       message.channel.send(command.Response);
