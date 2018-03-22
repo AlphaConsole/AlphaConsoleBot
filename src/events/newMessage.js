@@ -77,7 +77,7 @@ module.exports = {
                        getID = message.mentions.users.first();
                     }
 
-                    if (getID != null) {
+                    if (getID != undefined) {
                       theUser = message.guild.members.get(getID);
                       message.channel.send(theUser + " " + command.Response);
                     } else {
