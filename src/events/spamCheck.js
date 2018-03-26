@@ -14,7 +14,7 @@ module.exports = {
     banned,
     sql
   ) => {
-    if (isStaff(message.member)) return;
+    if (isIgnore(message.member)) return;
 
     if (noAutoResponceChannel(message.channel.id, serverInfo)) return;
 
@@ -61,7 +61,7 @@ module.exports = {
       message.channel.send(embed);
       message.member.addRole(message.guild.roles.find("name", "Muted"));
 
-      message.channel.messages.fetch({ limit: 100 }).then(messages => {
+      message.channel.messages.fetch({ limit: 15 }).then(messages => {
         messages.forEach(themessage => {
           if (themessage.author.id == message.author.id) {
             themessage.delete();
@@ -173,7 +173,7 @@ module.exports = {
       message.channel.send(embed);
       message.member.addRole(message.guild.roles.find("name", "Muted"));
 
-      message.channel.messages.fetch({ limit: 100 }).then(messages => {
+      message.channel.messages.fetch({ limit: 15 }).then(messages => {
         messages.forEach(themessage => {
           if (themessage.author.id == message.author.id) {
             themessage.delete();
@@ -242,7 +242,7 @@ module.exports = {
           message.channel.send(embed);
           message.member.addRole(message.guild.roles.find("name", "Muted"));
 
-          message.channel.messages.fetch({ limit: 100 }).then(messages => {
+          message.channel.messages.fetch({ limit: 15 }).then(messages => {
             messages.forEach(themessage => {
               if (themessage.author.id == message.author.id) {
                 themessage.delete();
@@ -353,7 +353,7 @@ module.exports = {
             message.channel.send(embed);
             message.member.addRole(message.guild.roles.find("name", "Muted"));
 
-            message.channel.messages.fetch({ limit: 100 }).then(messages => {
+            message.channel.messages.fetch({ limit: 15 }).then(messages => {
               messages.forEach(themessage => {
                 if (themessage.author.id == message.author.id) {
                   themessage.delete();
@@ -423,12 +423,15 @@ module.exports = {
  * Returns true if user is part of staff
  * @param {user} user
  */
-function isStaff(user) {
+function isIgnore(user) {
   if (
     hasRole(user, "Developer") ||
     hasRole(user, "Admin") ||
     hasRole(user, "Moderator") ||
-    hasRole(user, "Support")
+    hasRole(user, "Support") ||
+    hasRole(user, "Staff") ||
+    hasRole(user, "Stream Team") ||
+    hasRole(user, "Community Helper")
   ) {
     return true;
   } else {
