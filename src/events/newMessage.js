@@ -524,12 +524,13 @@ module.exports = {
       }
     });
 
-    if (
+    /* if (
       args.indexOf("bot") > -1 &&
       message.mentions.users.first() == undefined
     ) {
       sentiment(message);
-    }
+    } */
+    
   }
 };
 
