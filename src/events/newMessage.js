@@ -18,13 +18,16 @@ module.exports = {
     SwearWordsSet,
     permits
   ) => {
+
+
+
     // Custom Commands
-    if (message.content.startsWith("!")) {
+    if (message.content.startsWith("!") && !noCustomCommandsChannel(message.channel.id, serverInfo)) {
       sql
         .get(
           `Select * from Commands where Command = '${mysql_real_escape_string(
-            args[0].substring(1).toLowerCase()
-          )}'`
+              args[0].substring(1).toLowerCase()
+            )}'`
         )
         .then(command => {
           if (command) {
@@ -38,22 +41,22 @@ module.exports = {
                   sql
                     .run(
                       `Insert into Members(DiscordID, Username, JoinedDate)VALUES('${
-                        message.author.id
-                      }', '${mysql_real_escape_string(
-                        message.author.username
-                      )}', '${new Date().getTime()}')`
+                          message.author.id
+                        }', '${mysql_real_escape_string(
+                          message.author.username
+                        )}', '${new Date().getTime()}')`
                     )
                     .catch(err => console.log(err));
                   sql
                     .get(
                       `select * from Members where DiscordID = '${
-                        message.author.id
-                      }'`
+                          message.author.id
+                        }'`
                     )
                     .then(row => {
                       if (row.ccCooldown < new Date().getTime()) {
                         var theUser = message.mentions.users.first()
-                          
+
 
                         if (theUser == undefined) {
                           message.channel.send(command.Response);
@@ -64,7 +67,7 @@ module.exports = {
                         }
                         sql.run(
                           `update Members set ccCooldown = '${new Date().getTime() +
-                            5000}' where DiscordID = '${message.author.id}'`
+                              5000}' where DiscordID = '${message.author.id}'`
                         );
                       }
                     });
@@ -73,7 +76,7 @@ module.exports = {
 
                     var theUser;
                     if (message.mentions.users.first() != undefined) {
-                       theUser = message.mentions.users.first();
+                      theUser = message.mentions.users.first();
                     }
 
                     if (theUser != undefined) {
@@ -83,7 +86,7 @@ module.exports = {
                     }
                     sql.run(
                       `update Members set ccCooldown = '${new Date().getTime() +
-                        5000}' where DiscordID = '${message.author.id}'`
+                          5000}' where DiscordID = '${message.author.id}'`
                     );
                   }
                 }
@@ -591,6 +594,19 @@ function noAutoResponceChannel(channelID, serverInfo) {
   if (channelID == serverInfo.setTitleChannel) return true;
   if (channelID == serverInfo.showcaseChannel) return true;
   if (channelID == serverInfo.staffChannel) return true;
+  if (channelID == serverInfo.suggestionsChannel) return true;
+  //Else return false
+  return false;
+}
+
+function noCustomCommandsChannel(channelID, serverInfo) {
+  if (channelID == serverInfo.aclogChannel) return true;
+  if (channelID == serverInfo.betaSteamIDS) return true;
+  if (channelID == serverInfo.modlogChannel) return true;
+  if (channelID == serverInfo.serverlogChannel) return true;
+  if (channelID == serverInfo.setSpecialTitleChannel) return true;
+  if (channelID == serverInfo.setTitleChannel) return true;
+  if (channelID == serverInfo.showcaseChannel) return true;
   if (channelID == serverInfo.suggestionsChannel) return true;
   //Else return false
   return false;
