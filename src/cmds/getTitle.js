@@ -91,6 +91,7 @@ module.exports = {
         }
       }
     );
+    removeMessage(message, serverInfo);
   }
 };
 
@@ -371,3 +372,12 @@ function returnColour(colourID) {
       return "Cycling Colours";
   }
 }
+
+function removeMessage(message, serverInfo) {
+  if (
+    message.channel.id != serverInfo.setTitleChannel &&
+    message.channel.id != serverInfo.setSpecialTitleChannel
+  ) {
+    message.delete();
+  } 
+} 

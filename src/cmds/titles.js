@@ -16,12 +16,14 @@ module.exports = {
         args[0].toLowerCase() == "!set"
           ? setTitle(client, serverInfo, message, blackListedWords, args)
           : overrideTitle(client, serverInfo, message, blackListedWords, args);
+        removeMessage(message, serverInfo);
         break;
       case "color":
       case "colour":
         args[0].toLowerCase() == "!set"
           ? setColour(client, serverInfo, message, blackListedWords, args)
           : overrideColour(client, serverInfo, message, blackListedWords, args);
+        removeMessage(message, serverInfo);
         break;
       case "special":
         setSpecialTitle(
@@ -32,6 +34,7 @@ module.exports = {
           args,
           sql
         );
+        removeMessage(message, serverInfo);
         break;
       default:
         break;
@@ -611,4 +614,13 @@ function hasRole(mem, role) {
   } else {
     return false;
   }
+}
+
+function removeMessage(message, serverInfo) {
+  if (
+    message.channel.id != serverInfo.setTitleChannel &&
+    message.channel.id != serverInfo.setSpecialTitleChannel
+  ) {
+    message.delete();
+  } 
 }
