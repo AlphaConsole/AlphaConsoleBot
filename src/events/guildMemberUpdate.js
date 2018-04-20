@@ -89,7 +89,7 @@ module.exports = {
           .setTimestamp();
         client.guilds
           .get(serverInfo.guildId)
-          .channels.get(serverInfo.modlogChannel)
+          .channels.get(serverInfo.aclogChannel)
           .send(embedlog);
       }
 

@@ -289,6 +289,12 @@ async function messageProcess(message) {
           args,
           keys
         );
+      } else if (args[0].toLowerCase() == "!eval") {
+        require("./cmds/eval.js").run(
+          client,
+          serverInfo,
+          message,
+        );
       } else if (args[0].toLowerCase() == "!checkdb") {
         //Support checkdb for titles command
         require("./cmds/checkdb.js").run(client, serverInfo, message, args);
