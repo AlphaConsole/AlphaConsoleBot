@@ -321,6 +321,7 @@ module.exports = {
         }
       }
       if (
+        message.content.includes("discord.me/") ||
         message.content.includes("discord.gg/") ||
         (message.content.includes("discordapp.com/invite/") &&
           message.channel.parentID != "360838298677149720")
