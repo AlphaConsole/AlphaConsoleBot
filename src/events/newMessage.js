@@ -1,6 +1,5 @@
 const Discord = require("discord.js");
 const keys = require("../tokens.js");
-// Barbo, idk what I'm doing. - Vezqi
 
 module.exports = {
   title: "newMessage",
