@@ -44,7 +44,7 @@ module.exports = {
 
 function setTitle(client, serverInfo, message, blackListedWords, args) {
   if (message.channel.id != serverInfo.setTitleChannel) return;
-	var userTitle = createTitle(message, args, 2); //make title
+  var userTitle = createTitle(message, args, 2); //make title
   if (userTitle.replace(/[^::]/g, "").length > 8) {
     message.author
       .send(
@@ -76,7 +76,7 @@ function setTitle(client, serverInfo, message, blackListedWords, args) {
 
 function setColour(client, serverInfo, message, blackListedWords, args) {
   if (message.channel.id != serverInfo.setTitleChannel) return;
-	var success = setUsersColour(message.member, args[2], message, args);
+  var success = setUsersColour(message.member, args[2], message, args);
 }
 
 function overrideTitle(client, serverInfo, message, blackListedWords, args) {
@@ -180,7 +180,7 @@ function setSpecialTitle(
   sql
 ) {
   if (message.channel.id != serverInfo.setSpecialTitleChannel) return;
-	if (isNaN(args[2])) {
+  if (isNaN(args[2])) {
     message.author
       .send(
         "Hi, it looks like you tried to use `!set special` wrong. Please use " +
