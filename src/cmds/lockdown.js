@@ -35,6 +35,12 @@ module.exports = {
         .overwritePermissions(message.guild.id, {
           SEND_MESSAGES: false
         });
+      client.guilds
+        .get(serverInfo.guildId)
+        .channels.get(serverInfo.betaSteamIDS)
+        .overwritePermissions(message.guild.id, {
+          SEND_MESSAGES: false
+        });
       const embedChannel = new Discord.MessageEmbed()
         .setColor([255, 255, 0])
         .setAuthor(
