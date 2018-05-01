@@ -44,7 +44,7 @@ client.on("ready", () => {
     SwearWordsSet,
     blackListedWords
   );
-  require("./events/StatusUpdate.js").run(client, serverInfo, sql, require("./tokens.js").TwitchClientID);
+  //require("./events/StatusUpdate.js").run(client, serverInfo, sql, require("./tokens.js").TwitchClientID);
   //require('./events/updatePartners.js').run(client, serverInfo, sql);
 });
 
