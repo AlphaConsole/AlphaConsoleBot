@@ -261,13 +261,6 @@ module.exports = {
             );
         }
       }
-    } else if (reaction._emoji.name == "🎉") {
-      var theRole = reaction.message.guild.roles.get(serverInfo.legacyrole);
-      let member = client.guilds.get(serverInfo.guildId).members.get(user.id);
-
-      if (member.roles.has(theRole.id)) {
-        reaction.users.remove(user);
-      }
     }
   }
 };
