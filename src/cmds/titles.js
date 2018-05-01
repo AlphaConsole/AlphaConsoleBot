@@ -511,6 +511,7 @@ function isValidColour(user, colour) {
         hasRole(user, "Legacy") || 
         hasRole(user, "Org Partner") ||
         hasRole(user, "Partner+") ||
+        hasRole(user, "Donator") ||
         isStaff(user)
       ) {
         return true;
@@ -529,6 +530,7 @@ function isValidColour(user, colour) {
         hasRole(user, "Legacy") ||
         hasRole(user, "Org Partner") ||
         hasRole(user, "Partner+") ||
+        hasRole(user, "Donator") ||
         isStaff(user)
       ) {
         return true;
