@@ -22,6 +22,8 @@ module.exports = {
               "**"
           );
       } else {
+        newMember.nickname = newMember.nickname.replace(/<@/g, '<(at)');
+
         client.guilds
           .get(serverInfo.guildId)
           .channels.get(serverInfo.serverlogChannel)
