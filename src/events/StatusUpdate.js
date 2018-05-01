@@ -1,3 +1,6 @@
+var request = require("request");
+
+
 module.exports = {
   title: "StatusUpdate",
   description: "Updates the bot status every 30 mins",
@@ -19,7 +22,6 @@ module.exports = {
             const twitchData = JSON.parse(body);
 
             if (twitchData["stream"] != null) {
-
               //Update status
               client.user.setActivity(
                 twitchData["stream"]["channel"]["status"],
