@@ -508,6 +508,10 @@ module.exports = {
               } else {
                 return message.delete();
               }
+            } else {
+              if (message.channel.id == 297536247734206464) { //removes links from general chat
+                  return message.delete();
+              }
             }
           }
         });
