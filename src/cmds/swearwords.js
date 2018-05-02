@@ -114,7 +114,7 @@ function hasRole(mem, role) {
 }
 
 function mysql_real_escape_string(str) {
-  return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
+  return str.replace(/'/g, function(char) {
     switch (char) {
       case "\0":
         return "\\0";
@@ -131,6 +131,8 @@ function mysql_real_escape_string(str) {
       case "'":
         return char + char; // prepends a backslash to backslash, percent,
       // and double/single quotes
+      default:
+        return char
     }
   });
 }
