@@ -46,9 +46,6 @@ module.exports = {
           }
         }
 
-        console.log(`Update Commands set Response = '${mysql_real_escape_string(ResponseText)}' 
-        where Command = '${mysql_real_escape_string(TheCommand)}'`);
-
         sql
           .run(
             `Update Commands set Response = '${mysql_real_escape_string(
