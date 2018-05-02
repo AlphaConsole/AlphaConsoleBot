@@ -56,11 +56,7 @@ module.exports = {
         if (role.name != "@everyone") newRolesID += " " + role.id;
       });
 
-      if (
-        oldRoles.includes("Twitch Sub") &&
-        !newRoles.includes("Twitch Sub") &&
-        !isStaff(newMember)
-      ) {
+      if (oldRoles.includes("Twitch Sub") && !newRoles.includes("Twitch Sub") && !isStaff(newMember)) {
         var request = require("request");
         var url = keys.SetTitleURL;
         user = newMember;
@@ -83,11 +79,7 @@ module.exports = {
         const embedlog = new Discord.MessageEmbed()
           .setColor([255, 255, 0])
           .setAuthor("Title Colour Auto Reset", serverInfo.logo)
-          .setDescription(
-            "<@" +
-              user.id +
-              ">'s colour has been reset because Twitch Subscription ended."
-          )
+          .setDescription("<@" + user.id + ">'s colour has been reset because Twitch Subscription ended.")
           .setTimestamp();
         client.guilds
           .get(serverInfo.guildId)
@@ -105,6 +97,16 @@ module.exports = {
             "Various Discord server enhancements such as nickname perms\n\n" +
             "You will keep these benefits for as long as you are subscribed, and you will have a 3 day window to resubscribe if your subscription runs out. Thank you again for your subscription and your extra level of support for AlphaConsole!"
         );
+
+        const embedlog = new Discord.MessageEmbed()
+          .setColor([255, 255, 0])
+          .setAuthor("New Twitch Subscriber!", serverInfo.logo)
+          .setDescription("<@" + newMember.id + "> subscribed to AlphaConsole!")
+          .setTimestamp();
+        client.guilds
+          .get(serverInfo.guildId)
+          .channels.get(serverInfo.aclogChannel)
+          .send(embedlog);
       }
 
       // Legacy role added, and not in old roles.
