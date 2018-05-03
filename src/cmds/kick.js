@@ -19,7 +19,14 @@ module.exports = {
           .setTitle("Please tag the user to be kicked");
         return message.channel.send(embed);
       }
-
+      
+      if (isStaff(message.guild.member(message.mentions.users.first()))) {
+        const embed = new Discord.MessageEmbed()
+          .setColor([255, 255, 0])
+          .setTitle("You cannot kick a staff member.");
+        return message.channel.send(embed);
+      }
+      
       //Check if there is a reason
       if (args.length == 2) {
         var TheReason = "No reason provided";
