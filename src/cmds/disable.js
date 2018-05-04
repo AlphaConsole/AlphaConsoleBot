@@ -16,8 +16,8 @@ module.exports = {
       user.id +
       "&key=" +
       keys.Password +
-      "&title=0" +
-      "&color=0";
+      "&title=X" +
+      "&color=X";
     request(
       {
         method: "GET",
