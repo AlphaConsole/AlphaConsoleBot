@@ -33,7 +33,8 @@ module.exports = {
     } else {
       if (
         hasRole(message.member, "Admin") ||
-        hasRole(message.member, "Developer")
+        hasRole(message.member, "Developer") ||
+        hasRole(message.member, "Moderator")
       ) {
         if (args.length > 2) {
           var theMember;
@@ -51,8 +52,6 @@ module.exports = {
               rolename += args[i] + " ";
             }
 
-            console.log(rolename);
-
             theRole = message.guild.roles.find(
               r => r.name.toLowerCase() == rolename.trim().toLowerCase()
             );
@@ -65,12 +64,34 @@ module.exports = {
                   `${theRole.name} has been removed from ${theMember.user.tag}`,
                   serverInfo.logo
                 );
+
+                const embedlog = new Discord.MessageEmbed()
+                  .setColor([255, 255, 0])
+                  .setAuthor("Roles updated by Staff", serverInfo.logo)
+                  .addField("Info", `${theRole} was removed from ${theMember}`)
+                  .addField("By", `${message.member}`)
+                  .setTimestamp();
+                client.guilds
+                  .get(serverInfo.guildId)
+                  .channels.get(serverInfo.aclogChannel)
+                  .send(embedlog);
               } else {
                 await theMember.addRole(theRole);
                 embed.setAuthor(
                   `${theRole.name} has been added to ${theMember.user.tag}`,
                   serverInfo.logo
                 );
+
+                const embedlog = new Discord.MessageEmbed()
+                  .setColor([255, 255, 0])
+                  .setAuthor("Roles updated by Staff", serverInfo.logo)
+                  .addField("Info", `${theRole} was added to ${theMember}`)
+                  .addField("By", `${message.member}`)
+                  .setTimestamp();
+                client.guilds
+                  .get(serverInfo.guildId)
+                  .channels.get(serverInfo.aclogChannel)
+                  .send(embedlog);
               }
 
               message.channel.send(embed);
