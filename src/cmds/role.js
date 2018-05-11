@@ -33,8 +33,10 @@ module.exports = {
     } else {
       if (
         hasRole(message.member, "Admin") ||
-        hasRole(message.member, "Developer")
-      ) {
+        hasRole(message.member, "Developer") || 
+        hasRole(message.member, "Moderator")
+      ) 
+      {
         if (args.length > 2) {
           var theMember;
           if (message.mentions.members.first()) {
