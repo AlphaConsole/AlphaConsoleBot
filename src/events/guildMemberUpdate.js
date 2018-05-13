@@ -56,7 +56,7 @@ module.exports = {
         if (role.name != "@everyone") newRolesID += " " + role.id;
       });
 
-      if (oldRoles.includes("Twitch Sub") && !newRoles.includes("Twitch Sub") && !isStaff(newMember)) {
+      if (oldRoles.includes("Twitch Sub") && !newRoles.includes("Twitch Sub") && !canKeepTitle(newMember)) {
         var request = require("request");
         var url = keys.SetTitleURL;
         user = newMember;
@@ -186,12 +186,15 @@ module.exports = {
   }
 };
 
-function isStaff(user) {
+function canKeepTitle(user) {
   if (
     hasRole(user, "Developer") ||
     hasRole(user, "Admin") ||
     hasRole(user, "Moderator") ||
-    hasRole(user, "Support")
+    hasRole(user, "Support") ||
+    hasRole(user, "Legacy") ||
+    hasRole(user, "Org Partner") ||
+    hasRole(user, "Partner+")
   ) {
     return true;
   } else {
