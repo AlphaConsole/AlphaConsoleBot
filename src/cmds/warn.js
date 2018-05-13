@@ -15,56 +15,61 @@ module.exports = {
       hasRole(message.member, "Admin") ||
       hasRole(message.member, "Developer")
     ) {
-      if (message.mentions.users.first() == undefined) {
-        const embedChannel = new Discord.MessageEmbed()
-          .setColor([255, 255, 0])
-          .setAuthor("Please tag the user to be warned", serverInfo.logo);
-        return message.channel.send(embedChannel);
-      } else {
-        //Let's first check if the user even exists in the db
-        sql
-          .get(
-            `select * from Members where DiscordID = '${
-              message.mentions.users.first().id
-            }'`
-          )
-          .then(row => {
-            if (!row) {
-              var today = new Date().getTime();
-              sql
-                .run(
-                  `Insert into Members(DiscordID, Username, JoinedDate)VALUES('${
-                    message.mentions.users.first().id
-                  }', '${mysql_real_escape_string(
-                    message.mentions.users.first().username
-                  )}', '${today}')`
-                )
-                .then(() => {
-                  sql
-                    .get(
-                      `select * from Members where DiscordID = '${
-                        message.mentions.users.first().id
-                      }'`
-                    )
-                    .then(row => {
-                      WarnUser(client, serverInfo, sql, message, row, args);
-                    });
-                })
-                .catch(err => console.log(err));
-            } else {
-              sql
-                .get(
-                  `select * from Members where DiscordID = '${
-                    message.mentions.users.first().id
-                  }'`
-                )
-                .then(row => {
-                  WarnUser(client, serverInfo, sql, message, row, args);
-                });
-            }
-          })
-          .catch(err => console.log(err));
+      let discordid = "";
+      if (message.mentions.users.first()) discordid = message.mentions.users.first().id
+      else discordid = args[1];
+      
+      let member = message.guild.member(discordid);
+      if (!member) {
+        const embed = new Discord.MessageEmbed()
+            .setColor([255, 255, 0])
+            .setAuthor("I did not find any user with that tag / discordid", serverInfo.logo);
+        return message.channel.send(embed);
       }
+
+      //Let's first check if the user even exists in the db
+      sql
+        .get(
+          `select * from Members where DiscordID = '${
+            message.mentions.users.first().id
+          }'`
+        )
+        .then(row => {
+          if (!row) {
+            var today = new Date().getTime();
+            sql
+              .run(
+                `Insert into Members(DiscordID, Username, JoinedDate)VALUES('${
+                  member.id
+                }', '${mysql_real_escape_string(
+                  member.user.username
+                )}', '${today}')`
+              )
+              .then(() => {
+                sql
+                  .get(
+                    `select * from Members where DiscordID = '${
+                      member.id
+                    }'`
+                  )
+                  .then(row => {
+                    WarnUser(client, serverInfo, sql, message, row, args, member);
+                  });
+              })
+              .catch(err => console.log(err));
+          } else {
+            sql
+              .get(
+                `select * from Members where DiscordID = '${
+                  member.id
+                }'`
+              )
+              .then(row => {
+                WarnUser(client, serverInfo, sql, message, row, args, member);
+              });
+          }
+        })
+        .catch(err => console.log(err));
     }
   }
 };
@@ -89,8 +94,8 @@ function getRandomIntInclusive(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function WarnUser(client, serverInfo, sql, message, row, args) {
-  var user = message.mentions.users.first();
+function WarnUser(client, serverInfo, sql, message, row, args, member) {
+  var user = member.user;
 
   if (args.length == 2) var TheReason = "No reason provided";
   else {
@@ -204,7 +209,7 @@ function WarnUser(client, serverInfo, sql, message, row, args) {
 
             let TheRole = message.guild.roles.find("name", "Muted");
             let TheUser = message.guild.member(
-              message.mentions.users.first().id
+              member.id
             );
             TheUser.addRole(TheRole);
           } else if (row.Warnings > 1) {
@@ -246,7 +251,7 @@ function WarnUser(client, serverInfo, sql, message, row, args) {
 
             let TheRole = message.guild.roles.find("name", "Muted");
             let TheUser = message.guild.member(
-              message.mentions.users.first().id
+              member.id
             );
             TheUser.addRole(TheRole);
           }

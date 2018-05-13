@@ -16,10 +16,15 @@ module.exports = {
       hasRole(message.member, "Developer")
     ) {
       //Check if someone is tagged
-      if (message.mentions.users.first() == undefined) {
+      let discordid = "";
+      if (message.mentions.users.first()) discordid = message.mentions.users.first().id
+      else discordid = args[1];
+      
+      let member = message.guild.member(discordid);
+      if (!member) {
         const embed = new Discord.MessageEmbed()
-          .setColor([255, 255, 0])
-          .setAuthor("Please tag the user to be muted", serverInfo.logo);
+            .setColor([255, 255, 0])
+            .setAuthor("I did not find any user with that tag / discordid", serverInfo.logo);
         return message.channel.send(embed);
       }
 
@@ -95,7 +100,7 @@ module.exports = {
 
         //First add the Muted Role to the user
         let MutedRole = message.guild.roles.find("name", "Muted");
-        let MutedUser = message.guild.member(message.mentions.users.first().id);
+        let MutedUser = message.guild.member(member.id);
         MutedUser.addRole(MutedRole);
 
         //Check if there is a reason
@@ -123,7 +128,7 @@ module.exports = {
               sql
                 .get(
                   `select * from logs where Member = '${
-                    message.mentions.users.first().id
+                    member.id
                   }' order by ID desc`
                 )
                 .then(roww => {
@@ -136,7 +141,7 @@ module.exports = {
                     .setColor([255, 255, 0])
                     .setAuthor(
                       `${
-                        message.mentions.users.first().tag
+                        member.tag
                       } has been permanently muted. Case number: ${CaseID}`,
                       serverInfo.logo
                     );
@@ -147,9 +152,9 @@ module.exports = {
                     .setAuthor(`Case ${CaseID} | User Mute`, serverInfo.logo)
                     .setDescription(
                       `${message.guild.members.get(
-                        message.mentions.users.first().id
+                        member.id
                       )} (${
-                        message.mentions.users.first().id
+                        member.id
                       }) has been permanently muted by ${message.member}`
                     )
                     .setTimestamp()
@@ -172,7 +177,7 @@ module.exports = {
           await sql
             .get(
               `select * from Members where DiscordID = '${
-                message.mentions.users.first().id
+                member.id
               }'`
             )
             .then(row => {
@@ -181,9 +186,9 @@ module.exports = {
                 sql
                   .run(
                     `Insert into Members(DiscordID, Username, JoinedDate)VALUES('${
-                      message.mentions.users.first().id
+                      member.id
                     }', '${mysql_real_escape_string(
-                      message.mentions.users.first().username
+                      member.user.username
                     )}', '${today}')`
                   )
                   .then(() => {
@@ -194,7 +199,7 @@ module.exports = {
                     sql
                       .run(
                         `Update Members set MutedUntil = ${MutedUntil} where DiscordID = '${
-                          message.mentions.users.first().id
+                          member.id
                         }'`
                       )
                       .catch(err => console.log(err));
@@ -208,7 +213,7 @@ module.exports = {
                 sql
                   .run(
                     `Update Members set MutedUntil = ${MutedUntil} where DiscordID = '${
-                      message.mentions.users.first().id
+                      member.id
                     }'`
                   )
                   .catch(err => console.log(err));
@@ -244,7 +249,7 @@ module.exports = {
                     .setColor([255, 255, 0])
                     .setAuthor(
                       `${
-                        message.mentions.users.first().tag
+                        member.user.tag
                       } has been muted for ${originalTime} ${timeunitDisplay}. Case number: ${CaseID}`,
                       serverInfo.logo
                     );
@@ -255,9 +260,9 @@ module.exports = {
                     .setAuthor(`Case ${CaseID} | User Mute`, serverInfo.logo)
                     .setDescription(
                       `${message.guild.members.get(
-                        message.mentions.users.first().id
+                        member.id
                       )} (${
-                        message.mentions.users.first().id
+                        member.id
                       }) has been muted for ${originalTime} ${timeunitDisplay} by ${
                         message.member
                       }`

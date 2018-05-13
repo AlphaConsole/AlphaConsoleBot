@@ -13,10 +13,15 @@ module.exports = {
       hasRole(message.member, "Developer")
     ) {
       //Check if someone is tagged
-      if (message.mentions.users.first() == undefined) {
+      let discordid = "";
+      if (message.mentions.users.first()) discordid = message.mentions.users.first().id
+      else discordid = args[1];
+      
+      let member = message.guild.member(discordid);
+      if (!member) {
         const embed = new Discord.MessageEmbed()
-          .setColor([255, 255, 0])
-          .setTitle("Please tag the user to be kicked");
+            .setColor([255, 255, 0])
+            .setAuthor("I did not find any user with that tag / discordid", serverInfo.logo);
         return message.channel.send(embed);
       }
 
@@ -31,7 +36,7 @@ module.exports = {
       }
 
       //Let's start kicking the user
-      let KickedUser = message.guild.member(message.mentions.users.first().id);
+      let KickedUser = message.guild.member(member.id);
       KickedUser.kick(TheReason);
 
       //Insert the log into the database
@@ -61,7 +66,7 @@ module.exports = {
                 .setColor([255, 255, 0])
                 .setAuthor(
                   `${
-                    message.mentions.users.first().tag
+                    member.user.tag
                   } has been kicked from the server. Case number: ${CaseID}`,
                   serverInfo.logo
                 );
@@ -71,8 +76,8 @@ module.exports = {
                 .setColor([255, 255, 0])
                 .setAuthor(`Case ${CaseID} | User Kick`, serverInfo.logo)
                 .setDescription(
-                  `**${message.mentions.users.first().tag}** (${
-                    message.mentions.users.first().id
+                  `**${member.tag}** (${
+                    member.id
                   }) has been kicked by ${message.member}`
                 )
                 .setTimestamp()

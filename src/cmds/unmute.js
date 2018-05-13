@@ -14,17 +14,22 @@ module.exports = {
       hasRole(message.member, "Developer")
     ) {
       //Check if someone is tagged
-      if (message.mentions.users.first() == undefined) {
+      let discordid = "";
+      if (message.mentions.users.first()) discordid = message.mentions.users.first().id
+      else discordid = args[1];
+      
+      let member = message.guild.member(discordid);
+      if (!member) {
         const embed = new Discord.MessageEmbed()
-          .setColor([255, 255, 0])
-          .setAuthor("Please tag the user to be unmuted", serverInfo.logo);
+            .setColor([255, 255, 0])
+            .setAuthor("I did not find any user with that tag / discordid", serverInfo.logo);
         return message.channel.send(embed);
       }
 
       if (args.length == 2) {
         if (
           !hasRole(
-            message.guild.member(message.mentions.users.first().id),
+            message.guild.member(member.id),
             "Muted"
           )
         ) {
@@ -39,14 +44,14 @@ module.exports = {
 
         //Simply just add the mute role
         let MutedRole = message.guild.roles.find("name", "Muted");
-        let MutedUser = message.guild.member(message.mentions.users.first().id);
+        let MutedUser = message.guild.member(member.id);
         MutedUser.removeRole(MutedRole);
 
         //Make a notice & Log it to the log-channel
         const embed = new Discord.MessageEmbed()
           .setColor([255, 255, 0])
           .setAuthor(
-            `${message.mentions.users.first().tag} has been unmuted.`,
+            `${member.user.tag} has been unmuted.`,
             serverInfo.logo
           );
         message.channel.send(embed); //Remove this line if you don't want it to be public.
@@ -55,8 +60,8 @@ module.exports = {
           .setColor([255, 255, 0])
           .setAuthor("=== USER UNMUTE ===", serverInfo.logo)
           .setDescription(
-            `${message.guild.members.get(message.mentions.users.first().id)} (${
-              message.mentions.users.first().id
+            `${message.guild.members.get(member.id)} (${
+             member.id
             }) has been unmuted by ${message.member}`
           )
           .setTimestamp();
@@ -66,7 +71,7 @@ module.exports = {
         sql
           .get(
             `select * from Members where DiscordID = '${
-              message.mentions.users.first().id
+              member.id
             }'`
           )
           .then(row => {
@@ -75,9 +80,9 @@ module.exports = {
               sql
                 .run(
                   `Insert into Members(DiscordID, Username, JoinedDate)VALUES('${
-                    message.mentions.users.first().id
+                    member.id
                   }', '${mysql_real_escape_string(
-                    message.mentions.users.first().username
+                    member.user.username
                   )}', '${today}')`
                 )
                 .then(() => {
@@ -85,7 +90,7 @@ module.exports = {
                   sql
                     .run(
                       `Update Members set MutedUntil = null where DiscordID = '${
-                        message.mentions.users.first().id
+                        member.id
                       }'`
                     )
                     .catch(err => console.log(err));
@@ -96,7 +101,7 @@ module.exports = {
               sql
                 .run(
                   `Update Members set MutedUntil = null where DiscordID = '${
-                    message.mentions.users.first().id
+                    member.id
                   }'`
                 )
                 .catch(err => console.log(err));
