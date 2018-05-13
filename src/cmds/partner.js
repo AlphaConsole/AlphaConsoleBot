@@ -629,6 +629,7 @@ async function setChannelHeader(client, serverInfo, sql, message, args) {
       return forceUpdatePartners(client, serverInfo, sql, message, args); // Could use this instead of every other update tbh
     })
     .catch(err => {
+      console.log(err);
       return message.channel.send(getErrorEmbed(serverInfo, err));
     });
 }
@@ -668,6 +669,7 @@ function allowMessages(message, serverInfo, allow) {
 }
 
 function getErrorEmbed(serverInfo, err) {
+  console.log(err);
   const embed = new Discord.MessageEmbed()
     .setColor([255, 0, 0])
     .setAuthor("Failed!", serverInfo.logo)

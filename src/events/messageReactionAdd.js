@@ -1,4 +1,5 @@
 const Discord = require("discord.js");
+var cooldown = {};
 
 module.exports = {
   title: "messageReactionAdd",
@@ -6,6 +7,7 @@ module.exports = {
     "Event when a new reaction has been added for like `#Showcase` & `#Suggestions`",
 
   run: async (client, serverInfo, reaction, user, sql) => {
+
     if (reaction._emoji.name == "❌") {
       if (
         hasRole(
@@ -215,7 +217,7 @@ module.exports = {
               });			  
           });
       }
-    } else if (reaction._emoji.name == serverInfo.partnerEmoji) {
+    } else if (`:${reaction.emoji.name}:${reaction.emoji.id}` == serverInfo.partnerEmoji) {
       // ADDED FOR MESSAGING USER THE PARTNER INFORMATIONS
       if (
         reaction.message.channel.id == serverInfo.partnerChannel &&
@@ -223,17 +225,19 @@ module.exports = {
       ) {
         // Reacted to message, remove reaction, send messages
         reaction.users.remove(user);
+        if (cooldown[user.id] && cooldown[user.id] + 5000 > new Date().getTime()) return;
+        cooldown[user.id] = new Date().getTime();
 
-        var canMessage = await partnerCanMessage(
+        /* var canMessage = await partnerCanMessage(
           client,
           user,
           reaction.message
-        );
+        );*/
         var errChannel = reaction.message.guild.channels.get(
           serverInfo.modlogChannel
-        );
+        ); 
 
-        if (canMessage) {
+        if (true) {
           sql
             .get(`SELECT * FROM partners WHERE id=?`, [reaction.message.id])
             .then(row => {
