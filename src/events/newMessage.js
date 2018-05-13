@@ -314,14 +314,16 @@ module.exports = {
 				(message.content.includes("discordapp.com/invite/") &&
 					message.channel.parentID != "360838298677149720")
 			) {
-				if (
-					permits[message.author.id] &&
-					permits[message.author.id].channel == message.channel.id
-				) {
-					if (permits[message.author.id].until < new Date().getTime())
+				if (!message.content.includes("discord.gg/alphaconsole")) {
+					if (
+						permits[message.author.id] &&
+						permits[message.author.id].channel == message.channel.id
+					) {
+						if (permits[message.author.id].until < new Date().getTime())
+							return message.delete();
+					} else {
 						return message.delete();
-				} else {
-					return message.delete();
+					}
 				}
 			}
 		}
@@ -484,23 +486,26 @@ module.exports = {
 							"(https?://(?:www.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9].[^s]{2,}|www.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9].[^s]{2,}|https?://(?:www.|(?!www))[a-zA-Z0-9].[^s]{2,}|www.[a-zA-Z0-9].[^s]{2,})"
 						).test(word)
 					) {
-						if (!word.includes("imgur.com") &&
-							!word.includes("reddit.com") &&
-							!word.includes("gyazo.com") &&
-							!word.includes("prntscr.com")
-						) {
-							if (
-								permits[message.author.id] &&
-								permits[message.author.id].channel == message.channel.id
+						if (!word.includes("alphaconsole.net") && !word.includes("twitter.com/alphaconsole") && !word.includes("twitch.tv/alphaconsole")) {
+
+							if (!word.includes("imgur.com") &&
+								!word.includes("reddit.com") &&
+								!word.includes("gyazo.com") &&
+								!word.includes("prntscr.com")
 							) {
-								if (permits[message.author.id].until < new Date().getTime())
+								if (
+									permits[message.author.id] &&
+									permits[message.author.id].channel == message.channel.id
+								) {
+									if (permits[message.author.id].until < new Date().getTime())
+										return message.delete();
+								} else {
 									return message.delete();
+								}
 							} else {
-								return message.delete();
-							}
-						} else {
-							if (message.channel.id == 297536247734206464) { //removes links from general chat
-								return message.delete();
+								if (message.channel.id == 297536247734206464) { //removes links from general chat
+									return message.delete();
+								}
 							}
 						}
 					}
