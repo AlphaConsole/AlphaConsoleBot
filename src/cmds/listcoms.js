@@ -12,7 +12,8 @@ module.exports = {
       hasRole(message.member, "Developer") ||
       hasRole(message.member, "Moderator") ||
       hasRole(message.member, "Support") ||
-      hasRole(message.member, "Staff")
+      hasRole(message.member, "Staff") ||
+      hasRole(message.member, "Community Helper")
     ) {
       // <---   If you would like to change role perms. Change [BontControl] to your role name
       sql.all(`select * from Commands`).then(rows => {
