@@ -21,5 +21,6 @@ module.exports.serverInfo = {
   partnerEmoji: ":ACQuestion:444631913949560855", // Emoji used for partner reactions
   giveawaychannel: "381877174610821130",
   giveawayrole: "389384990087053312",
-  legacyrole: "415316301855064084"
+  legacyrole: "415316301855064084",
+  mutedReason: "445364228900257792"
 };

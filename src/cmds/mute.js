@@ -169,6 +169,26 @@ module.exports = {
                         }' where ID = '${CaseID}'`
                       );
                     });
+
+                  setTimeout(() => {
+                    message.guild.channels
+                      .get(serverInfo.mutedReason)
+                      .send(`${member}`).then(m => m.delete())
+                    const embedreason = new Discord.MessageEmbed()
+                      .setColor([255, 255, 0])
+                      .setAuthor(`Case ${CaseID} | User Mute`, serverInfo.logo)
+                      .setDescription(
+                        `${message.guild.members.get(
+                          member.id
+                        )} has been permanently muted by ${message.member}`
+                      )
+                      .setTimestamp()
+                      .addField("Reason", TheReason);
+                    message.guild.channels
+                      .get(serverInfo.mutedReason)
+                      .send(embedreason)
+                  }, 2000);
+
                 });
             })
             .catch(err => console.log(err));
@@ -279,6 +299,27 @@ module.exports = {
                         }' where ID = '${CaseID}'`
                       );
                     });
+
+                  setTimeout(() => {
+                    message.guild.channels
+                      .get(serverInfo.mutedReason)
+                      .send(`${member}`).then(m => m.delete())
+                    const embedreason = new Discord.MessageEmbed()
+                      .setColor([255, 255, 0])
+                      .setAuthor(`Case ${CaseID} | User Mute`, serverInfo.logo)
+                      .setDescription(
+                        `${message.guild.members.get(
+                          member.id
+                        )} has been muted for ${originalTime} ${timeunitDisplay} by ${
+                          message.member
+                        }`
+                      )
+                      .setTimestamp()
+                      .addField("Reason", TheReason);
+                    message.guild.channels
+                      .get(serverInfo.mutedReason)
+                      .send(embedreason)
+                  }, 2000);
                 });
             })
             .catch(err => console.log(err));
