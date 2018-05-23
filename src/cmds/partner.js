@@ -25,7 +25,8 @@ module.exports = {
 
     if (
       hasRole(message.member, "Admin") ||
-      hasRole(message.member, "Developer")
+      hasRole(message.member, "Developer") || 
+      message.author.id === "149223090134450177" // Using my ID and not my role since the red B doesn't get compared correctly
     ) {
       // Ensure this user is permitted to do this, keep it deleted either way just incase the channel permissions
       // get messed up and people somehow figure out the command, makes sure chat doesn't get spammed
