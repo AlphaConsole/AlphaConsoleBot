@@ -154,6 +154,23 @@ module.exports = {
                     }' where ID = '${CaseID}'`
                   );
                 });
+
+                setTimeout(() => {
+                  message.guild.channels
+                    .get(serverInfo.mutedReason)
+                    .send(`${message.member}`).then(m => m.delete())
+                  const embedreason = new Discord.MessageEmbed()
+                    .setColor([255, 255, 0])
+                    .setAuthor(`Case ${CaseID} | User Mute`, serverInfo.logo)
+                    .setDescription(
+                      `${message.member} has been muted for 1 hour by the bot (Spam Protection)`
+                    )
+                    .setTimestamp()
+                    .addField("Reason", roww.Reason);
+                  message.guild.channels
+                    .get(serverInfo.mutedReason)
+                    .send(embedreason)
+                }, 2000);
             });
         })
         .catch(err => console.log(err));
@@ -222,6 +239,23 @@ module.exports = {
                     }' where ID = '${CaseID}'`
                   );
                 });
+
+                setTimeout(() => {
+                  message.guild.channels
+                    .get(serverInfo.mutedReason)
+                    .send(`${message.member}`).then(m => m.delete())
+                  const embedreason = new Discord.MessageEmbed()
+                    .setColor([255, 255, 0])
+                    .setAuthor(`Case ${CaseID} | User Mute`, serverInfo.logo)
+                    .setDescription(
+                      `${message.member} has been permanent muted by the bot (Spam Protection)`
+                    )
+                    .setTimestamp()
+                    .addField("Reason", roww.Reason);
+                  message.guild.channels
+                    .get(serverInfo.mutedReason)
+                    .send(embedreason)
+                }, 2000);
             });
         })
         .catch(err => console.log(err));
@@ -337,6 +371,23 @@ module.exports = {
                         }' where ID = '${CaseID}'`
                       );
                     });
+
+                    setTimeout(() => {
+                      message.guild.channels
+                        .get(serverInfo.mutedReason)
+                        .send(`${message.member}`).then(m => m.delete())
+                      const embedreason = new Discord.MessageEmbed()
+                        .setColor([255, 255, 0])
+                        .setAuthor(`Case ${CaseID} | User Mute`, serverInfo.logo)
+                        .setDescription(
+                          `${message.member} has been muted for 1 hour by the bot (Spam Protection)`
+                        )
+                        .setTimestamp()
+                        .addField("Reason", roww.Reason);
+                      message.guild.channels
+                        .get(serverInfo.mutedReason)
+                        .send(embedreason)
+                    }, 2000);
                 });
             })
             .catch(err => console.log(err));
@@ -402,6 +453,23 @@ module.exports = {
                           }' where ID = '${CaseID}'`
                         );
                       });
+
+                      setTimeout(() => {
+                        message.guild.channels
+                          .get(serverInfo.mutedReason)
+                          .send(`${message.member}`).then(m => m.delete())
+                        const embedreason = new Discord.MessageEmbed()
+                          .setColor([255, 255, 0])
+                          .setAuthor(`Case ${CaseID} | User Mute`, serverInfo.logo)
+                          .setDescription(
+                            `${message.member} has been permanent muted by the bot (Spam Protection)`
+                          )
+                          .setTimestamp()
+                          .addField("Reason", roww.Reason);
+                        message.guild.channels
+                          .get(serverInfo.mutedReason)
+                          .send(embedreason)
+                      }, 2000);
                   });
               })
               .catch(err => console.log(err));
@@ -471,6 +539,8 @@ function mysql_real_escape_string(str) {
       case "'":
         return char + char; // prepends a backslash to backslash, percent,
       // and double/single quotes
+      default:
+        return char
     }
   });
 }

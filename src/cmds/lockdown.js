@@ -84,6 +84,8 @@ function mysql_real_escape_string(str) {
       case "'":
         return char + char; // prepends a backslash to backslash, percent,
       // and double/single quotes
+      default:
+        return char
     }
   });
 }

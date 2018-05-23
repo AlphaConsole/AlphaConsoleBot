@@ -22,32 +22,42 @@ module.exports = {
           var TheCommand = args[1].toLowerCase();
         }
 
-        var ResponseText = "";
-        for (i = 2; i < args.length; i++) {
-          if (args[i] == "@everyone") {
-            ResponseText += "`@everyone` ";
-          } else if (args[i] == "@here") {
-            ResponseText += "`@here` ";
-          } else if (
-            message.mentions.roles.has(args[i].replace(/[^0-9]/g, ""))
-          ) {
-            ResponseText +=
+        sql.get(`select * from Commands where Command = '${mysql_real_escape_string(TheCommand)}'`).then(check => {
+          if (check) {
+            const embed = new Discord.MessageEmbed()
+            .setColor([255, 255, 0])
+            .setAuthor(
+              `The command "${TheCommand}" already exists.`, serverInfo.logo);
+            return message.channel.send(embed);
+          }
+          
+          
+          var ResponseText = "";
+          for (i = 2; i < args.length; i++) {
+            if (args[i] == "@everyone") {
+              ResponseText += "`@everyone` ";
+            } else if (args[i] == "@here") {
+              ResponseText += "`@here` ";
+            } else if (
+              message.mentions.roles.has(args[i].replace(/[^0-9]/g, ""))
+            ) {
+              ResponseText +=
               "**" +
               message.mentions.roles.get(args[i].replace(/[^0-9]/g, "")).name +
               "** ";
-          } else if (
-            message.mentions.users.has(args[i].replace(/[^0-9]/g, ""))
-          ) {
-            ResponseText +=
+            } else if (
+              message.mentions.users.has(args[i].replace(/[^0-9]/g, ""))
+            ) {
+              ResponseText +=
               "**" +
               message.mentions.users.get(args[i].replace(/[^0-9]/g, "")).tag +
               "** ";
-          } else {
-            ResponseText += args[i] + " ";
+            } else {
+              ResponseText += args[i] + " ";
+            }
           }
-        }
-
-        sql
+          
+          sql
           .run(
             `Insert into Commands(Command, Response) VALUES ('${mysql_real_escape_string(
               TheCommand
@@ -55,32 +65,33 @@ module.exports = {
           )
           .then(() => {
             const embed = new Discord.MessageEmbed()
-              .setColor([255, 255, 0])
-              .setAuthor("Command succesfully added!", serverInfo.logo);
+            .setColor([255, 255, 0])
+            .setAuthor("Command succesfully added!", serverInfo.logo);
             message.channel.send(embed);
-
+            
             const embedlog = new Discord.MessageEmbed()
-              .setColor([255, 255, 0])
-              .setAuthor("Command added", serverInfo.logo)
-              .addField("Command", TheCommand)
-              .addField("Response", ResponseText)
-              .addField(
-                "Added by",
-                `**${message.member.user.tag}** (${message.member})`
-              )
-              .setTimestamp();
+            .setColor([255, 255, 0])
+            .setAuthor("Command added", serverInfo.logo)
+            .addField("Command", TheCommand)
+            .addField("Response", ResponseText)
+            .addField(
+              "Added by",
+              `**${message.member.user.tag}** (${message.member})`
+            )
+            .setTimestamp();
             client.guilds
-              .get(serverInfo.guildId)
-              .channels.get(serverInfo.aclogChannel)
-              .send(embedlog);
+            .get(serverInfo.guildId)
+            .channels.get(serverInfo.aclogChannel)
+            .send(embedlog);
           });
+        })
       } else {
         const embed = new Discord.MessageEmbed()
-          .setColor([255, 255, 0])
-          .setAuthor(
-            "Please provide me what the command should answer.\nUsage: `!AddComm [Command] [Text]`",
-            serverInfo.logo
-          );
+        .setColor([255, 255, 0])
+        .setAuthor(
+          "Please provide me what the command should answer.\nUsage: `!AddComm [Command] [Text]`",
+          serverInfo.logo
+        );
         message.channel.send(embed);
       }
     }
@@ -119,6 +130,8 @@ function mysql_real_escape_string(str) {
       case "'":
         return char + char; // prepends a backslash to backslash, percent,
       // and double/single quotes
+      default:
+        return char
     }
   });
 }

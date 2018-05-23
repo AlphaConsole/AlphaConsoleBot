@@ -174,6 +174,10 @@ async function messageProcess(message) {
         require("./cmds/role.js").run(client, serverInfo, sql, message, args);
       }
 
+      if (args[0].toLowerCase() == "!ping") {
+        require("./cmds/ping.js").run(client, serverInfo, message);
+      }
+
       if (args[0].toLowerCase() == "!serverinfo") {
         require("./cmds/serverinfo.js").run(
           client,

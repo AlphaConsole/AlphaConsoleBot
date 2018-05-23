@@ -18,8 +18,9 @@ module.exports.serverInfo = {
   devChannel: "381844964780277762",
   editPartnerChannel: "413841364032159764", // Channel for !partner command
   partnerChannel: "413841399306518530", // Channel bot uses to list the partners, and watch their respective reactions
-  partnerEmoji: "❓", // Emoji used for partner reactions
+  partnerEmoji: ":ACQuestion:444631913949560855", // Emoji used for partner reactions
   giveawaychannel: "381877174610821130",
   giveawayrole: "389384990087053312",
-  legacyrole: "415316301855064084"
+  legacyrole: "415316301855064084",
+  mutedReason: "445364228900257792"
 };

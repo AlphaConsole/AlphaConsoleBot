@@ -12,7 +12,8 @@ module.exports = {
       hasRole(message.member, "Developer") ||
       hasRole(message.member, "Moderator") ||
       hasRole(message.member, "Support") ||
-      hasRole(message.member, "Staff")
+      hasRole(message.member, "Staff") ||
+      hasRole(message.member, "Community Helper")
     ) {
       // <---   If you would like to change role perms. Change [BontControl] to your role name
       sql.all(`select * from Commands`).then(rows => {
@@ -63,6 +64,8 @@ function mysql_real_escape_string(str) {
       case "'":
         return char + char; // prepends a backslash to backslash, percent,
       // and double/single quotes
+      default:
+        return char
     }
   });
 }
