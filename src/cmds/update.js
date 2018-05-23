@@ -9,8 +9,7 @@ module.exports = {
 
   run: async (client, serverInfo, message, args) => {
     if (
-      hasRole(message.member, "Admin") ||
-      hasRole(message.member, "Developer") ||
+      message.author.id === "136607366408962048" ||
       message.author.id === "149223090134450177"
     ) {
       // <---   If you would like to change role perms. Change [BontControl] to your role name
