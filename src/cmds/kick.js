@@ -24,7 +24,14 @@ module.exports = {
             .setAuthor("I did not find any user with that tag / discordid", serverInfo.logo);
         return message.channel.send(embed);
       }
-
+      
+      if (isStaff(message.guild.member(message.mentions.users.first()))) {
+        const embed = new Discord.MessageEmbed()
+          .setColor([255, 255, 0])
+          .setTitle("You cannot kick a staff member.");
+        return message.channel.send(embed);
+      }
+      
       //Check if there is a reason
       if (args.length == 2) {
         var TheReason = "No reason provided";
