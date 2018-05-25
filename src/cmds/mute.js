@@ -114,6 +114,9 @@ module.exports = {
         }
 
         if (timeArg == 0) {
+
+          MutedUser.send(`**<@${message.author.id}>** has **permanently** muted you.\n\n__For the following reason:__\n${TheReason}\n\nFor more information, please read the <#448536110537244672> channel in the server.`)
+
           sql
             .run(
               `Insert into logs(Action, Member, Moderator, value, Reason, Time, ChannelID) VALUES('mute', '${
@@ -141,7 +144,7 @@ module.exports = {
                     .setColor([255, 255, 0])
                     .setAuthor(
                       `${
-                        member.tag
+                        member.user.tag
                       } has been permanently muted. Case number: ${CaseID}`,
                       serverInfo.logo
                     );
@@ -171,9 +174,6 @@ module.exports = {
                     });
 
                   setTimeout(() => {
-                    message.guild.channels
-                      .get(serverInfo.mutedReason)
-                      .send(`${member}`).then(m => m.delete())
                     const embedreason = new Discord.MessageEmbed()
                       .setColor([255, 255, 0])
                       .setAuthor(`Case ${CaseID} | User Mute`, serverInfo.logo)
@@ -193,6 +193,9 @@ module.exports = {
             })
             .catch(err => console.log(err));
         } else {
+
+          MutedUser.send(`**<@${message.author.id}>** has muted you for **${originalTime} ${timeunitDisplay}**.\n\n__For the following reason:__\n${TheReason}\n\nFor more information, please read the <#448536110537244672> channel in the server.`)
+
           //Let's first check if the user even exists in the db
           await sql
             .get(
@@ -301,9 +304,6 @@ module.exports = {
                     });
 
                   setTimeout(() => {
-                    message.guild.channels
-                      .get(serverInfo.mutedReason)
-                      .send(`${member}`).then(m => m.delete())
                     const embedreason = new Discord.MessageEmbed()
                       .setColor([255, 255, 0])
                       .setAuthor(`Case ${CaseID} | User Mute`, serverInfo.logo)
