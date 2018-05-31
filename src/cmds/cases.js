@@ -16,94 +16,96 @@ module.exports = {
       hasRole(message.member, "Developer")
     ) {
       if (message.mentions.users.first() == undefined) {
-        var TheUser = args[1];
+        var user = args[1];
       } else {
-        var TheUser = message.mentions.users.first().id;
+        var user = message.mentions.users.first().id;
       }
 
-      await sql
-        .get(`select * from Members where DiscordID = '${TheUser}'`)
-        .then(row => {
-          if (!row) {
-            const embed = new Discord.MessageEmbed()
-              .setColor([255, 255, 0])
-              .setAuthor(`User not found`, serverInfo.logo);
-            return message.channel.send(embed);
-          } else {
-            const embed = new Discord.MessageEmbed().setColor([255, 255, 0]);
-
-            if (client.users.get(TheUser)) {
-              embed.setAuthor(
-                `All cases of ${client.users.get(TheUser).tag}`,
-                serverInfo.logo
-              );
+      client.guild.members.fetch(user).then(async TheUser => {
+        await sql
+          .get(`select * from Members where DiscordID = '${TheUser}'`)
+          .then(row => {
+            if (!row) {
+              const embed = new Discord.MessageEmbed()
+                .setColor([255, 255, 0])
+                .setAuthor(`User not found`, serverInfo.logo);
+              return message.channel.send(embed);
             } else {
-              embed.setAuthor(
-                `All cases of ${row.Username} (Last name found in db)`,
-                serverInfo.logo
-              );
-            }
+              const embed = new Discord.MessageEmbed().setColor([255, 255, 0]);
 
-            sql
-              .all(
-                `select * from logs where Member = '${TheUser}' AND Action = 'mute'`
-              )
-              .then(mutes => {
-                embed.addField("Mutes", mutes.length, true);
+              if (client.users.get(TheUser)) {
+                embed.setAuthor(
+                  `All cases of ${client.users.get(TheUser).tag}`,
+                  serverInfo.logo
+                );
+              } else {
+                embed.setAuthor(
+                  `All cases of ${row.Username} (Last name found in db)`,
+                  serverInfo.logo
+                );
+              }
 
-                sql
-                  .all(
-                    `select * from logs where Member = '${TheUser}' AND Action = 'warn'`
-                  )
-                  .then(warns => {
-                    embed.addField("Warnings", warns.length, true);
-                    embed.setThumbnail(
-                      "http://www.cityrider.com/fixed/43aspect.png"
-                    );
+              sql
+                .all(
+                  `select * from logs where Member = '${TheUser}' AND Action = 'mute'`
+                )
+                .then(mutes => {
+                  embed.addField("Mutes", mutes.length, true);
 
-                    sql
-                      .all(
-                        `select * from logs where Member = '${TheUser}' AND Action = 'kick'`
-                      )
-                      .then(kicks => {
-                        embed.addField("Kicks", kicks.length, true);
+                  sql
+                    .all(
+                      `select * from logs where Member = '${TheUser}' AND Action = 'warn'`
+                    )
+                    .then(warns => {
+                      embed.addField("Warnings", warns.length, true);
+                      embed.setThumbnail(
+                        "http://www.cityrider.com/fixed/43aspect.png"
+                      );
 
-                        sql
-                          .all(
-                            `select * from logs where Member = '${TheUser}' AND Action = 'ban'`
-                          )
-                          .then(bans => {
-                            embed.addField("Bans", bans.length, true);
+                      sql
+                        .all(
+                          `select * from logs where Member = '${TheUser}' AND Action = 'kick'`
+                        )
+                        .then(kicks => {
+                          embed.addField("Kicks", kicks.length, true);
 
-                            sql
-                              .all(
-                                `select * from logs where Member = '${TheUser}' LIMIT 5`
-                              )
-                              .then(cases => {
-                                var output = "";
-                                cases.forEach(element => {
-                                  output +=
-                                    "**" +
-                                    element.ID +
-                                    "**: " +
-                                    capitalizeFirstLetter(element.Action) +
-                                    " - " +
-                                    element.Reason +
-                                    "\n";
+                          sql
+                            .all(
+                              `select * from logs where Member = '${TheUser}' AND Action = 'ban'`
+                            )
+                            .then(bans => {
+                              embed.addField("Bans", bans.length, true);
+
+                              sql
+                                .all(
+                                  `select * from logs where Member = '${TheUser}' LIMIT 5`
+                                )
+                                .then(cases => {
+                                  var output = "";
+                                  cases.forEach(element => {
+                                    output +=
+                                      "**" +
+                                      element.ID +
+                                      "**: " +
+                                      capitalizeFirstLetter(element.Action) +
+                                      " - " +
+                                      element.Reason +
+                                      "\n";
+                                  });
+
+                                  if (output.length < 2) {
+                                    output = "/";
+                                  }
+                                  embed.addField("Last 5 cases", output);
+                                  message.channel.send(embed);
                                 });
-
-                                if (output.length < 2) {
-                                  output = "/";
-                                }
-                                embed.addField("Last 5 cases", output);
-                                message.channel.send(embed);
-                              });
-                          });
-                      });
-                  });
-              });
-          }
-        });
+                            });
+                        });
+                    });
+                });
+            }
+          });
+      })
     }
   }
 };

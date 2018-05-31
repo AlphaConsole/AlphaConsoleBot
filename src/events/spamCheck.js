@@ -69,6 +69,8 @@ module.exports = {
         });
       });
 
+      message.author.send(`**AlphaConsole Bot** has muted you for **1 hour**.\n\n__For the following reason:__\nAutomated mute by spam protection\n\nFor more information, please read the <#448536110537244672> channel in the server.`)
+
       //Let's first check if the user even exists in the db
       await sql
         .get(`select * from Members where DiscordID = '${message.author.id}'`)
@@ -156,9 +158,6 @@ module.exports = {
                 });
 
                 setTimeout(() => {
-                  message.guild.channels
-                    .get(serverInfo.mutedReason)
-                    .send(`${message.member}`).then(m => m.delete())
                   const embedreason = new Discord.MessageEmbed()
                     .setColor([255, 255, 0])
                     .setAuthor(`Case ${CaseID} | User Mute`, serverInfo.logo)
@@ -179,6 +178,9 @@ module.exports = {
       messageMatch == maxDuplicatesBan &&
       !banned.includes(message.author.id)
     ) {
+
+      message.author.send(`**AlphaConsole Bot** has **permanently** muted you.\n\n__For the following reason:__\nAutomated mute by spam protection\n\nFor more information, please read the <#448536110537244672> channel in the server.`)
+
       const embed = new Discord.MessageEmbed()
         .setColor([255, 255, 0])
         .setAuthor(
@@ -241,9 +243,6 @@ module.exports = {
                 });
 
                 setTimeout(() => {
-                  message.guild.channels
-                    .get(serverInfo.mutedReason)
-                    .send(`${message.member}`).then(m => m.delete())
                   const embedreason = new Discord.MessageEmbed()
                     .setColor([255, 255, 0])
                     .setAuthor(`Case ${CaseID} | User Mute`, serverInfo.logo)
@@ -267,6 +266,10 @@ module.exports = {
       if (authors[i].time > now - interval) {
         matched++;
         if (matched == warnBuffer && !warned.includes(message.author.id)) {
+
+          message.author.send(`**AlphaConsole Bot** has muted you for **1 hour**.\n\n__For the following reason:__\nAutomated mute by spam protection\n\nFor more information, please read the <#448536110537244672> channel in the server.`)
+
+
           const embed = new Discord.MessageEmbed()
             .setColor([255, 255, 0])
             .setAuthor(
@@ -373,9 +376,6 @@ module.exports = {
                     });
 
                     setTimeout(() => {
-                      message.guild.channels
-                        .get(serverInfo.mutedReason)
-                        .send(`${message.member}`).then(m => m.delete())
                       const embedreason = new Discord.MessageEmbed()
                         .setColor([255, 255, 0])
                         .setAuthor(`Case ${CaseID} | User Mute`, serverInfo.logo)
@@ -393,6 +393,9 @@ module.exports = {
             .catch(err => console.log(err));
         } else if (matched == maxBuffer) {
           if (!banned.includes(message.author.id)) {
+
+            message.author.send(`**AlphaConsole Bot** has **permanently** muted you.\n\n__For the following reason:__\nAutomated mute by spam protection\n\nFor more information, please read the <#448536110537244672> channel in the server.`)
+
             const embed = new Discord.MessageEmbed()
               .setColor([255, 255, 0])
               .setAuthor(
@@ -455,9 +458,6 @@ module.exports = {
                       });
 
                       setTimeout(() => {
-                        message.guild.channels
-                          .get(serverInfo.mutedReason)
-                          .send(`${message.member}`).then(m => m.delete())
                         const embedreason = new Discord.MessageEmbed()
                           .setColor([255, 255, 0])
                           .setAuthor(`Case ${CaseID} | User Mute`, serverInfo.logo)

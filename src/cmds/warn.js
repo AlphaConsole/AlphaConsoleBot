@@ -18,58 +18,60 @@ module.exports = {
       let discordid = "";
       if (message.mentions.users.first()) discordid = message.mentions.users.first().id
       else discordid = args[1];
-      
-      let member = message.guild.member(discordid);
-      if (!member) {
-        const embed = new Discord.MessageEmbed()
-            .setColor([255, 255, 0])
-            .setAuthor("I did not find any user with that tag / discordid", serverInfo.logo);
-        return message.channel.send(embed);
-      }
 
-      //Let's first check if the user even exists in the db
-      sql
-        .get(
-          `select * from Members where DiscordID = '${
-            message.mentions.users.first().id
-          }'`
-        )
-        .then(row => {
-          if (!row) {
-            var today = new Date().getTime();
-            sql
-              .run(
-                `Insert into Members(DiscordID, Username, JoinedDate)VALUES('${
-                  member.id
-                }', '${mysql_real_escape_string(
-                  member.user.username
-                )}', '${today}')`
-              )
-              .then(() => {
-                sql
-                  .get(
-                    `select * from Members where DiscordID = '${
-                      member.id
-                    }'`
-                  )
-                  .then(row => {
-                    WarnUser(client, serverInfo, sql, message, row, args, member);
-                  });
-              })
-              .catch(err => console.log(err));
-          } else {
-            sql
-              .get(
-                `select * from Members where DiscordID = '${
-                  member.id
-                }'`
-              )
-              .then(row => {
-                WarnUser(client, serverInfo, sql, message, row, args, member);
-              });
-          }
-        })
-        .catch(err => console.log(err));
+      message.guild.members.fetch(discordid).then(async member => {
+        if (!member) {
+          const embed = new Discord.MessageEmbed()
+              .setColor([255, 255, 0])
+              .setAuthor("I did not find any user with that tag / discordid", serverInfo.logo);
+          return message.channel.send(embed);
+        }
+  
+        //Let's first check if the user even exists in the db
+        sql
+          .get(
+            `select * from Members where DiscordID = '${
+              member.id
+            }'`
+          )
+          .then(row => {
+            if (!row) {
+              var today = new Date().getTime();
+              sql
+                .run(
+                  `Insert into Members(DiscordID, Username, JoinedDate)VALUES('${
+                    member.id
+                  }', '${mysql_real_escape_string(
+                    member.user.username
+                  )}', '${today}')`
+                )
+                .then(() => {
+                  sql
+                    .get(
+                      `select * from Members where DiscordID = '${
+                        member.id
+                      }'`
+                    )
+                    .then(row => {
+                      WarnUser(client, serverInfo, sql, message, row, args, member);
+                    });
+                })
+                .catch(err => console.log(err));
+            } else {
+              sql
+                .get(
+                  `select * from Members where DiscordID = '${
+                    member.id
+                  }'`
+                )
+                .then(row => {
+                  WarnUser(client, serverInfo, sql, message, row, args, member);
+                });
+            }
+          })
+          .catch(err => console.log(err));
+      })
+      
     }
   }
 };

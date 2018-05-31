@@ -28,15 +28,15 @@ module.exports = {
       }
     }
 
+    let channel = message.channel.type == "text" ? `<#${message.channel.id}>` : '**DM**'
+
     client.guilds
       .get(serverInfo.guildId)
       .channels.get(serverInfo.serverlogChannel)
       .send(
         ":pencil: `[" +
           new Date().toTimeString().split(" ")[0] +
-          "]` **Channel: <#" +
-          message.channel.id +
-          "> " +
+          "]` **Channel: " + channel + " " +
           message.author.tag +
           "**'s message was deleted. Content: " +
           ResponseText
