@@ -138,7 +138,7 @@ client.on("message", async message => {
 //--------------------------//
 
 async function messageProcess(message) {
-  if (message.author.bot) return;
+  if (message.author.bot || message.guild.id !== serverInfo.guildId) return;
 
   var args = message.content.split(/[ ]+/);
 
