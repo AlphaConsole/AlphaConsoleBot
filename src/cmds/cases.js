@@ -21,21 +21,21 @@ module.exports = {
         var user = message.mentions.users.first().id;
       }
 
-      client.guild.members.fetch(user).then(async TheUser => {
-        await sql
-          .get(`select * from Members where DiscordID = '${TheUser}'`)
-          .then(row => {
-            if (!row) {
-              const embed = new Discord.MessageEmbed()
-                .setColor([255, 255, 0])
-                .setAuthor(`User not found`, serverInfo.logo);
-              return message.channel.send(embed);
-            } else {
-              const embed = new Discord.MessageEmbed().setColor([255, 255, 0]);
+      await sql
+        .get(`select * from Members where DiscordID = '${user}'`)
+        .then(row => {
+          if (!row) {
+            const embed = new Discord.MessageEmbed()
+              .setColor([255, 255, 0])
+              .setAuthor(`User not found`, serverInfo.logo);
+            return message.channel.send(embed);
+          } else {
+            const embed = new Discord.MessageEmbed().setColor([255, 255, 0]);
 
-              if (client.users.get(TheUser)) {
+            client.users.fetch(user).then(u => {
+              if (u) {
                 embed.setAuthor(
-                  `All cases of ${client.users.get(TheUser).tag}`,
+                  `All cases of ${u.tag}`,
                   serverInfo.logo
                 );
               } else {
@@ -46,66 +46,68 @@ module.exports = {
               }
 
               sql
-                .all(
-                  `select * from logs where Member = '${TheUser}' AND Action = 'mute'`
-                )
-                .then(mutes => {
-                  embed.addField("Mutes", mutes.length, true);
+              .all(
+                `select * from logs where Member = '${user}' AND Action = 'mute'`
+              )
+              .then(mutes => {
+                embed.addField("Mutes", mutes.length, true);
 
-                  sql
-                    .all(
-                      `select * from logs where Member = '${TheUser}' AND Action = 'warn'`
-                    )
-                    .then(warns => {
-                      embed.addField("Warnings", warns.length, true);
-                      embed.setThumbnail(
-                        "http://www.cityrider.com/fixed/43aspect.png"
-                      );
+                sql
+                  .all(
+                    `select * from logs where Member = '${user}' AND Action = 'warn'`
+                  )
+                  .then(warns => {
+                    embed.addField("Warnings", warns.length, true);
+                    embed.setThumbnail(
+                      "http://www.cityrider.com/fixed/43aspect.png"
+                    );
 
-                      sql
-                        .all(
-                          `select * from logs where Member = '${TheUser}' AND Action = 'kick'`
-                        )
-                        .then(kicks => {
-                          embed.addField("Kicks", kicks.length, true);
+                    sql
+                      .all(
+                        `select * from logs where Member = '${user}' AND Action = 'kick'`
+                      )
+                      .then(kicks => {
+                        embed.addField("Kicks", kicks.length, true);
 
-                          sql
-                            .all(
-                              `select * from logs where Member = '${TheUser}' AND Action = 'ban'`
-                            )
-                            .then(bans => {
-                              embed.addField("Bans", bans.length, true);
+                        sql
+                          .all(
+                            `select * from logs where Member = '${user}' AND Action = 'ban'`
+                          )
+                          .then(bans => {
+                            embed.addField("Bans", bans.length, true);
 
-                              sql
-                                .all(
-                                  `select * from logs where Member = '${TheUser}' LIMIT 5`
-                                )
-                                .then(cases => {
-                                  var output = "";
-                                  cases.forEach(element => {
-                                    output +=
-                                      "**" +
-                                      element.ID +
-                                      "**: " +
-                                      capitalizeFirstLetter(element.Action) +
-                                      " - " +
-                                      element.Reason +
-                                      "\n";
-                                  });
-
-                                  if (output.length < 2) {
-                                    output = "/";
-                                  }
-                                  embed.addField("Last 5 cases", output);
-                                  message.channel.send(embed);
+                            sql
+                              .all(
+                                `select * from logs where Member = '${user}' LIMIT 5`
+                              )
+                              .then(cases => {
+                                var output = "";
+                                cases.forEach(element => {
+                                  output +=
+                                    "**" +
+                                    element.ID +
+                                    "**: " +
+                                    capitalizeFirstLetter(element.Action) +
+                                    " - " +
+                                    element.Reason +
+                                    "\n";
                                 });
-                            });
-                        });
-                    });
-                });
-            }
-          });
-      })
+
+                                if (output.length < 2) {
+                                  output = "/";
+                                }
+                                embed.addField("Last 5 cases", output);
+                                message.channel.send(embed);
+                              });
+                          });
+                      });
+                  });
+              });
+            })
+
+            
+          }
+        });
     }
   }
 };
