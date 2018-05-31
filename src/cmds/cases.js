@@ -21,7 +21,7 @@ module.exports = {
         var user = message.mentions.users.first().id;
       }
 
-      client.guild.members.fetch(user).then(TheUser => {
+      client.guild.members.fetch(user).then(async TheUser => {
         await sql
           .get(`select * from Members where DiscordID = '${TheUser}'`)
           .then(row => {
