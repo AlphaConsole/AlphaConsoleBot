@@ -14,7 +14,8 @@ module.exports = {
 		AllowedLinksSet,
 		AutoResponds,
 		SwearWordsSet,
-		permits
+		permits,
+		keys
 	) => {
 
 
@@ -519,6 +520,53 @@ module.exports = {
 			}
 		}
 
+
+		// Title Report functionality
+		if (message.channel.id == serverInfo.titleReporting && !message.content.startsWith(".")) {
+			message.delete();
+
+			let request = require("request");
+			request(`${keys.CheckdbURLnew}?DiscordID=${message.content}`, (err, res, body) => {
+				if (err) return console.error(err);
+
+				if (body !== "Not signed up for DB") {
+					reportTitle(client, serverInfo, sql, message, body, message.author.id)
+				} else {
+					request(`${keys.CheckdbURLnew}?SteamID=${message.content}`, (error, result, bodydata) => {
+						if (error) return console.error(error);
+
+						if (bodydata !== "Not signed up for DB") {
+							reportTitle(client, serverInfo, sql, message, bodydata, message.author.id)
+						} else {
+							message.author.send("I did not find any title based on that DiscordID / SteamID. Please **only** provide me the ID in that channel")
+						}
+					})
+				}
+			})
+		}
+
+		if (message.channel.id == serverInfo.ingameReports /* && message.author.bot && message.author.username == "Title reports" */) {
+			let data = JSON.parse(message.content);
+			
+			if (data.Issuer.GoodReports >= data.Issuer.BadReports) {
+
+				message.guild.channels.get(serverInfo.titleReporting).send(`
+**================================**
+Reports by <@${data.Issuer.DiscordID}>
+\`👍 ${data.Issuer.GoodReports}\`
+\`👎 ${data.Issuer.BadReports}\` 
+`)
+
+				for (let i = 0; i < data.Users.length; i++) {
+					let r = data.Users[i];
+					
+					reportTitle(client, serverInfo, sql, message, `${r.Title} ? ${r.SteamID} ${r.DiscordID}`, data.Issuer.DiscordID);
+				}
+			}
+		}
+
+
+
 		// Add reaction when bot is mentioned
 		message.mentions.users.forEach(user => {
 			if (user.id == 328581069995507722 || user.id == 328632005627478019) {
@@ -535,6 +583,32 @@ module.exports = {
 
 	}
 };
+
+function reportTitle(client, serverInfo, sql, message, titleInfo, Reporter) {
+	let titleDetails = titleInfo.split(/[ ]+/);
+	let discordID = titleDetails[titleDetails.length - 1];
+	let steamID = titleDetails[titleDetails.length - 2];
+	let color = titleDetails[titleDetails.length - 3];
+	let title = titleDetails.splice(0, titleDetails.length - 3);
+	title = title.join(" ");
+
+	sql.get(`select * from titleReports where SteamID = ${steamID} order by ID desc`).then(row => {
+		if (row && row.Permitted == 1) {
+			return message.author.send("This user has been reported before and has been permitted to use this title.")
+		}
+		if (row && row.Fixed == 0) {
+			return message.author.send("This user has an open report currently.")
+		}
+
+		message.guild.channels.get(serverInfo.titleReporting).send(`\`DiscordID: ${discordID} | SteamID: ${steamID} | title: ${title}\``).then(async m => {
+			sql.run(`Insert into titleReports(DiscordID, SteamID, Title, Color, MessageID, Reporter) VALUES ('${discordID}', '${steamID}', '${mysql_real_escape_string(title)}', '${color}', '${m.id}', '${Reporter}')`)
+			await m.react("🔨");
+			await m.react("✅");
+			await m.react("❎");
+			await m.react("❌");
+		})
+	})
+}
 
 function sentiment(message) {
 	var sentiment = require("sentiment");
