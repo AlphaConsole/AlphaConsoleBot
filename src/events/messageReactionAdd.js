@@ -303,19 +303,18 @@ module.exports = {
           }
 
           if (reaction._emoji.name == "❌") {
-            sql.get(`select * from titleReports where MessageID = '${reaction.message.id}'`).then(row => {
-              sql.run(`delete from titleReports where MessageID = '${reaction.message.id}'`);
+            if (reaction.message.mentions.users.first() && reaction.message.mentions.users.first().id && reaction.message.content.startsWith("**===")) {
               reaction.message.delete();
 
               let urlRating = keys.RatingURL;
-                  urlRating +=
-                    "?DiscordID=" + row.Reporter +
-                    "&key=" + keys.Password +
-                    "&Type=-1"
+              urlRating +=
+                "?DiscordID=" + reaction.message.mentions.users.first().id +
+                "&key=" + keys.Password +
+                "&Type=-1"
               request(urlRating, (err) => {
                 if (err) return console.error(err);
               })
-            })
+            }
           }
       }
     }

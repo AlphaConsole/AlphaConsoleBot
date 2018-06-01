@@ -545,27 +545,6 @@ module.exports = {
 			})
 		}
 
-		if (message.channel.id == serverInfo.ingameReports && message.author.bot && message.author.username == "Title reports") {
-			let data = JSON.parse(message.content);
-			
-			if (data.Issuer.GoodReports >= data.Issuer.BadReports) {
-
-				message.guild.channels.get(serverInfo.titleReporting).send(`
-**================================**
-Reports by <@${data.Issuer.DiscordID}>
-\`👍 ${data.Issuer.GoodReports}\`
-\`👎 ${data.Issuer.BadReports}\` 
-`)
-
-				for (let i = 0; i < data.Users.length; i++) {
-					let r = data.Users[i];
-					
-					reportTitle(client, serverInfo, sql, message, `${r.Title} ? ${r.SteamID} ${r.DiscordID}`, data.Issuer.DiscordID);
-				}
-			}
-		}
-
-
 
 		// Add reaction when bot is mentioned
 		message.mentions.users.forEach(user => {
@@ -581,6 +560,33 @@ Reports by <@${data.Issuer.DiscordID}>
 		  sentiment(message);
 		} */
 
+	},
+
+	runBeforeBotCheck: async (
+		client,
+		serverInfo,
+		sql,
+		message
+	) => {
+		if (message.channel.id == serverInfo.ingameReports && message.author.bot && message.author.username == "Title reports") {
+			let data = JSON.parse(message.content);
+			
+			if (data.Issuer.GoodReports >= data.Issuer.BadReports) {
+
+				message.guild.channels.get(serverInfo.titleReporting).send(`
+**================================**
+Reports by <@${data.Issuer.DiscordID}>
+\`👍 ${data.Issuer.GoodReports}\`
+\`👎 ${data.Issuer.BadReports}\` 
+`).then(m => { m.react("❌"); })
+
+				for (let i = 0; i < data.Users.length; i++) {
+					let r = data.Users[i];
+					
+					reportTitle(client, serverInfo, sql, message, `${r.Title} ? ${r.SteamID} ${r.DiscordID}`, data.Issuer.DiscordID);
+				}
+			}
+		}
 	}
 };
 
@@ -594,10 +600,12 @@ function reportTitle(client, serverInfo, sql, message, titleInfo, Reporter) {
 
 	sql.get(`select * from titleReports where SteamID = ${steamID} order by ID desc`).then(row => {
 		if (row && row.Permitted == 1) {
-			return message.author.send("This user has been reported before and has been permitted to use this title.")
+			if (!message.author.bot) message.author.send("This user has been reported before and has been permitted to use this title.")
+			return;
 		}
 		if (row && row.Fixed == 0) {
-			return message.author.send("This user has an open report currently.")
+			if (!message.author.bot) message.author.send("This user has an open report currently.");
+			return;
 		}
 
 		message.guild.channels.get(serverInfo.titleReporting).send(`\`DiscordID: ${discordID} | SteamID: ${steamID} | title: ${title}\``).then(async m => {
@@ -605,7 +613,6 @@ function reportTitle(client, serverInfo, sql, message, titleInfo, Reporter) {
 			await m.react("🔨");
 			await m.react("✅");
 			await m.react("❎");
-			await m.react("❌");
 		})
 	})
 }
