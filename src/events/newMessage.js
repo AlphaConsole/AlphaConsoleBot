@@ -545,6 +545,7 @@ module.exports = {
 			})
 		}
 
+		console.log(message.channel.id == serverInfo.ingameReports, message.author)
 		if (message.channel.id == serverInfo.ingameReports && message.author.username == "Title reports") {
 			let data = JSON.parse(message.content);
 			
