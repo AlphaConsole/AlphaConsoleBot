@@ -92,7 +92,7 @@ client.on("userUpdate", (oldMember, newMember) => {
 
 //User Info changed
 client.on("messageDelete", message => {
-  require("./events/messageDelete.js").run(client, serverInfo, message);
+  require("./events/messageDelete.js").run(client, serverInfo, message, sql);
 });
 
 //React has been added
@@ -102,7 +102,8 @@ client.on("messageReactionAdd", (reaction, user) => {
     serverInfo,
     reaction,
     user,
-    sql
+    sql,
+    keys
   );
 });
 
@@ -155,7 +156,8 @@ async function messageProcess(message) {
         AllowedLinksSet,
         AutoResponds,
         SwearWordsSet,
-        permits
+        permits,
+        keys
       );
       require("./events/spamCheck.js").run(
         client,

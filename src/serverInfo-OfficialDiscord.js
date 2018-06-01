@@ -10,6 +10,8 @@ module.exports.serverInfo = {
   EventsRole: "389234045709582337",
   suggestionsChannel: "352855430315376640",
   showcaseChannel: "358833347486810112",
+  titleReporting: "446186367303680000",
+  ingameReports: "446186367303680000",
   betaSteamIDS: "423943897329303552",
   setTitleChannel: "328236864534216704",
   setSpecialTitleChannel: "363137607540015106",

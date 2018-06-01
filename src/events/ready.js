@@ -133,6 +133,10 @@ module.exports = {
       if (!row) sql.run("CREATE TABLE `partners` ( `id` TEXT NOT NULL UNIQUE, `type` TEXT, `partner_name` TEXT, `message_data` TEXT, `header_data` TEXT, `enabled` INTEGER )");
     })
 
+    sql.get("SELECT name FROM sqlite_master WHERE type='table' AND name='titleReports';").then(row => {
+      if (!row) sql.run("CREATE TABLE `titleReports` ( `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, `DiscordID` TEXT, `SteamID` TEXT, `Title` TEXT, `Color` TEXT, `MessageID` TEXT, `Fixed` INTEGER DEFAULT 0, `Permitted` INTEGER DEFAULT 0, `Reporter` TEXT )");
+    })
+
     /* if (!client.guilds.get(serverInfo.guildId).available) {
       client.users
         .get("136607366408962048")
@@ -145,6 +149,7 @@ module.exports = {
     //Should be a loop to get them all but I couldn't make it work with it being async... 100 should be enough anyway.
     client.guilds.get(serverInfo.guildId).channels.get(serverInfo.suggestionsChannel).messages.fetch({limit: 100})
     client.guilds.get(serverInfo.guildId).channels.get(serverInfo.partnerChannel).messages.fetch({limit: 100})
+    client.guilds.get(serverInfo.guildId).channels.get(serverInfo.titleReporting).messages.fetch({limit: 100})
 
     console.log("AlphaConsole Bot logged in and ready.");
 

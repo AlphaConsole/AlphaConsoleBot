@@ -1,4 +1,5 @@
 const Discord = require("discord.js");
+const request = require("request");
 var cooldown = {};
 
 module.exports = {
@@ -6,25 +7,11 @@ module.exports = {
   description:
     "Event when a new reaction has been added for like `#Showcase` & `#Suggestions`",
 
-  run: async (client, serverInfo, reaction, user, sql) => {
+  run: async (client, serverInfo, reaction, user, sql, keys) => {
 
-    if (reaction._emoji.name == "❌") {
-      if (
-        hasRole(
-          client.guilds.get(serverInfo.guildId).members.get(user.id),
-          "Developer"
-        ) ||
-        hasRole(
-          client.guilds.get(serverInfo.guildId).members.get(user.id),
-          "Admin"
-        )
-      ) {
-        if (
-          reaction.message.channel.id != serverInfo.suggestionsChannel &&
-          reaction.message.channel.id != serverInfo.showcaseChannel
-        ) {
-          return;
-        }
+    if (reaction._emoji.name == "❌" && !(reaction.message.channel.id != serverInfo.suggestionsChannel && reaction.message.channel.id != serverInfo.showcaseChannel)) {
+      if (hasRole(client.guilds.get(serverInfo.guildId).members.get(user.id), "Developer") ||
+          hasRole(client.guilds.get(serverInfo.guildId).members.get(user.id), "Admin") ) {
 
         user
           .send(
@@ -264,6 +251,72 @@ module.exports = {
               }, your DM's are disabled, so we can't send you the information you requested about one of our Partners!`
             );
         }
+      }
+    }
+
+
+
+    // Title Reporting functionality
+    if (reaction.message.channel.id == serverInfo.titleReporting) {
+      if (hasRole(client.guilds.get(serverInfo.guildId).members.get(user.id), "Developer") ||
+          hasRole(client.guilds.get(serverInfo.guildId).members.get(user.id), "Admin") ) {
+
+          if (reaction._emoji.name == "🔨") {
+            sql.get(`select * from titleReports where MessageID = '${reaction.message.id}'`).then(row => {
+              if (row) {
+                let url = keys.SetTitleURL;
+                url +=
+                  "?DiscordID=" + row.DiscordID +
+                  "&key=" + keys.Password +
+                  "&title=" + escape("Title reset by admin!");
+                  
+                console.log(url)
+                request(url, (err, res, body) => {
+                  if (body.toLowerCase().includes("done")) {
+                    sql.run(`update titleReports set Fixed = 1 where MessageID = '${reaction.message.id}'`);
+                    reaction.message.delete();
+
+                    let urlRating = keys.RatingURL;
+                    urlRating +=
+                      "?DiscordID=" + row.Reporter +
+                      "&key=" + keys.Password +
+                      "&Type=1"
+                    request(urlRating, (err) => {
+                      if (err) return console.error(err);
+                    })
+                  } else {
+                    user.send("I did not receive a confirmation from the server. This is what the server sent back:\n`" + body + "`")
+                  }
+                })
+              }
+            })
+          }
+
+          if (reaction._emoji.name == "✅") {
+            sql.run(`update titleReports set Permitted = 1, Fixed = 1 where MessageID = '${reaction.message.id}'`);
+            reaction.message.delete();
+          }
+
+          if (reaction._emoji.name == "❎") {
+            sql.run(`delete from titleReports where MessageID = '${reaction.message.id}'`);
+            reaction.message.delete();
+          }
+
+          if (reaction._emoji.name == "❌") {
+            sql.get(`select * from titleReports where MessageID = '${reaction.message.id}'`).then(row => {
+              sql.run(`delete from titleReports where MessageID = '${reaction.message.id}'`);
+              reaction.message.delete();
+
+              let urlRating = keys.RatingURL;
+                  urlRating +=
+                    "?DiscordID=" + row.Reporter +
+                    "&key=" + keys.Password +
+                    "&Type=-1"
+              request(urlRating, (err) => {
+                if (err) return console.error(err);
+              })
+            })
+          }
       }
     }
   }
