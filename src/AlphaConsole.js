@@ -139,7 +139,8 @@ client.on("message", async message => {
 //--------------------------//
 
 async function messageProcess(message) {
-  if ((message.author.bot && message.author.username != "Title reports") || message.guild.id !== serverInfo.guildId) return;
+  require("./events/newMessage.js").runBeforeBotCheck(client, serverInfo, sql, message);
+  if (message.author.bot || message.guild.id !== serverInfo.guildId) return;
 
   var args = message.content.split(/[ ]+/);
 
