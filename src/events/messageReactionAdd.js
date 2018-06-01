@@ -270,7 +270,6 @@ module.exports = {
                   "&key=" + keys.Password +
                   "&title=" + escape("Title reset by admin!");
                   
-                console.log(url)
                 request(url, (err, res, body) => {
                   if (body.toLowerCase().includes("done")) {
                     sql.run(`update titleReports set Fixed = 1 where MessageID = '${reaction.message.id}'`);
