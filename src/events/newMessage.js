@@ -522,7 +522,7 @@ module.exports = {
 
 
 		// Title Report functionality
-		if (message.channel.id == serverInfo.titleReporting && !message.content.startsWith(".")) {
+		if (message.channel.id == serverInfo.titleReporting && !message.content.startsWith(".") && !message.author.bot) {
 			message.delete();
 
 			let request = require("request");
@@ -545,8 +545,7 @@ module.exports = {
 			})
 		}
 
-		console.log(message.channel.id == serverInfo.ingameReports, message.author)
-		if (message.channel.id == serverInfo.ingameReports && message.author.username == "Title reports") {
+		if (message.channel.id == serverInfo.ingameReports && message.author.bot && message.author.username == "Title reports") {
 			let data = JSON.parse(message.content);
 			
 			if (data.Issuer.GoodReports >= data.Issuer.BadReports) {
