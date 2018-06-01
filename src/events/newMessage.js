@@ -545,28 +545,6 @@ module.exports = {
 			})
 		}
 
-		// Add reaction when bot is mentioned
-		message.mentions.users.forEach(user => {
-			if (user.id == 328581069995507722 || user.id == 328632005627478019) {
-				message.react(":pingsock:395678894650294274");
-			}
-		});
-
-		/* if (
-		  args.indexOf("bot") > -1 &&
-		  message.mentions.users.first() == undefined
-		) {
-		  sentiment(message);
-		} */
-
-	},
-
-	runBeforeBotCheck: async (
-		client,
-		serverInfo,
-		sql,
-		message
-	) => {
 		if (message.channel.id == serverInfo.ingameReports && message.author.bot && message.author.username == "Title reports") {
 			let data = JSON.parse(message.content);
 			
@@ -586,10 +564,25 @@ Reports by <@${data.Issuer.DiscordID}>
 				}
 			}
 		}
+
+
+
+		// Add reaction when bot is mentioned
+		message.mentions.users.forEach(user => {
+			if (user.id == 328581069995507722 || user.id == 328632005627478019) {
+				message.react(":pingsock:395678894650294274");
+			}
+		});
+
+		/* if (
+		  args.indexOf("bot") > -1 &&
+		  message.mentions.users.first() == undefined
+		) {
+		  sentiment(message);
+		} */
+
 	}
 };
-
-
 
 function reportTitle(client, serverInfo, sql, message, titleInfo, Reporter) {
 	let titleDetails = titleInfo.split(/[ ]+/);
