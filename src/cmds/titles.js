@@ -63,7 +63,7 @@ function setTitle(client, serverInfo, message, blackListedWords, args) {
     var invalidTitle = isValidTitle(message, blackListedWords, userTitle); //check if title is valid
     if (!invalidTitle) {
       //Make web req.
-      setUsersTitle(message.author, userTitle, message, args);
+      setUsersTitle(message.author, userTitle, message, args, serverInfo);
     } else {
       //DM user and say invalid.
       message.member.send(
@@ -201,7 +201,7 @@ function setSpecialTitle(
       .then(row => {
         if (row) {
           if (hasRole(message.member, row.PermittedRoles)) {
-            setUsersTitle(message.author, row.Title, message, args);
+            setUsersTitle(message.author, row.Title, message, args, serverInfo);
             setUsersColour(message.author, row.Color, message, args);
           } else {
             message.author
@@ -246,7 +246,7 @@ function setSpecialTitle(
  * @param {string} userTitle
  * @param {message object} message
  */
-function setUsersTitle(user, userTitle, message, args) {
+function setUsersTitle(user, userTitle, message, args, serverInfo) {
   var request = require("request");
   var url = keys.SetTitleURL;
   url +=
