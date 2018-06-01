@@ -42,7 +42,7 @@ module.exports = {
           const embed = new Discord.MessageEmbed()
             .setColor([255, 255, 0])
             .setAuthor(
-              "The command has not correctly been used. Please use `!clear [amount]`",
+              "The command has not correctly been used. Please use `!purge [amount]`",
               serverInfo.logo
             );
           return message.channel.send(embed);
