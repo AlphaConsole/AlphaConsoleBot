@@ -571,7 +571,7 @@ module.exports = {
 		if (message.channel.id == serverInfo.ingameReports && message.author.bot && message.author.username == "Title reports") {
 			let data = JSON.parse(message.content);
 			
-			if (data.Issuer.GoodReports >= data.Issuer.BadReports) {
+			/* if (data.Issuer.GoodReports >= data.Issuer.BadReports) { */
 
 				message.guild.channels.get(serverInfo.titleReporting).send(`
 **================================**
@@ -585,7 +585,7 @@ Reports by <@${data.Issuer.DiscordID}>
 					
 					reportTitle(client, serverInfo, sql, message, `${r.Title} ? ${r.SteamID} ${r.DiscordID}`, data.Issuer.DiscordID);
 				}
-			}
+			/* } */
 		}
 	}
 };
