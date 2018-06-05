@@ -1,493 +1,274 @@
-//Main file for AlphaConsole Discord Bot
+/**
+ * !Main file for AlphaConsole Discord Bot
+ * 
+ * ? This is the main file where all event handlers are located and it routes to the correct file.
+ * ? Also time based events are called from here
+ * 
+ * * You will notice that all the comments start with a ?, ! or *.
+ * * This is done for nicer looking comments / documentation.
+ * * I use the Better Comments exentension in vsc for the look
+ * * -> https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments
+ */
 
-//const
-const Discord = require("discord.js");
+
+
+/**
+ * ! requires & setup
+ * 
+ * ? Requiring Discord & mysql and setting up the client.
+ * ? Also requiring the private keys and the server information.
+ */
 const keys = require("../src/tokens.js");
+const serverInfoPath = process.argv.slice(2).pop().replace("-serverfile=", "");
+const serverInfo = require(serverInfoPath);
+
+const Discord = require("discord.js");
+const mysql = require('mysql');
+
 const client = new Discord.Client();
-const sql = require("sqlite");
-sql.open("src/sqlite/Bot.db");
+const pool = mysql.createPool({
+    host    : keys.dbHost,
+    port    : 3306,
+    user    : keys.dbUser,
+    password: keys.dbPass,
+    database: keys.dbName
+});
 
-//vars
-var AllowedLinksSet = new Set();
-var SwearWordsSet = new Set();
-var AutoResponds = new Map();
-var Commands = [];
-var Events = [];
-var blackListedWords = [];
-//anti-spam
-var authors = [];
-var messagelog = [];
-var warned = [];
-var banned = [];
-var permits = [];
-//server information
-var serverInfoPath = process.argv
-  .slice(2)
-  .pop()
-  .replace("-serverfile=", "");
-var serverInfo = require(serverInfoPath).serverInfo;
+let config = {
+  
+}
 
-//---------------------------//
-//      Client Events        //
-//---------------------------//
+// ? Database function to ensure we always have a connection but without having to repeat ourself in the code.
+let sql = {};
+sql.query = function(query, params, callback) {
+    pool.getConnection(function(err, connection) {
+      if(err) { 
+        console.log(err); 
+        if (callback) callback(true, null); 
+        return; 
+      }
+
+      connection.query(query, params, function(err, results) {
+        connection.release(); // always put connection back in pool after last query
+        if(err) { 
+          console.log(err); 
+          if (callback) callback(true, null); 
+          return; 
+        }
+        if (callback) callback(false, results);
+      });
+    });
+};
+
+
+
+
+
+
+
+/**
+ * ! Bot event handlers
+ * 
+ * ? These include all events that the bot receive except the message event.
+ * ? This is used to check if a new user joins for example
+ * ? or if to check if a new reaction has been added and the bot must take action
+ */
 
 //Bot logs in
 client.on("ready", () => {
-  require("./events/ready.js").run(
-    client,
-    serverInfo,
-    sql,
-    AllowedLinksSet,
-    AutoResponds,
-    Commands,
-    Events,
-    SwearWordsSet,
-    blackListedWords
-  );
-  //require("./events/StatusUpdate.js").run(client, serverInfo, sql, require("./tokens.js").TwitchClientID);
-  //require('./events/updatePartners.js').run(client, serverInfo, sql);
+  require('./events/ready').run(client, serverInfo, sql);
 });
 
 //New member joins
 client.on("guildMemberAdd", member => {
-  require("./events/newMember.js").run(client, serverInfo, member, sql);
+  
 });
 
 //User Left / kicked
 client.on("guildMemberRemove", member => {
-  require("./events/guildMemberRemove.js").run(client, serverInfo, member, sql);
+  
 });
 
 //Voice users update
 client.on("voiceStateUpdate", (oldMember, newMember) => {
-  require("./events/voiceChannelUpdate.js").run(
-    client,
-    serverInfo,
-    oldMember,
-    newMember
-  );
+  
 });
 
 //User Info changed
 client.on("guildMemberUpdate", (oldMember, newMember) => {
-  require("./events/guildMemberUpdate.js").run(
-    client,
-    serverInfo,
-    oldMember,
-    newMember,
-    sql,
-    keys
-  );
+  
 });
 
 //Personal Info changed
 client.on("userUpdate", (oldMember, newMember) => {
-  require("./events/userUpdate.js").run(
-    client,
-    serverInfo,
-    oldMember,
-    newMember
-  );
+  
 });
 
 //User Info changed
 client.on("messageDelete", message => {
-  require("./events/messageDelete.js").run(client, serverInfo, message, sql);
+  
 });
 
 //React has been added
 client.on("messageReactionAdd", (reaction, user) => {
-  require("./events/messageReactionAdd.js").run(
-    client,
-    serverInfo,
-    reaction,
-    user,
-    sql,
-    keys
-  );
+  
 });
 
-//Message Updated - Run checks for links / blacklisted. Spam check not needed since it's not a new message.
-client.on("messageUpdate", async (originalMessage, newMessage) => {
-  messageProcess(newMessage);
-});
 
 client.on("guildBanAdd", (guild, user) => {
-  require("./events/banAdd.js").run(client, serverInfo, user, sql);
+  
 });
 
 //Outputs unhandles promises
 process.on("unhandledRejection", (reason, p) => {
   console.log("Unhandled Rejection at: Promise", p, "reason:", reason);
-  //client.users.get("136607366408962048").send(`Unhandled Rejection at: Promise ${p} \n reason: ${reason}`);
 });
 
-//--------------------------//
-//    ALL MESSAGE EVENTS    //
-//--------------------------//
 
+
+
+
+
+
+
+/**
+ * ! New or edited message events / handling
+ * 
+ * ? All new and edited messages are checked.
+ * ? Checks like is this user allowed to chat in this channel or is the user spamming.
+ */
+
+//* New message
 client.on("message", async message => {
-  //Note from Nameless,
-  // Calls function below to process the message, this means it can be used in messageUpdate event just above to
-  // run the exact same checks for commands, words, all sorts when edited.
-
   messageProcess(message);
 });
 
-//--------------------------//
-//   DO MESSAGE FUNCTIONS   //
-//--------------------------//
+//* Message Updated
+client.on("messageUpdate", async (originalMessage, newMessage) => {
+  messageProcess(newMessage);
+});
+
 
 async function messageProcess(message) {
-  if (!message.guild) return;
-  if (message.guild.id !== serverInfo.guildId) return;
-  require("./events/newMessage.js").runBeforeBotCheck(client, serverInfo, sql, message);
-  if (message.author.bot) return;
-
+  if (message.author.bot || !message.guild) return;
   var args = message.content.split(/[ ]+/);
 
-  if (message.channel.type != "dm") {
+  if (message.channel.type === "text") {
+    /**
+     * ! Fetching the user
+     * 
+     * ? Due to the Discord server having a lot of members there is a chance that the user itself is not fetched.
+     * ? That's why we do so on every command, if the user is already fetched it'll take his information
+     * ? from the cache anyway without extra effort. This is just to insure the user can always be used
+     * ? in the command
+     */
     await message.guild.members.fetch(message.author.id).then(m => {
       message.member = m;
 
-      require("./events/newMessage.js").run(
-        client,
-        serverInfo,
-        sql,
-        message,
-        args,
-        AllowedLinksSet,
-        AutoResponds,
-        SwearWordsSet,
-        permits,
-        keys
-      );
-      require("./events/spamCheck.js").run(
-        client,
-        serverInfo,
-        message,
-        authors,
-        messagelog,
-        warned,
-        banned,
-        sql
-      );
+      /**
+       * ! Assigning all positions to the member to easily detect if he is allowed to do certain commands
+       * 
+       * ? We are saving these varibales in the message.member object. This way at any point of time
+       * ? we can request the information and detect if he is allowed to execute the command.
+       */
+      if (message.member.roles.has(serverInfo.roles.developer)) 
+        message.member.isDeveloper = true;
+      else
+        message.member.isDeveloper = false;
+      
+      if (message.member.roles.has(serverInfo.roles.admin) || message.member.isDeveloper)
+        message.member.isAdmin = true;
+      else
+        message.member.isAdmin = false;
 
-      /// USER COMMANDS
-      // Bot-Spam: Self-Assign role
-      if (args[0].toLowerCase() == "!role") {
-        require("./cmds/role.js").run(client, serverInfo, sql, message, args);
-      }
+      if (message.member.roles.has(serverInfo.roles.support) || message.member.isAdmin)
+        message.member.isSupport = true;
+      else
+        message.member.isSupport = false;
 
-      if (args[0].toLowerCase() == "!ping") {
-        require("./cmds/ping.js").run(client, serverInfo, message);
-      }
+      if (message.member.roles.has(serverInfo.roles.staff) || message.member.isSupport)
+        message.member.isStaff = true;
+      else
+        message.member.isStaff = false;
 
-      if (args[0].toLowerCase() == "!serverinfo") {
-        require("./cmds/serverinfo.js").run(
-          client,
-          serverInfo,
-          sql,
-          message,
-          args
-        );
-      }
+      /** 
+       * ! Assigned all data to a var
+       * 
+       * ? Here we'll be assigning all data we need in the other files to the `data` var.
+       * ? This is done because we will be requiring 20+ times and to avoid repeating if
+       * ? we need to update stuff we save it in 1 var we user everywhere.
+       * 
+       * * It might send more variables than needed in that file. But it's the same everywhere.
+       * * So it shouldn't affect permformance too much.
+       */
 
-      if (args[0].toLowerCase() == "!roleinfo") {
-        require("./cmds/roleinfo.js").run(
-          client,
-          serverInfo,
-          sql,
-          message,
-          args
-        );
+      let data = {
+        client    : client,
+        serverInfo: serverInfo,
+        message   : message,
+        sql       : sql,
+        config    : config
       }
+      
+      /**
+       * ! All possible commands
+       * 
+       * ? We assign the command to a variable. Based on that variable we'll redirect
+       * ? the request to the right file. So this file is not one big mess
+       * ? We also check every single message, to ensure the user is allowed to chat or for custom commands
+       */
+      let cmd = args[0].toLowerCase();
 
-      //Help command
-      if (args[0].toLowerCase() == "!help" || args[0].toLowerCase() == "!h") {
-        require("./cmds/helpPublic.js").run(
-          client,
-          serverInfo,
-          message,
-          args,
-          Commands
-        );
-      } else if (
-        args[0].toLowerCase() == "!set" ||
-        args[0].toLowerCase() == "!override"
-      ) {
-        //Title commands
-        require("./cmds/titles.js").run(
-          client,
-          serverInfo,
-          message,
-          blackListedWords,
-          args,
-          sql
-        );
-      } else if (args[0].toLowerCase() == "!disable") {
-        require("./cmds/disable.js").run(client, serverInfo, message, args);
-      } else if (args[0].toLowerCase() == "!events") {
-        require("./cmds/events.js").run(
-          client,
-          serverInfo,
-          message,
-          args,
-          Events
-        );
-      } else if (args[0].toLowerCase() == "!addcom") {
-        /// STAFF COMMANDS
-        //Staff Custom Commands add
-        require("./cmds/addcom.js").run(client, serverInfo, sql, message, args);
-      } else if (args[0].toLowerCase() == "!editcom") {
-        //Staff Custom Commands edit
-        require("./cmds/editcom.js").run(
-          client,
-          serverInfo,
-          sql,
-          message,
-          args
-        );
-      } else if (args[0].toLowerCase() == "!delcom") {
-        //Staff Custom Commands delete
-        require("./cmds/delcom.js").run(client, serverInfo, sql, message, args);
-      } else if (args[0].toLowerCase() == "!listcoms") {
-        //Staff Custom Commands list
-        require("./cmds/listcoms.js").run(
-          client,
-          serverInfo,
-          sql,
-          message,
-          args
-        );
-      } else if (args[0].toLowerCase() == "!usercount") {
-        //Staff usercount command
-        require("./cmds/usercount.js").run(
-          client,
-          serverInfo,
-          sql,
-          message,
-          args
-        );
-      } else if (args[0].toLowerCase() == "!lastseen") {
-        //Last Seen
-        require("./cmds/lastseen.js").run(client, serverInfo, message, args);
-      } else if (args[0].toLowerCase() == "!mute") {
-        /// SUPPORT COMMANDS
-        //Support mute command
-        require("./cmds/mute.js").run(client, serverInfo, sql, message, args);
-      } else if (args[0].toLowerCase() == "!unmute") {
-        //Support unmute command
-        require("./cmds/unmute.js").run(client, serverInfo, sql, message, args);
-      } else if (args[0].toLowerCase() == "!warn") {
-        //Support warn command
-        require("./cmds/warn.js").run(client, serverInfo, sql, message, args);
-      } else if (args[0].toLowerCase() == "!check") {
-        //Support check command
-        require("./cmds/check.js").run(client, serverInfo, sql, message, args);
-      } else if (args[0].toLowerCase() == "!case") {
-        //Support check command
-        require("./cmds/case.js").run(client, serverInfo, sql, message, args);
-      } else if (args[0].toLowerCase() == "!cases") {
-        //Support check command
-        require("./cmds/cases.js").run(
-          client,
-          serverInfo,
-          sql,
-          message,
-          args,
-          keys
-        );
-      } else if (args[0].toLowerCase() == "!eval") {
-        require("./cmds/eval.js").run(
-          client,
-          serverInfo,
-          message,
-        );
-      } else if (args[0].toLowerCase() == "!checkdb") {
-        //Support checkdb for titles command
-        require("./cmds/checkdb.js").run(client, serverInfo, message, args);
-      } else if (args[0].toLowerCase() == "!kick") {
-        /// MODERATOR COMMANDS
-        //Moderator kick command
-        require("./cmds/kick.js").run(client, serverInfo, sql, message, args);
-      } else if (args[0].toLowerCase() == "!ban") {
-        //Moderator ban command
-        require("./cmds/ban.js").run(client, serverInfo, sql, message, args);
-      } else if (args[0].toLowerCase() == "!auto") {
-        //Moderator auto respond command
-        require("./cmds/auto.js").run(
-          client,
-          serverInfo,
-          sql,
-          message,
-          args,
-          AutoResponds
-        );
-      } else if (args[0].toLowerCase() == "!swearwords") {
-        //Moderator swear words command
-        require("./cmds/swearwords.js").run(
-          client,
-          serverInfo,
-          sql,
-          message,
-          args,
-          SwearWordsSet
-        );
-      } else if (args[0].toLowerCase() == "!togglelinks") {
-        //Moderator togglelinks command
-        require("./cmds/togglelinks.js").run(
-          client,
-          serverInfo,
-          sql,
-          message,
-          args,
-          AllowedLinksSet
-        );
-      } else if (args[0].toLowerCase() == "!permit") {
-        //Moderator permit command
-        require("./cmds/permit.js").run(
-          client,
-          serverInfo,
-          sql,
-          message,
-          args,
-          permits
-        );
-      } else if (args[0].toLowerCase() == "!purge") {
-        //Moderator purge command
-        require("./cmds/purge.js").run(client, serverInfo, message, args);
-      } else if (args[0].toLowerCase() == "!listroles") {
-        //Moderator listroles command
-        require("./cmds/listroles.js").run(
-          client,
-          serverInfo,
-          sql,
-          message,
-          args
-        );
-      } else if (args[0].toLowerCase() == "!nick") {
-        //Moderator nick command
-        require("./cmds/nick.js").run(client, serverInfo, sql, message, args);
-      } else if (args[0].toLowerCase() == "!status") {
-        /// ADMIN COMMANDS
-        //Admin Bot Status
-        require("./cmds/status.js").run(client, serverInfo, sql, message, args);
-      } else if (args[0].toLowerCase() == "!lockdown") {
-        //Disables all channels which rely on the bot heavily. (#set-title, special title, etc)
-        require("./cmds/lockdown.js").run(client, serverInfo, message, args);
-      } else if (args[0].toLowerCase() == "!unlock") {
-        require("./cmds/unlockdown.js").run(client, serverInfo, message, args);
-      } else if (args[0].toLowerCase() == "!blacklist") {
-        require("./cmds/blacklist.js").run(
-          client,
-          serverInfo,
-          message,
-          args,
-          sql,
-          blackListedWords
-        );
-      } else if (args[0].toLowerCase() == "!update") {
-        require("./cmds/update.js").run(client, serverInfo, message, args);
-      } else if (args[0].toLowerCase() == "!betaids") {
-        require("./cmds/betaids.js").run(
-          client,
-          serverInfo,
-          message,
-          args,
-          sql,
-          keys
-        );
-      } else if (args[0].toLowerCase() == "!startgiveaway") {
-        require("./cmds/startgiveaway.js").run(
-          client,
-          serverInfo,
-          message,
-          args,
-          sql
-        );
-      } else if (args[0].toLowerCase() == "!togglelegacy") {
-        require("./cmds/togglelegacy.js").run(
-          client,
-          serverInfo,
-          message,
-          args,
-          sql
-        );
-      } else if (args[0].toLowerCase() == "!partner") {
-        //Admin partner command - only works in serverInfo.editPartnerChannel
-        require("./cmds/partner.js").run(
-          client,
-          serverInfo,
-          sql,
-          message,
-          args
-        );
-      } else if (args.length == 2) {
-        //For commands with 2 args.
-        if (
-          args[0].toLowerCase() == "!get" &&
-          args[1].toLowerCase() == "title"
-        ) {
-          require("./cmds/getTitle.js").run(client, serverInfo, message, args);
-        }
-      }
 
-      //Keep #Set-title clean
-      if (
-        message.channel.id == serverInfo.setTitleChannel ||
-        message.channel.id == serverInfo.setSpecialTitleChannel
-      ) {
-        if (args[0].toLowerCase() != "!override") {
-          message.delete().catch(console.error);
-        }
+      switch (cmd) {
+        case value:
+          
+          break;
+      
+        default:
+          break;
       }
+      
+
+
     });
   } else {
     /// ALL DM COMMANDS
 
-    if (args[0].toLowerCase() == "!help" || args[0].toLowerCase() == "!h") {
-      require("./cmds/help.js").run(
-        client,
-        serverInfo,
-        message,
-        args,
-        Commands
-      );
-    } else if (args[0].toLowerCase() == "!s") {
-      require("./cmds/sendmessage.js").run(client, serverInfo, message, args);
-    }
   }
 
   return;
 }
 
+
+
+
+
+//This should be moved to another file eventually..
 var schedule = require("node-schedule");
 
 var a = schedule.scheduleJob({ second: 1 }, function() {
-  require("./events/minuteCheck.js").run(client, serverInfo, sql);
+  
 });
 
-var aa = schedule.scheduleJob({ minute: 1 }, function() {
-  require("./events/StatusUpdate.js").run(client, serverInfo, sql, require("./tokens.js").TwitchClientID);
-  require("./events/TitleCleanUp.js").run(client, serverInfo, sql);
+var b = schedule.scheduleJob({ minute: 1 }, function() {
+  
 });
 
-var b = schedule.scheduleJob({ minute: 31 }, function() {
-  require("./events/StatusUpdate.js").run(client, serverInfo, sql, require("./tokens.js").TwitchClientID);
-  require("./events/TitleCleanUp.js").run(client, serverInfo, sql);
+var c = schedule.scheduleJob({ minute: 31 }, function() {
+  
 });
 
-var c = schedule.scheduleJob({ hour: 9, minute: 40 }, function() {
-  require("./events/DailyStats.js").run(client, serverInfo, sql);
+var d = schedule.scheduleJob({ hour: 9, minute: 40 }, function() {
+  
 });
 
-var d = schedule.scheduleJob({ date: 1, hour: 17 }, function() {
-  require("./events/legacygiveaway.js").run(client, serverInfo, sql);
+var e = schedule.scheduleJob({ date: 1, hour: 17 }, function() {
+  
 });
 
-var e = schedule.scheduleJob({ date: 16, hour: 17 }, function() {
-  require("./events/legacygiveaway.js").run(client, serverInfo, sql);
+var f = schedule.scheduleJob({ date: 16, hour: 17 }, function() {
+  
 });
 
-client.login(require("./tokens.js").TestBotToken);
+client.login(require("./tokens.js").token);

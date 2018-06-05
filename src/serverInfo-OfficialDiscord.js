@@ -1,5 +1,5 @@
 //Server Information
-module.exports.serverInfo = {
+module.exports = {
   guildName: "AlphaConsole",
   guildId: "278333760666075136",
   aclogChannel: "352861631128272897",
