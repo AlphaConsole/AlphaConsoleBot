@@ -30,7 +30,7 @@ module.exports = {
         if (!message.member.isModerator) return;
 
         if (args.length === 1) {
-            sql.query("Select * from Config where Config = 'swearWords'", [], (err, res) => {
+            sql.query("Select * from Config where Config = 'swearwords'", [], (err, res) => {
                 let output = "";
                 for (let i = 0; i < res.length; i++) output += `\`${res[i].ID}.\` ${res[i].Value1}\n`;
 
@@ -48,21 +48,21 @@ module.exports = {
             let word = "";
             for (let i = 2; i < args.length; i++) word += args[i] + " ";
 
-            config.swearWords.push(word.trim())
-            sql.query("Insert into Config(Config, Value1) Values('swearWords', ?)", [ word.trim() ]);
+            config.swearwords.push(word.trim())
+            sql.query("Insert into Config(Config, Value1) Values('swearwords', ?)", [ word.trim() ]);
 
             sendEmbed(message.channel, "Swearword added to the list!");
 
         } else if (args[1].toLowerCase() == "remove") {
             if (args.length < 3) return sendEmbed(message.channel, "You did not include the ID to remove.");
 
-            sql.query("Select * from Config where Config = 'swearWords' and ID = ?", [ args[2] ], (err, res) => {
+            sql.query("Select * from Config where Config = 'swearwords' and ID = ?", [ args[2] ], (err, res) => {
                 if (err) return console.error(err);
 
                 if (res.length === 0) return sendEmbed(message.channel, "No swearword found with this ID.");
 
-                config.swearWords.splice(config.swearWords.indexOf(res[0].Value1), 1)
-                sql.query("Delete from Config where Config = 'swearWords' and ID = ?", [ args[2] ]);
+                config.swearwords.splice(config.swearwords.indexOf(res[0].Value1), 1)
+                sql.query("Delete from Config where Config = 'swearwords' and ID = ?", [ args[2] ]);
 
                 sendEmbed(message.channel, "Swearword deleted from the list!");
             })

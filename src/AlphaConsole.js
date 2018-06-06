@@ -58,10 +58,11 @@ sql.query = function(query, params, callback) {
 
 
 let config = {
-  sql: sql,
+  sql                    : sql,
   whitelistedLinksChannel: [],
-  swearWords: [],
-  autoResponds: {}
+  swearwords             : [],
+  autoResponds           : {},
+  permits                : {}
 }
 
 
@@ -198,6 +199,11 @@ async function messageProcess(message) {
       else
         message.member.isStaff = false;
 
+      if (message.member.roles.has(serverInfo.roles.ch) || message.member.isStaff)
+        message.member.isCH = true;
+      else
+        message.member.isCH = false;
+
       /** 
        * ! Assigned all data to a var
        * 
@@ -227,6 +233,7 @@ async function messageProcess(message) {
        * ? We also check every single message, to ensure the user is allowed to chat or for custom commands
        */
       let cmd = args[0].substring(1).toLowerCase();
+      require('./events/message').run(data)
 
       switch (cmd) {
         case "togglelinks":
@@ -235,6 +242,10 @@ async function messageProcess(message) {
 
         case "swearwords":
           require('./cmds/swearwords').run(data);
+          break;
+
+        case "permit":
+          require('./cmds/permit').run(data);
           break;
       
         default:
@@ -252,11 +263,12 @@ async function messageProcess(message) {
   return;
 }
 
-let sendEmbed = (channel, message) => {
+let sendEmbed = (channel, message, desc) => {
   const embed = new Discord.MessageEmbed()
     .setColor([255, 255, 0])
     .setAuthor(message, client.user.displayAvatarURL({ format: "png" }));
-  channel.send(embed);
+    if (desc) embed.setDescription(desc)
+  channel.send(embed).catch(e => { });
 }
 
 
