@@ -62,7 +62,8 @@ let config = {
   whitelistedLinksChannel: [],
   swearwords             : [],
   autoResponds           : {},
-  permits                : {}
+  permits                : {},
+  commands               : []
 }
 
 
@@ -153,134 +154,142 @@ client.on("messageUpdate", async (originalMessage, newMessage) => {
 
 
 async function messageProcess(message) {
-  if (!message.guild || message.author.bot || message.guild.id !== serverInfo.guildId) return;
+  if (message.author.bot) return;
   var args = message.content.split(/[ ]+/);
 
-  if (message.channel.type === "text") {
+
+  /**
+   * ! Fetching the user
+   * 
+   * ? Due to the Discord server having a lot of members there is a chance that the user itself is not fetched.
+   * ? That's why we do so on every command, if the user is already fetched it'll take his information
+   * ? from the cache anyway without extra effort. This is just to insure the user can always be used
+   * ? in the command
+   */
+  await client.guilds.get(serverInfo.guildId).members.fetch(message.author.id).then(m => {
+    message.member = m;
+
     /**
-     * ! Fetching the user
+     * ! Assigning all positions to the member to easily detect if he is allowed to do certain commands
      * 
-     * ? Due to the Discord server having a lot of members there is a chance that the user itself is not fetched.
-     * ? That's why we do so on every command, if the user is already fetched it'll take his information
-     * ? from the cache anyway without extra effort. This is just to insure the user can always be used
-     * ? in the command
+     * ? We are saving these varibales in the message.member object. This way at any point of time
+     * ? we can request the information and detect if he is allowed to execute the command.
      */
-    await message.guild.members.fetch(message.author.id).then(m => {
-      message.member = m;
+    if (message.member.roles.has(serverInfo.roles.developer)) 
+      message.member.isDeveloper = true;
+    else
+      message.member.isDeveloper = false;
+    
+    if (message.member.roles.has(serverInfo.roles.admin) || message.member.isDeveloper)
+      message.member.isAdmin = true;
+    else
+      message.member.isAdmin = false;
 
-      /**
-       * ! Assigning all positions to the member to easily detect if he is allowed to do certain commands
-       * 
-       * ? We are saving these varibales in the message.member object. This way at any point of time
-       * ? we can request the information and detect if he is allowed to execute the command.
-       */
-      if (message.member.roles.has(serverInfo.roles.developer)) 
-        message.member.isDeveloper = true;
-      else
-        message.member.isDeveloper = false;
-      
-      if (message.member.roles.has(serverInfo.roles.admin) || message.member.isDeveloper)
-        message.member.isAdmin = true;
-      else
-        message.member.isAdmin = false;
+    if (message.member.roles.has(serverInfo.roles.moderator) || message.member.isAdmin)
+      message.member.isModerator = true;
+    else
+      message.member.isModerator = false;
 
-      if (message.member.roles.has(serverInfo.roles.moderator) || message.member.isAdmin)
-        message.member.isModerator = true;
-      else
-        message.member.isModerator = false;
+    if (message.member.roles.has(serverInfo.roles.support) || message.member.isModerator)
+      message.member.isSupport = true;
+    else
+      message.member.isSupport = false;
 
-      if (message.member.roles.has(serverInfo.roles.support) || message.member.isModerator)
-        message.member.isSupport = true;
-      else
-        message.member.isSupport = false;
+    if (message.member.roles.has(serverInfo.roles.staff) || message.member.isSupport)
+      message.member.isStaff = true;
+    else
+      message.member.isStaff = false;
 
-      if (message.member.roles.has(serverInfo.roles.staff) || message.member.isSupport)
-        message.member.isStaff = true;
-      else
-        message.member.isStaff = false;
+    if (message.member.roles.has(serverInfo.roles.ch) || message.member.isStaff)
+      message.member.isCH = true;
+    else
+      message.member.isCH = false;
 
-      if (message.member.roles.has(serverInfo.roles.ch) || message.member.isStaff)
-        message.member.isCH = true;
-      else
-        message.member.isCH = false;
+    /** 
+     * ! Assigned all data to a var
+     * 
+     * ? Here we'll be assigning all data we need in the other files to the `data` var.
+     * ? This is done because we will be requiring 20+ times and to avoid repeating if
+     * ? we need to update stuff we save it in 1 var we user everywhere.
+     * 
+     * * It might send more variables than needed in that file. But it's the same everywhere.
+     * * So it shouldn't affect permformance too much.
+     */
 
-      /** 
-       * ! Assigned all data to a var
-       * 
-       * ? Here we'll be assigning all data we need in the other files to the `data` var.
-       * ? This is done because we will be requiring 20+ times and to avoid repeating if
-       * ? we need to update stuff we save it in 1 var we user everywhere.
-       * 
-       * * It might send more variables than needed in that file. But it's the same everywhere.
-       * * So it shouldn't affect permformance too much.
-       */
-
-      let data = {
-        client    : client,
-        serverInfo: serverInfo,
-        message   : message,
-        args      : args,
-        sql       : sql,
-        config    : config,
-        sendEmbed : sendEmbed
-      }
-      
-      /**
-       * ! All possible commands
-       * 
-       * ? We assign the command to a variable. Based on that variable we'll redirect
-       * ? the request to the right file. So this file is not one big mess
-       * ? We also check every single message, to ensure the user is allowed to chat or for custom commands
-       */
-      let cmd = args[0].substring(1).toLowerCase();
-      require('./events/message').run(data, cmd)
-
-      switch (cmd) {
-        case "ping":
-          require('./cmds/ping').run(data);
-          break;
-
-        case "togglelinks":
-          require('./cmds/toggleLinks').run(data);
-          break;
-
-        case "swearwords":
-          require('./cmds/swearwords').run(data);
-          break;
-
-        case "permit":
-          require('./cmds/permit').run(data);
-          break;
-
-        case "auto":
-          require('./cmds/auto').run(data);
-          break;
-
-        case "addcom":
-          require('./cmds/addcom').run(data);
-          break;
-
-        case "editcom":
-          require('./cmds/editcom').run(data);
-          break;
-
-        case "delcom":
-          require('./cmds/delcom').run(data);
-          break;
-      
-        default:
-          break;
-      }
-      
+    let data = {
+      client    : client,
+      serverInfo: serverInfo,
+      message   : message,
+      args      : args,
+      sql       : sql,
+      config    : config,
+      sendEmbed : sendEmbed
+    }
 
 
-    });
-  } else {
-    //* ALL DM COMMANDS
+    if (message.channel.type === "text") {
+      if (message.guild.id !== serverInfo.guildId) return;
+        
+        /**
+         * ! All possible commands
+         * 
+         * ? We assign the command to a variable. Based on that variable we'll redirect
+         * ? the request to the right file. So this file is not one big mess
+         * ? We also check every single message, to ensure the user is allowed to chat or for custom commands
+         */
+        let cmd = args[0].substring(1).toLowerCase();
+        require('./events/message').run(data, cmd)
 
-  }
+        switch (cmd) {
+          case "ping":
+            require('./cmds/ping').run(data);
+            break;
 
-  return;
+          case "togglelinks":
+            require('./cmds/toggleLinks').run(data);
+            break;
+
+          case "swearwords":
+            require('./cmds/swearwords').run(data);
+            break;
+
+          case "permit":
+            require('./cmds/permit').run(data);
+            break;
+
+          case "auto":
+            require('./cmds/auto').run(data);
+            break;
+
+          case "addcom":
+            require('./cmds/addcom').run(data);
+            break;
+
+          case "editcom":
+            require('./cmds/editcom').run(data);
+            break;
+
+          case "delcom":
+            require('./cmds/delcom').run(data);
+            break;
+
+          case "help":
+            require("./cmds/help").run(data, false);
+            break;
+        
+          default:
+            break;
+        }
+        
+    } else {
+      //* ALL DM COMMANDS
+
+      if (args[0].toLowerCase() == "!help" || args[0].toLowerCase() == "!h")
+        require('./cmds/help').run(data, true);
+
+    }
+
+  }).catch(e => { })
 }
 
 let sendEmbed = (channel, message, desc) => {

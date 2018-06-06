@@ -4,6 +4,7 @@
  * ? This is activated whenever the bot started & is ready to serve.
  * ? It'll fetch data from the database and save it in the config to prevent more db calls
  */
+let fs = require('fs');
 
 module.exports.run = (client, serverInfo, config) => {
     console.log("AlphaConsole Bot logged in and ready.");
@@ -41,6 +42,28 @@ module.exports.run = (client, serverInfo, config) => {
                     }
                 }
             })
+        }
+    })
+
+    /**
+     * ! Help command setup
+     * 
+     * ? On bot start we'll fetch all the files from cmds.
+     * ? Every single file includes a title & details. We'll be fetching those to make a fast a smooth help
+     */
+
+    fs.readdir('./src/cmds', (err, files) => {
+        for (let i = 0; i < files.length; i++) {
+            let info = require(`../cmds/${files[i]}`);
+            if (!info.title || !info.details) continue;
+            for (let ii = 0; ii < info.details.length; ii++) {
+                config.commands.push({
+                    title      : info.title,
+                    perms      : info.details[ii].perms,
+                    command    : info.details[ii].command,
+                    description: info.details[ii].description
+                })
+            }
         }
     })
 }
