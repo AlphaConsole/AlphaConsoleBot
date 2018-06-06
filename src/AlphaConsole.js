@@ -213,6 +213,7 @@ async function messageProcess(message) {
         client    : client,
         serverInfo: serverInfo,
         message   : message,
+        args      : args,
         sql       : sql,
         config    : config,
         sendEmbed : sendEmbed
@@ -230,6 +231,10 @@ async function messageProcess(message) {
       switch (cmd) {
         case "togglelinks":
           require('./cmds/toggleLinks').run(data);
+          break;
+
+        case "swearwords":
+          require('./cmds/swearwords').run(data);
           break;
       
         default:
