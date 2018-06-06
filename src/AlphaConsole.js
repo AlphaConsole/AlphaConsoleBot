@@ -214,7 +214,8 @@ async function messageProcess(message) {
         serverInfo: serverInfo,
         message   : message,
         sql       : sql,
-        config    : config
+        config    : config,
+        sendEmbed : sendEmbed
       }
       
       /**
@@ -227,8 +228,8 @@ async function messageProcess(message) {
       let cmd = args[0].substring(1).toLowerCase();
 
       switch (cmd) {
-        case "lol":
-          console.log("herro :)")
+        case "togglelinks":
+          require('./cmds/toggleLinks').run(data);
           break;
       
         default:
@@ -246,7 +247,12 @@ async function messageProcess(message) {
   return;
 }
 
-
+let sendEmbed = (channel, message) => {
+  const embed = new Discord.MessageEmbed()
+    .setColor([255, 255, 0])
+    .setAuthor(message, client.user.displayAvatarURL({ format: "png" }));
+  channel.send(embed);
+}
 
 
 
