@@ -233,7 +233,7 @@ async function messageProcess(message) {
        * ? We also check every single message, to ensure the user is allowed to chat or for custom commands
        */
       let cmd = args[0].substring(1).toLowerCase();
-      require('./events/message').run(data)
+      require('./events/message').run(data, cmd)
 
       switch (cmd) {
         case "togglelinks":
@@ -250,6 +250,18 @@ async function messageProcess(message) {
 
         case "auto":
           require('./cmds/auto').run(data);
+          break;
+
+        case "addcom":
+          require('./cmds/addcom').run(data);
+          break;
+
+        case "editcom":
+          require('./cmds/editcom').run(data);
+          break;
+
+        case "delcom":
+          require('./cmds/delcom').run(data);
           break;
       
         default:

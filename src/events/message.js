@@ -5,7 +5,9 @@
  * ? For example checking for links, checking for swear words etc...
  */
 
- module.exports.run = ({ client, serverInfo, message, sql, config, sendEmbed }) => {
+ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbed }, cmd) => {
+
+    //! First all the filters before continueing
 
     //* Swear words filter
     if (!message.member.isStaff) {
@@ -44,7 +46,7 @@
     }
 
     //* Auto responds
-    if (!message.member.isStaff) {
+    if (!message.member.isStaff && !AutoResponseChannel(message.channel.id, serverInfo.channels)) {
         for (const word in config.autoResponds) {
             if (config.autoResponds.hasOwnProperty(word)) {
                 let words = word.split(/[ ]+/);
@@ -62,4 +64,51 @@
         }
     }
 
- }
+    // ! End of filters. Start of other functionalities
+
+    if (message.content.startsWith('!') && CustomCommandsChannel(message.channel.id, serverInfo.channels)) {
+        sql.query('select * from Commands where Command = ?', [ cmd ], (err, res) => {
+            if (err) console.error(err);
+
+            if (res.length !== 0) {
+                let user = message.mentions.users.first() ? message.mentions.users.first().id : args.length === 1 ? "123456" : args[1];
+                message.guild.members.fetch(user).then(m => {
+                    message.channel.send(`<@${m.id}>, ${res[0].Response}`)
+                }).catch(e => {
+                    message.channel.send(res[0].Response)
+                })
+            }
+        })
+    }
+
+}
+
+
+function AutoResponseChannel(channelID, channels) {
+	if (channelID == channels.aclog) return true;
+	if (channelID == channels.basement) return true;
+	if (channelID == channels.betaSteamIDS) return true;
+	if (channelID == channels.botSpam) return true;
+	if (channelID == channels.modlog) return true;
+	if (channelID == channels.serverlog) return true;
+	if (channelID == channels.setSpecialTitleChannel) return true;
+	if (channelID == channels.setTitle) return true;
+	if (channelID == channels.showcase) return true;
+	if (channelID == channels.suggestion) return true;
+	if (channelID == channels.staff) return true;
+	//Else return false
+	return false;
+}
+
+function CustomCommandsChannel(channelID, channels) {
+	if (channelID == channels.aclog) return true;
+	if (channelID == channels.betaSteamIDS) return true;
+	if (channelID == channels.modlog) return true;
+	if (channelID == channels.serverlog) return true;
+	if (channelID == channels.setSpecialTitleChannel) return true;
+	if (channelID == channels.setTitle) return true;
+	if (channelID == channels.showcase) return true;
+	if (channelID == channels.suggestion) return true;
+	//Else return false
+	return false;
+}
