@@ -4,6 +4,7 @@
  * ? For faster support we set up a couple of words that needs to be triggered for the bot to answer
  * ? This often includes FAQ questions and does help a lot of the time
  */
+const Discord = require("discord.js");
 
 module.exports = {
     title: "AutoResponse",
@@ -61,7 +62,7 @@ module.exports = {
 
                 if (res.length === 0) return sendEmbed(message.channel, "No swearword found with this ID.");
 
-                config.autoResponds.splice(config.autoResponds.indexOf(res[0].Value1), 1)
+                delete config.autoResponds[res[0].Value1]
                 sql.query("Delete from Config where Config = 'autoResponds' and ID = ?", [ args[2] ]);
 
                 sendEmbed(message.channel, "Auto response deleted from the list!");
