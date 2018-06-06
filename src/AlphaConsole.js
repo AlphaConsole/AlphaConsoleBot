@@ -247,6 +247,10 @@ async function messageProcess(message) {
         case "permit":
           require('./cmds/permit').run(data);
           break;
+
+        case "auto":
+          require('./cmds/auto').run(data);
+          break;
       
         default:
           break;

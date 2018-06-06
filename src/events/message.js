@@ -43,4 +43,23 @@
         }
     }
 
+    //* Auto responds
+    if (!message.member.isStaff) {
+        for (const word in config.autoResponds) {
+            if (config.autoResponds.hasOwnProperty(word)) {
+                let words = word.split(/[ ]+/);
+                let counter = 0;
+
+                for (let i = 0; i < words.length; i++) {
+                    if (message.content.includes(words[i])) counter++;
+                }
+
+                if (counter == words.length) {
+                    message.channel.send(`${message.member}, ${config.autoResponds[word]}`)
+                }
+                
+            }
+        }
+    }
+
  }
