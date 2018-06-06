@@ -8,10 +8,14 @@
 const Discord = require("discord.js");
 
 module.exports = {
-    title: "Toggle Links",
-    perms: "Moderator",
-    commands: ["!togglelinks"],
-    description: ["Toggle links filter in the current channel"],
+    title: "ToggleLinks",
+    details: [
+        {
+            perms      : "Moderator",
+            commands   : "!togglelinks",
+            description: "Toggle links filter in the current channel"
+        }
+    ],
 
     run: ({ client, serverInfo, message, sql, config, sendEmbed }) => {
         if (!message.member.isModerator) return;
