@@ -1,5 +1,5 @@
 /**
- * !Main file for AlphaConsole Discord Bot
+ * ! Main file for AlphaConsole Discord Bot
  * 
  * ? This is the main file where all event handlers are located and it routes to the correct file.
  * ? Also time based events are called from here
@@ -34,33 +34,35 @@ const pool = mysql.createPool({
     database: keys.dbName
 });
 
-let config = {
-  
-}
-
 // ? Database function to ensure we always have a connection but without having to repeat ourself in the code.
 let sql = {};
 sql.query = function(query, params, callback) {
-    pool.getConnection(function(err, connection) {
+  pool.getConnection(function(err, connection) {
+    if(err) { 
+      console.log(err); 
+      if (callback) callback(true, null); 
+      return; 
+    }
+    
+    connection.query(query, params, function(err, results) {
+      connection.release(); // always put connection back in pool after last query
       if(err) { 
         console.log(err); 
         if (callback) callback(true, null); 
         return; 
       }
-
-      connection.query(query, params, function(err, results) {
-        connection.release(); // always put connection back in pool after last query
-        if(err) { 
-          console.log(err); 
-          if (callback) callback(true, null); 
-          return; 
-        }
-        if (callback) callback(false, results);
-      });
+      if (callback) callback(false, results);
     });
+  });
 };
 
 
+let config = {
+  sql: sql,
+  whitelistedLinksChannel: [],
+  swearWords: [],
+  autoResponds: {}
+}
 
 
 
@@ -76,7 +78,7 @@ sql.query = function(query, params, callback) {
 
 //Bot logs in
 client.on("ready", () => {
-  require('./events/ready').run(client, serverInfo, sql);
+  require('./events/ready').run(client, serverInfo, config);
 });
 
 //New member joins
@@ -150,7 +152,7 @@ client.on("messageUpdate", async (originalMessage, newMessage) => {
 
 
 async function messageProcess(message) {
-  if (message.author.bot || !message.guild) return;
+  if (!message.guild || message.author.bot || message.guild.id !== serverInfo.guildId) return;
   var args = message.content.split(/[ ]+/);
 
   if (message.channel.type === "text") {
@@ -181,7 +183,12 @@ async function messageProcess(message) {
       else
         message.member.isAdmin = false;
 
-      if (message.member.roles.has(serverInfo.roles.support) || message.member.isAdmin)
+      if (message.member.roles.has(serverInfo.roles.moderator) || message.member.isAdmin)
+        message.member.isModerator = true;
+      else
+        message.member.isModerator = false;
+
+      if (message.member.roles.has(serverInfo.roles.support) || message.member.isModerator)
         message.member.isSupport = true;
       else
         message.member.isSupport = false;
@@ -217,12 +224,11 @@ async function messageProcess(message) {
        * ? the request to the right file. So this file is not one big mess
        * ? We also check every single message, to ensure the user is allowed to chat or for custom commands
        */
-      let cmd = args[0].toLowerCase();
-
+      let cmd = args[0].substring(1).toLowerCase();
 
       switch (cmd) {
-        case value:
-          
+        case "lol":
+          console.log("herro :)")
           break;
       
         default:
@@ -233,7 +239,7 @@ async function messageProcess(message) {
 
     });
   } else {
-    /// ALL DM COMMANDS
+    //* ALL DM COMMANDS
 
   }
 
