@@ -10,7 +10,7 @@ module.exports = {
     details: [
         {
             perms      : "Staff",
-            command    : "!delcom",
+            command    : "!delcom <command>",
             description: "Deletes a command"
         }
     ],

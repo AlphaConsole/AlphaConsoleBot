@@ -10,7 +10,7 @@ module.exports = {
     details: [
         {
             perms      : "Staff",
-            command    : "!editcom",
+            command    : "!editcom <command> <response>",
             description: "Edits an already existing command"
         }
     ],
