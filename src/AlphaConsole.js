@@ -236,6 +236,10 @@ async function messageProcess(message) {
       require('./events/message').run(data, cmd)
 
       switch (cmd) {
+        case "ping":
+          require('./cmds/ping').run(data);
+          break;
+
         case "togglelinks":
           require('./cmds/toggleLinks').run(data);
           break;
