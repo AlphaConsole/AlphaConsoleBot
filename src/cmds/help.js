@@ -48,7 +48,7 @@ module.exports = {
                 message.channel.send(emb);
 
 
-            } else {
+            } else if (message.channel.id === serverInfo.channels.botSpam) {
 
                 const emb = new Discord.MessageEmbed()
                 .setColor([255, 255, 0])
