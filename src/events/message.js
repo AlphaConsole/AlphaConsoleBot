@@ -4,6 +4,7 @@
  * ? Every single message being sent is being validated by this file
  * ? For example checking for links, checking for swear words etc...
  */
+const Discord = require('discord.js');
 
  module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbed }, cmd) => {
 
@@ -92,6 +93,7 @@
                 await message.react("👍");
                 await message.react("👎");
                 await message.react("❌");
+                postPin(client, message, config.sql, serverInfo, "showcase");
 
                 sql.query("Update Members set Showcase = ? where DiscordID = ?", [ new Date().getTime() + 300000, message.author.id ]);
             } else {
@@ -107,6 +109,7 @@
                 await message.react("👍");
                 await message.react("👎");
                 await message.react("❌");
+                postPin(client, message, config.sql, serverInfo, "suggestion");
 
                 sql.query("Update Members set Suggestion = ? where DiscordID = ?", [ new Date().getTime() + 300000, message.author.id ]);
             } else {
@@ -233,5 +236,28 @@ function reportTitle(client, serverInfo, sql, message, titleInfo, Reporter) {
 			await m.react("✅");
 			await m.react("❎");
 		})
+	})
+}
+
+
+function postPin(client, message, sql, serverInfo, something) {
+	const embed = new Discord.MessageEmbed()
+		.setColor([255, 255, 0])
+		.setAuthor("Make sure to read the pins before sending a message here!", client.user.displayAvatarURL({ format: "png" }));
+
+	sql.query(`select * from Misc where value = ?`, [ something ], (err, res) => {
+        if (err) return console.error(err);
+        let sugg = res[0];
+
+		if (sugg) {
+			message.channel.messages.fetch(sugg.message).then(msg => msg.delete())
+			message.channel.send(embed).then(msg => {
+				sql.query(`update Misc set message = ? where value = ?`, [ msg.id, something ])
+			})
+		} else {
+			message.channel.send(embed).then(msg => {
+				sql.query(`insert into Misc(message, value) VALUES(?, ?)`, [ msg.id, something ])
+			})
+		}
 	})
 }
