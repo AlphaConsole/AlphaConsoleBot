@@ -65,8 +65,7 @@
     }
 
     // ! End of filters. Start of other functionalities
-
-    if (message.content.startsWith('!') && CustomCommandsChannel(message.channel.id, serverInfo.channels)) {
+    if (message.content.startsWith('!') && !CustomCommandsChannel(message.channel.id, serverInfo.channels)) {
         sql.query('select * from Commands where Command = ?', [ cmd ], (err, res) => {
             if (err) console.error(err);
 
