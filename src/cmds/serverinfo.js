@@ -70,7 +70,5 @@ module.exports = {
         .addField("Owner", guild.owner.user, true)
         //.addField("Emojis", guild.emojis.map(m => m.toString()).join("")) -- Somehow brakes it without any warning
         message.channel.send(embed);
-
-        console.log("hi?")
     }
 }

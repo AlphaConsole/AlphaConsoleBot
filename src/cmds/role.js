@@ -38,7 +38,6 @@ module.exports = {
 
             } 
         } else {
-            console.log(message.member)
             if (message.member.isModerator && args.length > 2) {
 
                 let user = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
