@@ -40,18 +40,18 @@ sql.query = function(query, params, callback) {
   pool.getConnection(function(err, connection) {
     if(err) { 
       console.log(err); 
-      if (callback) callback(true, null); 
+      if (callback) callback(true, null, null); 
       return; 
     }
     
-    connection.query(query, params, function(err, results) {
+    connection.query(query, params, function(err, results, fields) {
       connection.release(); // always put connection back in pool after last query
       if(err) { 
         console.log(err); 
-        if (callback) callback(true, null); 
+        if (callback) callback(true, null, null); 
         return; 
       }
-      if (callback) callback(false, results);
+      if (callback) callback(false, results, fields);
     });
   });
 };
@@ -302,6 +302,22 @@ async function messageProcess(message) {
 
           case "partner":
             require('./cmds/partner').run(data);
+            break;
+
+          case "mute":
+            require('./cmds/mute').run(data);
+            break;
+
+          case "unmute":
+            require('./cmds/unmute').run(data);
+            break;
+
+          case "kick":
+            require('./cmds/kick').run(data);
+            break;
+
+          case "ban":
+            require('./cmds/ban').run(data);
             break;
         
           default:
