@@ -18,7 +18,7 @@ module.exports.run = (client, serverInfo, config) => {
      */
 
     config.sql.query("SELECT * FROM Config", (error, result) => {
-        if (err) return console.error(err);
+        if (error) return console.error(error);
 
         for (let i = 0; i < result.length; i++) {
             if (config[result[i].Config]) {
