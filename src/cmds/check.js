@@ -34,9 +34,9 @@ module.exports = {
                 .setColor([255, 255, 0])
                 .setThumbnail("http://www.pngmart.com/files/5/Snow-PNG-Transparent-Image.png")
                 .addField("Mutes", mutes.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n") === "" ? "Nothing found" : mutes.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n").substring(0, 245), true)
-                .addField("Mutes", warns.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n") === "" ? "Nothing found" : warns.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n").substring(0, 245), true)
-                .addField("Mutes", kicks.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n") === "" ? "Nothing found" : kicks.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n").substring(0, 245), true)
-                .addField("Mutes", bans.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n") === "" ? "Nothing found" : bans.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n").substring(0, 245), true)
+                .addField("Warnings", warns.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n") === "" ? "Nothing found" : warns.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n").substring(0, 245), true)
+                .addField("Kicks", kicks.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n") === "" ? "Nothing found" : kicks.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n").substring(0, 245), true)
+                .addField("Bans", bans.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n") === "" ? "Nothing found" : bans.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n").substring(0, 245), true)
             message.channel.send(embed);
         })
 
