@@ -19,6 +19,7 @@ module.exports = {
     serverlog             : "389536059177828374",
     aclog                 : "389536034041495562",
     modlog                : "389536131089432596",
+    ingameReports         : "451959218858229770",
 
     setTitle              : "349645232910106625",
     setSpecialTitleChannel: "396350002886344714",

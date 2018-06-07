@@ -58,6 +58,7 @@ sql.query = function(query, params, callback) {
 
 
 let config = {
+  keys                   : keys,
   sql                    : sql,
   whitelistedLinksChannel: [],
   swearwords             : [],
@@ -144,6 +145,8 @@ process.on("unhandledRejection", (reason, p) => {
 
 //* New message
 client.on("message", async message => {
+  require('./events/message').botMessage(client, serverInfo, config.sql, message)
+
   messageProcess(message);
 });
 

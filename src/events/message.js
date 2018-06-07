@@ -115,34 +115,123 @@
             }
         })
     }
+
+    // ! Staff title reporting
+    if (message.channel.id === serverInfo.channels.ingameReports && !message.content.startsWith('.')) {
+        message.delete();
+
+        let request = require("request");
+        request(`${config.keys.CheckdbURL}?DiscordID=${message.content}`, (err, res, body) => {
+            if (err) return console.error(err);
+
+            if (body !== "Not signed up for DB") {
+                reportTitle(client, serverInfo, config.sql, message, body, message.author.id)
+            } else {
+                request(`${config.keys.CheckdbURL}?SteamID=${message.content}`, (error, result, bodydata) => {
+                    if (error) return console.error(error);
+
+                    if (bodydata !== "Not signed up for DB") {
+                        reportTitle(client, serverInfo, config.sql, message, bodydata, message.author.id)
+                    } else {
+                        message.author.send("I did not find any title based on that DiscordID / SteamID. Please **only** provide me the ID in that channel")
+                    }
+                })
+            }
+        })
+    }
+
+
+    // ! Add reaction when bot is mentioned
+		message.mentions.users.forEach(user => {
+			if (user.id == client.user.id) 
+				message.react(":pingsock:395678894650294274");
+		});
 }
 
 
 function AutoResponseChannel(channelID, channels) {
-	if (channelID == channels.aclog) return true;
-	if (channelID == channels.basement) return true;
-	if (channelID == channels.betaSteamIDS) return true;
-	if (channelID == channels.botSpam) return true;
-	if (channelID == channels.modlog) return true;
-	if (channelID == channels.serverlog) return true;
-	if (channelID == channels.setSpecialTitleChannel) return true;
-	if (channelID == channels.setTitle) return true;
-	if (channelID == channels.showcase) return true;
-	if (channelID == channels.suggestion) return true;
-	if (channelID == channels.staff) return true;
+	if (channelID === channels.aclog) return true;
+	if (channelID === channels.basement) return true;
+	if (channelID === channels.betaSteamIDS) return true;
+	if (channelID === channels.botSpam) return true;
+	if (channelID === channels.modlog) return true;
+	if (channelID === channels.serverlog) return true;
+	if (channelID === channels.setSpecialTitleChannel) return true;
+	if (channelID === channels.setTitle) return true;
+	if (channelID === channels.showcase) return true;
+	if (channelID === channels.suggestion) return true;
+	if (channelID === channels.staff) return true;
 	//Else return false
 	return false;
 }
 
 function CustomCommandsChannel(channelID, channels) {
-	if (channelID == channels.aclog) return true;
-	if (channelID == channels.betaSteamIDS) return true;
-	if (channelID == channels.modlog) return true;
-	if (channelID == channels.serverlog) return true;
-	if (channelID == channels.setSpecialTitleChannel) return true;
-	if (channelID == channels.setTitle) return true;
-	if (channelID == channels.showcase) return true;
-	if (channelID == channels.suggestion) return true;
+	if (channelID === channels.aclog) return true;
+	if (channelID === channels.betaSteamIDS) return true;
+	if (channelID === channels.modlog) return true;
+	if (channelID === channels.serverlog) return true;
+	if (channelID === channels.setSpecialTitleChannel) return true;
+	if (channelID === channels.setTitle) return true;
+	if (channelID === channels.showcase) return true;
+	if (channelID === channels.suggestion) return true;
 	//Else return false
 	return false;
+}
+
+
+
+
+/**
+ * ! Bot messages
+ * 
+ * ? This is a small part that is very dangerous!
+ * ? This does not check if we are in the right server or if the author was a bot.
+ * ? This is for a functionality whereby the bot needs to respond on a message from another bot.
+ */
+
+module.exports.botMessage = (client, serverInfo, sql, message) => {
+    if (message.channel.id === serverInfo.channels.ingameReports && message.author.bot && message.author.username == "Title reports") {
+        let data = JSON.parse(message.content);
+
+        message.guild.channels.get(serverInfo.channels.ingameReports).send(
+            `**================================**\n` +
+            `Reports by <@${data.Issuer.DiscordID}>\n` +
+            `\`👍 ${data.Issuer.GoodReports}\`\n` +
+            `\`👎 ${data.Issuer.BadReports}\`\n`
+        ).then(m => { m.react("❌"); })
+
+        for (let i = 0; i < data.Users.length; i++) {
+            let r = data.Users[i];
+            reportTitle(client, serverInfo, sql, message, `${r.Title} ? ${r.SteamID} ${r.DiscordID}`, data.Issuer.DiscordID);
+        }
+    }
+}
+
+function reportTitle(client, serverInfo, sql, message, titleInfo, Reporter) {
+	let titleDetails = titleInfo.split(/[ ]+/);
+	let discordID = titleDetails[titleDetails.length - 1];
+	let steamID = titleDetails[titleDetails.length - 2];
+	let color = titleDetails[titleDetails.length - 3];
+	let title = titleDetails.splice(0, titleDetails.length - 3);
+	title = title.join(" ");
+
+	sql.query(`select * from TitleReports where SteamID = ? order by ID desc`, [ steamID ], (err, res) => {
+        if (res[0]) {
+            if (res[0].Permitted === 1) {
+                if (!message.author.bot) message.author.send("This user has been reported before and has been permitted to use this title.")
+                return;
+            }
+            if (res[0].Fixed === 0) {
+                if (!message.author.bot) message.author.send("This user has an open report currently.");
+                return;
+            }
+        }
+
+		message.guild.channels.get(serverInfo.channels.ingameReports).send(`\`DiscordID: ${discordID} | SteamID: ${steamID} | title: ${title}\``).then(async m => {
+			sql.query(`Insert into TitleReports(DiscordID, SteamID, Title, Color, MessageID, Reporter) VALUES (?, ?, ?, ?, ?, ?)`, [ discordID, steamID, title, color, m.id, Reporter ])
+			await m.react("🔨");
+			await m.react("✅");
+			await m.react("❎");
+		})
+	})
 }
