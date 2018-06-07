@@ -313,11 +313,26 @@ async function messageProcess(message) {
 }
 
 let sendEmbed = (channel, message, desc) => {
+  /**
+   * ! Send information in embed form to the channel
+   * 
+   * ? Channel can be 2 things: Guild channel or an user object.
+   * ? If it's a guild channel, all fine. Should be no problems.
+   * ? But if it's a user then we'll DM him. DM's can be disabled.
+   * 
+   * ? So to check if channel is a user I check if the .tag property exist.
+   * ? It it does exist I know it's a user object, and if we are already in the catch
+   * ? It's most likely because he got his DM's disabled. So we let him know in the #bot-spam
+   */
   const embed = new Discord.MessageEmbed()
     .setColor([255, 255, 0])
     .setAuthor(message, client.user.displayAvatarURL({ format: "png" }));
     if (desc) embed.setDescription(desc)
-  channel.send(embed).catch(e => { });
+  channel.send(embed).catch(e => {
+    if (channel.tag) {
+      client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.botSpam).send(`<@${channel.id}>, I could not DM you my message because you have your DM's disabled.`)
+    }
+  });
 }
 
 
