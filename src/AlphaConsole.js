@@ -299,6 +299,10 @@ async function messageProcess(message) {
           case "nick":
             require('./cmds/nick').run(data);
             break;
+
+          case "partner":
+            require('./cmds/partner').run(data);
+            break;
         
           default:
             break;

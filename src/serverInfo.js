@@ -20,6 +20,7 @@ module.exports = {
     aclog                 : "389536034041495562",
     modlog                : "389536131089432596",
     ingameReports         : "451959218858229770",
+    editPartners          : "413841364032159764",
 
     setTitle              : "349645232910106625",
     setSpecialTitleChannel: "396350002886344714",
@@ -28,5 +29,8 @@ module.exports = {
     botSpam               : "389241234100715520",
     showcase              : "349637406393237514",
     suggestion            : "389870221906804737",
+    partners              : "413841399306518530",
   },
+
+  partnerEmoji: ":ACQuestion:444631913949560855"
 };
