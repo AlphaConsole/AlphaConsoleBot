@@ -53,4 +53,14 @@ module.exports.run = (client, serverInfo, config) => {
             }
         }
     })
+
+    /**
+     * ! Channel messages fetching
+     * 
+     * ? Channels like showcase & suggestions requires fetching because reactions won't work
+     * ? if the messages aren't fetched. So by fetching them at least the last 100 messages will work
+     */
+
+    client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.showcase).messages.fetch();
+    client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.suggestion).messages.fetch();
 }

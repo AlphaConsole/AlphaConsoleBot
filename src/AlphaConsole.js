@@ -115,7 +115,7 @@ client.on("messageDelete", message => {
 
 //React has been added
 client.on("messageReactionAdd", (reaction, user) => {
-  
+  require('./events/messageReactionAdd').run(client, serverInfo, config, reaction, user, sendEmbed);
 });
 
 

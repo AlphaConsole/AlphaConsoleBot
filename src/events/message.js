@@ -80,6 +80,41 @@
         })
     }
 
+    // ! Showcase & Suggestions
+    if (message.channel.id === serverInfo.channels.showcase) {
+        if (message.attachments.size !== 1) {
+            message.delete().catch(e => { });
+            return sendEmbed(message.author, "Only images allowed in Showcase channel.");
+        }
+
+        require('../checks/checkUser').run(sql, message.author, async (err, user) => {
+            if (user.Showcase < new Date().getTime()) {
+                await message.react("👍");
+                await message.react("👎");
+                await message.react("❌");
+
+                sql.query("Update Members set Showcase = ? where DiscordID = ?", [ new Date().getTime() + 300000, message.author.id ]);
+            } else {
+                message.delete().catch(e => { });
+                sendEmbed(message.author, "Your showcase has been removed since you can only send in once every 5 minutes!")
+            }
+        })
+    }
+
+    if (message.channel.id === serverInfo.channels.suggestion) {
+        require('../checks/checkUser').run(sql, message.author, async (err, user) => {
+            if (user.Suggestion < new Date().getTime()) {
+                await message.react("👍");
+                await message.react("👎");
+                await message.react("❌");
+
+                sql.query("Update Members set Suggestion = ? where DiscordID = ?", [ new Date().getTime() + 300000, message.author.id ]);
+            } else {
+                message.delete().catch(e => { });
+                sendEmbed(message.author, "Your suggestion has been removed since you can only send in once every 5 minutes!")
+            }
+        })
+    }
 }
 
 
