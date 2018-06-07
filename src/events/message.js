@@ -67,7 +67,7 @@
     // ! End of filters. Start of other functionalities
     if (message.content.startsWith('!') && !CustomCommandsChannel(message.channel.id, serverInfo.channels)) {
         sql.query('select * from Commands where Command = ?', [ cmd ], (err, res) => {
-            if (err) console.error(err);
+            if (err) return console.error(err);
 
             if (res.length !== 0) {
                 let user = message.mentions.users.first() ? message.mentions.users.first().id : args.length === 1 ? "123456" : args[1];
