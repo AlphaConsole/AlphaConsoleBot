@@ -325,7 +325,12 @@ async function messageProcess(message) {
             break;
 
           case "check":
+          case "cases":
             require('./cmds/check').run(data);
+            break;
+
+          case "case":
+            require('./cmds/case').run(data);
             break;
         
           default:
