@@ -323,6 +323,10 @@ async function messageProcess(message) {
           case "warn":
             require('./cmds/warn').run(data);
             break;
+
+          case "check":
+            require('./cmds/check').run(data);
+            break;
         
           default:
             break;
