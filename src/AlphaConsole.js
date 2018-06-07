@@ -284,6 +284,10 @@ async function messageProcess(message) {
           case "serverinfo":
             require('./cmds/serverinfo').run(data);
             break;
+
+          case "listroles":
+            require('./cmds/listroles').run(data);
+            break;
         
           default:
             break;
