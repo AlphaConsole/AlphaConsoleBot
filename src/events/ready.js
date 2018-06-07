@@ -10,40 +10,27 @@ module.exports.run = (client, serverInfo, config) => {
     console.log("AlphaConsole Bot logged in and ready.");
 
     /**
-     * ! Table checks and creation
+     * ! Config variables setup
      * 
-     * ? Checking if the required tables exist.
-     * ? If not automatically create them
-     * 
-     * ? If they do exist. Use them if necessary.
+     * ? We'll grab all details from database and save them in variables.
+     * ? This way we can use the variables to check stuff, and we don't need to query
+     * ? the database over & over again.
      */
 
-    //* Config table
-    config.sql.query("SHOW TABLES LIKE 'Config'", [], (err, res) => {
-        if (err) return console.log(err);
+    config.sql.query("SELECT * FROM Config", (error, result) => {
+        if (err) return console.error(err);
 
-        if (res.length === 0) {
-            console.log("MESSAGE || Table 'Config' not found. Creating one now...");
-            config.sql.query('CREATE TABLE `pollieah_ac`.`Config` (' + 
-                '`ID` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,' + 
-                '`Config` VARCHAR(45) NOT NULL,' + 
-                '`Value1` MEDIUMTEXT NOT NULL,' + 
-                '`Value2` MEDIUMTEXT NULL)');
-            console.log("MESSAGE || Table 'Config' created.");
-        } else {
-            config.sql.query("SELECT * FROM Config", (error, result) => {
-                for (let i = 0; i < result.length; i++) {
-                    if (config[result[i].Config]) {
-                        if (result[i].Config === "autoResponds") 
-                            config[result[i].Config][result[i].Value1] = result[i].Value2
-                        else 
-                            config[result[i].Config].push(result[i].Value1)
-                        
-                    }
-                }
-            })
+        for (let i = 0; i < result.length; i++) {
+            if (config[result[i].Config]) {
+                if (result[i].Config === "autoResponds") 
+                    config[result[i].Config][result[i].Value1] = result[i].Value2
+                else 
+                    config[result[i].Config].push(result[i].Value1)
+                
+            }
         }
     })
+    
 
     /**
      * ! Help command setup
