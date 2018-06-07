@@ -26,6 +26,8 @@ module.exports = {
             }
 
             sendEmbed(message.channel, `${m.user.tag} may now post links for 5 minutes.`)
-        }).catch(e => { })
+        }).catch(e => {
+            sendEmbed(message.channel, "User not found..")
+        })
     }
 }

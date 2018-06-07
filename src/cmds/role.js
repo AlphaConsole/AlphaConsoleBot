@@ -47,6 +47,7 @@ module.exports = {
                     for (let i = 2; i < args.length; i++) rolename += args[i] + " ";
 
                     let role = message.guild.roles.find(r => r.name.toLowerCase() == rolename.trim().toLowerCase());
+                    if (!role) return sendEmbed(message.channel, "Role not found..")
 
                     if (m.roles.has(role.id)) {
                         m.removeRole(role.id);
@@ -57,7 +58,9 @@ module.exports = {
                         sendEmbed(message.channel, `${role.name} given to ${m.user.tag}`)
                     }
 
-                }).catch(e => { })
+                }).catch(e => {
+                    sendEmbed(message.channel, "User not found..")
+                })
             }
 
         }
