@@ -288,6 +288,10 @@ async function messageProcess(message) {
           case "listroles":
             require('./cmds/listroles').run(data);
             break;
+
+          case "purge":
+            require('./cmds/purge').run(data);
+            break;
         
           default:
             break;
