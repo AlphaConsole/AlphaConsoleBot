@@ -34,5 +34,6 @@ module.exports = {
     muted                 : "445364228900257792",
   },
 
-  partnerEmoji: ":ACQuestion:444631913949560855"
+  partnerEmoji: ":ACQuestion:444631913949560855",
+  DynamicCat: "388834196782579712"
 };

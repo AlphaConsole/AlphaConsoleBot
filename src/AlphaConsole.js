@@ -86,32 +86,30 @@ client.on("ready", () => {
 
 //New member joins
 client.on("guildMemberAdd", member => {
-  
+  client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.serverlog).send(`✅ \`[${new Date().toTimeString().split(" ")[0]}]\` **${member.user.tag}** joined the guild. Total members: ${numberWithSpaces(client.guilds.get(serverInfo.guildId).memberCount)}`);
+  require('./events/guildMemberAdd').run(client, serverInfo, config, member);
 });
 
 //User Left / kicked
 client.on("guildMemberRemove", member => {
-  
-});
-
-//Voice users update
-client.on("voiceStateUpdate", (oldMember, newMember) => {
-  
+  client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.serverlog).send(`❌ \`[${new Date().toTimeString().split(" ")[0]}]\` **${member.user.tag}** left the guild. Total members: ${numberWithSpaces(client.guilds.get(serverInfo.guildId).memberCount)}`);
+  require('./events/guildMemberRemove').run(client, serverInfo, config, member);
 });
 
 //User Info changed
 client.on("guildMemberUpdate", (oldMember, newMember) => {
-  
+  require('./events/guildMemberUpdate').run(client, serverInfo, config, oldMember, newMember);
 });
 
 //Personal Info changed
 client.on("userUpdate", (oldMember, newMember) => {
-  
+  client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.serverlog).send(`🔨 \`[${new Date().toTimeString().split(" ")[0]}]\` **\`${oldMember.tag}\`** changed their Discord name to **\`${newMember.tag}\`**`)
+  require('./events/userUpdate').run(client, serverInfo, config, newMember);
 });
 
 //User Info changed
 client.on("messageDelete", message => {
-  
+  require('./events/messageDelete').run(client, serverInfo, config, message);
 });
 
 //React has been added
@@ -119,9 +117,14 @@ client.on("messageReactionAdd", (reaction, user) => {
   require('./events/messageReactionAdd').run(client, serverInfo, config, reaction, user, sendEmbed);
 });
 
-
+//On a new ban
 client.on("guildBanAdd", (guild, user) => {
-  
+  client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.serverlog).send(`🔨 \`[${new Date().toTimeString().split(" ")[0]}]\` **${user.tag}** has been banned from the guild.`)
+});
+
+//Voice users update
+client.on("voiceStateUpdate", (oldMember, newMember) => {
+  require('./events/voiceChannelUpdate').run(client, serverInfo, config, oldMember, newMember)
 });
 
 //Outputs unhandles promises
@@ -348,18 +351,22 @@ async function messageProcess(message) {
   }).catch(e => { })
 }
 
+/**
+  * ! Send information in embed form to the channel
+  * 
+  * ? Channel can be 2 things: Guild channel or an user object.
+  * ? If it's a guild channel, all fine. Should be no problems.
+  * ? But if it's a user then we'll DM him. DM's can be disabled.
+  * 
+  * ? So to check if channel is a user I check if the .tag property exist.
+  * ? It it does exist I know it's a user object, and if we are already in the catch
+  * ? It's most likely because he got his DM's disabled. So we let him know in the #bot-spam
+ * 
+ * @param {Collection} channel 
+ * @param {String} message 
+ * @param {String} desc (optional)
+ */
 let sendEmbed = (channel, message, desc) => {
-  /**
-   * ! Send information in embed form to the channel
-   * 
-   * ? Channel can be 2 things: Guild channel or an user object.
-   * ? If it's a guild channel, all fine. Should be no problems.
-   * ? But if it's a user then we'll DM him. DM's can be disabled.
-   * 
-   * ? So to check if channel is a user I check if the .tag property exist.
-   * ? It it does exist I know it's a user object, and if we are already in the catch
-   * ? It's most likely because he got his DM's disabled. So we let him know in the #bot-spam
-   */
   const embed = new Discord.MessageEmbed()
     .setColor([255, 255, 0])
     .setAuthor(message, client.user.displayAvatarURL({ format: "png" }));
@@ -371,6 +378,9 @@ let sendEmbed = (channel, message, desc) => {
   });
 }
 
+function numberWithSpaces(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+}
 
 
 //This should be moved to another file eventually..
