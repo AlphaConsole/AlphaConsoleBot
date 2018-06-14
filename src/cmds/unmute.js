@@ -30,7 +30,7 @@ module.exports = {
             m.removeRole(serverInfo.roles.muted);
             sendEmbed(message.channel, `${m.user.tag} has been unmuted!`);
 
-            require('../checks/checkUser').run(config.sql, m.user, (err, user) => {
+            require('../helpers/checkUser').run(config.sql, m.user, (err, user) => {
                 config.sql.query("Update Members set MutedUntil = null where DiscordID = ?", [ m.id ]);
             });
 

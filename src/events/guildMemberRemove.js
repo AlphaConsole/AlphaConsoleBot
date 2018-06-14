@@ -1,6 +1,6 @@
 module.exports.run = (client, serverInfo, config, member) => {
 
-    require('../checks/checkUser').run(config.sql, member.user, (err, user) => {
+    require('../helpers/checkUser').run(config.sql, member.user, (err, user) => {
         if (err) return console.error(err);
 
         let roles = "";

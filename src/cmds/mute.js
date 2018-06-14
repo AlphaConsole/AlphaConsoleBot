@@ -75,7 +75,7 @@ module.exports = {
             for (i = 3; i < args.length; i++) reason += args[i] + " ";
             if (reason === "") reason = "No reason provided";
 
-            require('../checks/checkUser').run(config.sql, m.user, (err, user) => {
+            require('../helpers/checkUser').run(config.sql, m.user, (err, user) => {
                 m.addRole(serverInfo.roles.muted);
 
                 m.send(timeArg == 0 ?

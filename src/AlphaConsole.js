@@ -23,39 +23,8 @@ const serverInfoPath = process.argv.slice(2).pop().replace("-serverfile=", "");
 const serverInfo = require(serverInfoPath);
 
 const Discord = require("discord.js");
-const mysql = require('mysql');
-
 const client = new Discord.Client();
-const pool = mysql.createPool({
-    host    : keys.dbHost,
-    port    : 3306,
-    user    : keys.dbUser,
-    password: keys.dbPass,
-    database: keys.dbName
-});
-
-// ? Database function to ensure we always have a connection but without having to repeat ourself in the code.
-let sql = {};
-sql.query = function(query, params, callback) {
-  pool.getConnection(function(err, connection) {
-    if(err) { 
-      console.log(err); 
-      if (callback) callback(true, null, null); 
-      return; 
-    }
-    
-    connection.query(query, params, function(err, results, fields) {
-      connection.release(); // always put connection back in pool after last query
-      if(err) { 
-        console.log(err); 
-        if (callback) callback(true, null, null); 
-        return; 
-      }
-      if (callback) callback(false, results, fields);
-    });
-  });
-};
-
+let sql = require("./helpers/sql");
 
 let config = {
   keys                   : keys,
@@ -143,13 +112,12 @@ process.on("unhandledRejection", (reason, p) => {
  * ! New or edited message events / handling
  * 
  * ? All new and edited messages are checked.
- * ? Checks like is this user allowed to chat in this channel or is the user spamming.
+ * ? Checks like "is this user allowed to chat in this channel" or "is the user spamming".
  */
 
 //* New message
 client.on("message", async message => {
   require('./events/message').botMessage(client, serverInfo, config.sql, message)
-
   messageProcess(message);
 });
 

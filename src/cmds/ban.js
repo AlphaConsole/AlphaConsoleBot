@@ -23,7 +23,7 @@ module.exports = {
 
         let user = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
         message.guild.members.fetch(user).then(m => {
-            require('../checks/checkUser').run(config.sql, m.user, (err, user) => {
+            require('../helpers/checkUser').run(config.sql, m.user, (err, user) => {
                 
                 if (isStaff(m, serverInfo)) 
                     return sendEmbed(message.channel, "You cannot ban a staff member.");

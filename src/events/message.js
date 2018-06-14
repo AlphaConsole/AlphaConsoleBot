@@ -88,7 +88,7 @@ const Discord = require('discord.js');
             return sendEmbed(message.author, "Only images allowed in Showcase channel.");
         }
 
-        require('../checks/checkUser').run(sql, message.author, async (err, user) => {
+        require('../helpers/checkUser').run(sql, message.author, async (err, user) => {
             if (user.Showcase < new Date().getTime()) {
                 await message.react("👍");
                 await message.react("👎");
@@ -104,7 +104,7 @@ const Discord = require('discord.js');
     }
 
     if (message.channel.id === serverInfo.channels.suggestion) {
-        require('../checks/checkUser').run(sql, message.author, async (err, user) => {
+        require('../helpers/checkUser').run(sql, message.author, async (err, user) => {
             if (user.Suggestion < new Date().getTime()) {
                 await message.react("👍");
                 await message.react("👎");

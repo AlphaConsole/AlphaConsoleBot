@@ -87,7 +87,7 @@ module.exports.run = (client, serverInfo, config, oldMember, newMember) => {
               .setTimestamp();
             client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.aclog).send(embedlog);
 
-            require('../checks/checkUser').run(config.sql, user.user, (err, u) => {
+            require('../helpers/checkUser').run(config.sql, user.user, (err, u) => {
                 if (err) return console.error(err);
 
                 config.sql.query("Update Members set Roles = ? where DiscordID = ?", [ newRolesID, user.id ]);
