@@ -23,7 +23,7 @@ module.exports = {
 
         let user = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
         message.guild.members.fetch(user).then(m => {
-            require('../helpers/checkUser').run(config.sql, m.user, (err, user) => {
+            require('../helpers/checkUser').run(sql, m.user, (err, user) => {
 
                 let newWarnings = parseInt(user.Warnings + 1);
                 sendEmbed(message.channel, `${m.user.tag} has been warned.`)
@@ -32,7 +32,7 @@ module.exports = {
                 for (i = 2; i < args.length; i++) reason += args[i] + " ";
                 if (reason === "") reason = "No reason provided";
 
-                config.sql.query("Insert Into Logs(Action, Member, Moderator, Reason, Time, ChannelID) values(?, ?, ?, ?, ?, ?)",
+                sql.query("Insert Into Logs(Action, Member, Moderator, Reason, Time, ChannelID) values(?, ?, ?, ?, ?, ?)",
                 [ 'warn', m.id, message.author.id, reason, new Date().getTime(), message.channel.id ], (err, res) => {
                     if (err) return console.error(err);
 
@@ -52,7 +52,7 @@ module.exports = {
                         .setDescription(`New warning of <@${m.id}> (${m.id}) by <@${message.author.id}>`)
                         .addField("Reason", reason);
                     message.guild.channels.get(serverInfo.channels.modlog).send(embedLog).then(msg => {
-                        config.sql.query(`update Logs set MessageID = ? where ID = ?`, [ msg.id, caseId ]);
+                        sql.query(`update Logs set MessageID = ? where ID = ?`, [ msg.id, caseId ]);
                     });
 
                     //* If he has 2 or more warnings he'll get muted.
@@ -60,15 +60,15 @@ module.exports = {
                         m.addRole(serverInfo.roles.muted);
 
                         let timeextra = new Date().getTime() + 1000 * 60 * 15;
-                        config.sql.query("Update Members set Warnings = ?, MutedUntil = ? where DiscordID = ?", [ newWarnings, timeextra, m.id ]);
+                        sql.query("Update Members set Warnings = ?, MutedUntil = ? where DiscordID = ?", [ newWarnings, timeextra, m.id ]);
 
                     } if (newWarnings > 2) {
                         m.addRole(serverInfo.roles.muted);
 
-                        config.sql.query("Update Members set Warnings = ?, MutedUntil = null where DiscordID = ?", [ newWarnings, m.id ]);
+                        sql.query("Update Members set Warnings = ?, MutedUntil = null where DiscordID = ?", [ newWarnings, m.id ]);
 
                     } else {
-                        config.sql.query("Update Members set Warnings = ? where DiscordID = ?", [ newWarnings, m.id ]);
+                        sql.query("Update Members set Warnings = ? where DiscordID = ?", [ newWarnings, m.id ]);
                     }
                 })
 

@@ -22,7 +22,7 @@ module.exports = {
         if (args.length < 2) return sendEmbed(message.channel, "You must have forgotten the user", "`!Warn <@tag | user Id> <?Reason>`")
 
         let user = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
-        config.sql.query("Select * from Logs where Member = ? order by Time desc", [ user ], (err, res) => {
+        sql.query("Select * from Logs where Member = ? order by Time desc", [ user ], (err, res) => {
 
             let mutes = res.filter(c => c.Action === "mute");
             let warns = res.filter(c => c.Action === "warn");

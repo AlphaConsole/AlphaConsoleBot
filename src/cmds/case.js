@@ -33,7 +33,7 @@ module.exports = {
         if (args.length === 2) {
             let caseId = args[1];
 
-            config.sql.query("Select * from Logs where ID = ?", [ caseId ], (err, res) => {
+            sql.query("Select * from Logs where ID = ?", [ caseId ], (err, res) => {
                 if (err) return console.error(err);
 
                 let row = res[0];
@@ -70,7 +70,7 @@ module.exports = {
             for (i = 3; i < args.length; i++) reason += args[i] + " ";
             if (reason === "") reason = "No reason provided";
 
-            config.sql.query("Update Logs set Reason = ? where ID = ?", [ reason, caseId ], (err, res) => {
+            sql.query("Update Logs set Reason = ? where ID = ?", [ reason, caseId ], (err, res) => {
                 if (err) return console.error(err);
 
                 if (res.affectedRows === 0) 
@@ -83,7 +83,7 @@ module.exports = {
 
             let caseId = args[2];
 
-            config.sql.query("delete from Logs where ID = ?", [ caseId ], (err, res) => {
+            sql.query("delete from Logs where ID = ?", [ caseId ], (err, res) => {
                 if (err) return console.error(err);
 
                 if (res.affectedRows === 0) 

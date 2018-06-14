@@ -30,8 +30,8 @@ module.exports = {
             m.removeRole(serverInfo.roles.muted);
             sendEmbed(message.channel, `${m.user.tag} has been unmuted!`);
 
-            require('../helpers/checkUser').run(config.sql, m.user, (err, user) => {
-                config.sql.query("Update Members set MutedUntil = null where DiscordID = ?", [ m.id ]);
+            require('../helpers/checkUser').run(sql, m.user, (err, user) => {
+                sql.query("Update Members set MutedUntil = null where DiscordID = ?", [ m.id ]);
             });
 
             const embedlog = new Discord.MessageEmbed()

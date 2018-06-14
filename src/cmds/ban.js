@@ -23,7 +23,7 @@ module.exports = {
 
         let user = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
         message.guild.members.fetch(user).then(m => {
-            require('../helpers/checkUser').run(config.sql, m.user, (err, user) => {
+            require('../helpers/checkUser').run(sql, m.user, (err, user) => {
                 
                 if (isStaff(m, serverInfo)) 
                     return sendEmbed(message.channel, "You cannot ban a staff member.");
@@ -34,7 +34,7 @@ module.exports = {
 
                 m.ban({ reason: reason });
 
-                config.sql.query("Insert into `Logs`(Action, Member, Moderator, Reason, Time, ChannelID) values(?, ?, ?, ?, ?, ?)", 
+                sql.query("Insert into `Logs`(Action, Member, Moderator, Reason, Time, ChannelID) values(?, ?, ?, ?, ?, ?)", 
                 [ 'ban', m.id, message.author.id, reason, new Date().getTime(), message.channel.id ], (err, res) => {
                     if (err) return console.error(err);
 
@@ -48,7 +48,7 @@ module.exports = {
                         .setTimestamp()
                         .addField("Reason", reason);
                     message.guild.channels.get(serverInfo.channels.modlog).send(embedlog).then(msg => {
-                        config.sql.query(`update Logs set MessageID = ? where ID = ?`, [ msg.id, caseId ]);
+                        sql.query(`update Logs set MessageID = ? where ID = ?`, [ msg.id, caseId ]);
                     });
 
                 });

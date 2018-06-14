@@ -93,7 +93,7 @@ const Discord = require('discord.js');
                 await message.react("👍");
                 await message.react("👎");
                 await message.react("❌");
-                postPin(client, message, config.sql, serverInfo, "showcase");
+                postPin(client, message, sql, serverInfo, "showcase");
 
                 sql.query("Update Members set Showcase = ? where DiscordID = ?", [ new Date().getTime() + 300000, message.author.id ]);
             } else {
@@ -109,7 +109,7 @@ const Discord = require('discord.js');
                 await message.react("👍");
                 await message.react("👎");
                 await message.react("❌");
-                postPin(client, message, config.sql, serverInfo, "suggestion");
+                postPin(client, message, sql, serverInfo, "suggestion");
 
                 sql.query("Update Members set Suggestion = ? where DiscordID = ?", [ new Date().getTime() + 300000, message.author.id ]);
             } else {
@@ -128,13 +128,13 @@ const Discord = require('discord.js');
             if (err) return console.error(err);
 
             if (body !== "Not signed up for DB") {
-                reportTitle(client, serverInfo, config.sql, message, body, message.author.id)
+                reportTitle(client, serverInfo, sql, message, body, message.author.id)
             } else {
                 request(`${config.keys.CheckdbURL}?SteamID=${message.content}`, (error, result, bodydata) => {
                     if (error) return console.error(error);
 
                     if (bodydata !== "Not signed up for DB") {
-                        reportTitle(client, serverInfo, config.sql, message, bodydata, message.author.id)
+                        reportTitle(client, serverInfo, sql, message, bodydata, message.author.id)
                     } else {
                         message.author.send("I did not find any title based on that DiscordID / SteamID. Please **only** provide me the ID in that channel")
                     }

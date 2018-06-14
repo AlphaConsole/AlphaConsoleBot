@@ -75,7 +75,7 @@ module.exports = {
             for (i = 3; i < args.length; i++) reason += args[i] + " ";
             if (reason === "") reason = "No reason provided";
 
-            require('../helpers/checkUser').run(config.sql, m.user, (err, user) => {
+            require('../helpers/checkUser').run(sql, m.user, (err, user) => {
                 m.addRole(serverInfo.roles.muted);
 
                 m.send(timeArg == 0 ?
@@ -86,10 +86,10 @@ module.exports = {
 
                 //* Let's save his time muted in the database
                 let MutedUntil = timeArg == 0 ? null : new Date().getTime() + timeArg;
-                config.sql.query("Update Members set MutedUntil = ? where DiscordID = ?", [ MutedUntil, m.id ]);
+                sql.query("Update Members set MutedUntil = ? where DiscordID = ?", [ MutedUntil, m.id ]);
 
                 //* Let's save it in the logs asswel for future reference
-                config.sql.query("Insert into `Logs`(Action, Member, Moderator, value, Reason, Time, ChannelID) values(?, ?, ?, ?, ?, ?, ?)", 
+                sql.query("Insert into `Logs`(Action, Member, Moderator, value, Reason, Time, ChannelID) values(?, ?, ?, ?, ?, ?, ?)", 
                 [ 'mute', m.id, message.author.id, timeArg, reason, new Date().getTime(), message.channel.id ], (err, res) => {
                     if (err) return console.error(err);
 
@@ -114,7 +114,7 @@ module.exports = {
                     message.guild.channels
                         .get(serverInfo.channels.modlog)
                         .send(embedlog).then(msg => {
-                            config.sql.query(`update \`Logs\` set MessageID = ? where ID = ?`, [ msg.id, caseId ]);
+                            sql.query(`update \`Logs\` set MessageID = ? where ID = ?`, [ msg.id, caseId ]);
                         });
 
                     //* Wait 2 seconds to confirm he has the role yet. Then send the same message in muted-reasons
