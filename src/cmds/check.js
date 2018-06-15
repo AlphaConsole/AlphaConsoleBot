@@ -7,7 +7,7 @@
 const Discord = require('discord.js');
 
 module.exports = {
-     title: "Warn",
+     title: "Check",
      details: [
         {
             perms      : "Support",

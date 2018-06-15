@@ -50,7 +50,8 @@ let config = {
 
 //Bot logs in
 client.on("ready", () => {
-  require('./events/ready').run(client, serverInfo, config);
+  require('./events/ready').run(client, serverInfo, config, checkStatus);
+  require('./helpers/scheduled').run(client, serverInfo, config, checkStatus);
 });
 
 //New member joins
@@ -131,7 +132,6 @@ async function messageProcess(message) {
   if (message.author.bot) return;
   var args = message.content.split(/[ ]+/);
 
-
   /**
    * ! Fetching the user
    * 
@@ -191,13 +191,14 @@ async function messageProcess(message) {
      */
 
     let data = {
-      client    : client,
-      serverInfo: serverInfo,
-      message   : message,
-      args      : args,
-      sql       : sql,
-      config    : config,
-      sendEmbed : sendEmbed
+      client     : client,
+      serverInfo : serverInfo,
+      message    : message,
+      args       : args,
+      sql        : sql,
+      config     : config,
+      sendEmbed  : sendEmbed,
+      checkStatus: checkStatus
     }
 
 
@@ -303,6 +304,10 @@ async function messageProcess(message) {
           case "case":
             require('./cmds/case').run(data);
             break;
+
+          case "status":
+            require('./cmds/status').run(data);
+            break;
         
           default:
             break;
@@ -318,6 +323,8 @@ async function messageProcess(message) {
 
   }).catch(e => { })
 }
+
+
 
 /**
   * ! Send information in embed form to the channel
@@ -346,36 +353,47 @@ let sendEmbed = (channel, message, desc) => {
   });
 }
 
+
+
+/**
+ * ! Status information check
+ * 
+ * ? We'll check all statuses from the db. Check which one was last active
+ * ? and apply that one to the bot. If none was active we'll start with the first one again
+ */
+let checkStatus = () => {
+  sql.query("select * from Statuses", [], (err, res) => {
+    if (err) return console.error(err);
+    if (res.length === 0) return;
+  
+    if (res.filter(r => r.Active == 1).length === 0) {
+        let r = res[0];
+        setStatus(r);
+  
+    } else {
+        let r = res.filter(r => r.Active == 1)[0];
+        setStatus(r);
+    }
+
+  })
+}
+function setStatus(r) {
+  sql.query("Update Statuses set Active = 1 where ID = ?", [ r.ID ]); 
+
+
+  //* All exceptions first
+  if (r.StatusText.toLowerCase() === "counter") 
+    client.user.setActivity(`with ${client.guilds.get(serverInfo.guildId).memberCount} members`, { type: "PLAYING" });
+  else
+    client.user.setActivity(r.StatusText, { type: r.StatusType });
+}
+
+
+
 function numberWithSpaces(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
 
 
-//This should be moved to another file eventually..
-var schedule = require("node-schedule");
-
-var a = schedule.scheduleJob({ second: 1 }, function() {
-  
-});
-
-var b = schedule.scheduleJob({ minute: 1 }, function() {
-  
-});
-
-var c = schedule.scheduleJob({ minute: 31 }, function() {
-  
-});
-
-var d = schedule.scheduleJob({ hour: 9, minute: 40 }, function() {
-  
-});
-
-var e = schedule.scheduleJob({ date: 1, hour: 17 }, function() {
-  
-});
-
-var f = schedule.scheduleJob({ date: 16, hour: 17 }, function() {
-  
-});
 
 client.login(require("./tokens.js").token);

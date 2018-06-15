@@ -6,7 +6,7 @@
 const Discord = require('discord.js');
 
 module.exports = {
-    title: "AddCommand",
+    title: "Nick",
     details: [
         {
             perms      : "Moderator",

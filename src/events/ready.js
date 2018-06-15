@@ -6,8 +6,9 @@
  */
 let fs = require('fs');
 
-module.exports.run = (client, serverInfo, config) => {
+module.exports.run = (client, serverInfo, config, checkStatus) => {
     console.log("AlphaConsole Bot logged in and ready.");
+    checkStatus();
 
     /**
      * ! Config variables setup
