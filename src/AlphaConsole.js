@@ -213,7 +213,8 @@ async function messageProcess(message) {
          * ? We also check every single message, to ensure the user is allowed to chat or for custom commands
          */
         let cmd = args[0].substring(1).toLowerCase();
-        require('./events/message').run(data, cmd)
+        require('./events/message').run(data, cmd);
+        require('./events/spamProtection').run(data);
 
         switch (cmd) {
           case "ping":

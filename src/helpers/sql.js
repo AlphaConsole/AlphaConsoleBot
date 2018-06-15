@@ -13,16 +13,14 @@ let sql = {};
 sql.query = function(query, params, callback) {
   pool.getConnection(function(err, connection) {
     if(err) { 
-      console.log(err); 
-      if (callback) callback(true, null, null); 
+      if (callback) callback(err, null, null); 
       return; 
     }
     
-    connection.query(query, params, function(err, results, fields) {
+    connection.query(query, params, function(error, results, fields) {
       connection.release(); // always put connection back in pool after last query
-      if(err) { 
-        console.log(err); 
-        if (callback) callback(true, null, null); 
+      if(error) { 
+        if (callback) callback(error, null, null); 
         return; 
       }
       if (callback) callback(false, results, fields);

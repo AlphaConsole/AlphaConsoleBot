@@ -6,7 +6,7 @@
  */
 const Discord = require('discord.js');
 
- module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbed }, cmd) => {
+module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbed }, cmd) => {
 
     //! First all the filters before continueing
 
