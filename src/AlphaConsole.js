@@ -309,6 +309,14 @@ async function messageProcess(message) {
           case "status":
             require('./cmds/status').run(data);
             break;
+          
+          case "lockdown":
+            require('./cmds/lockdown').run(data);
+            break;
+
+          case "unlock":
+            require('./cmds/unlock').run(data);
+            break;
         
           default:
             break;
