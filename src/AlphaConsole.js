@@ -31,6 +31,7 @@ let config = {
   sql                    : sql,
   whitelistedLinksChannel: [],
   swearwords             : [],
+  blacklistedWords       : [],
   autoResponds           : {},
   permits                : {},
   commands               : []
@@ -316,6 +317,10 @@ async function messageProcess(message) {
 
           case "unlock":
             require('./cmds/unlock').run(data);
+            break;
+
+          case "blacklist":
+            require('./cmds/blacklist').run(data);
             break;
         
           default:
