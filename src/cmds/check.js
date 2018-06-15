@@ -1,5 +1,5 @@
 /**
- * ! Warn command
+ * ! Check command
  * 
  * ? Kinda obvious, too lazy to write anything smart anyway
  * ? We also have command description for a reason. So I actually don't know why I added this here. Welp...
