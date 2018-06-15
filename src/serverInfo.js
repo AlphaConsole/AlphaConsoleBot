@@ -27,7 +27,7 @@ module.exports = {
     botConfig             : "377992732418768907",
 
     setTitle              : "349645232910106625",
-    setSpecialTitleChannel: "396350002886344714",
+    setSpecialTitle       : "396350002886344714",
     betaSteamIDS          : "391345364919123968",
     
     botSpam               : "389241234100715520",

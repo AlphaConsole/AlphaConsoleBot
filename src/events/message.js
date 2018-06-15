@@ -252,7 +252,7 @@ function AutoResponseChannel(channelID, channels) {
 	if (channelID === channels.botSpam) return true;
 	if (channelID === channels.modlog) return true;
 	if (channelID === channels.serverlog) return true;
-	if (channelID === channels.setSpecialTitleChannel) return true;
+	if (channelID === channels.setSpecialTitle) return true;
 	if (channelID === channels.setTitle) return true;
 	if (channelID === channels.showcase) return true;
 	if (channelID === channels.suggestion) return true;
@@ -266,7 +266,7 @@ function CustomCommandsChannel(channelID, channels) {
 	if (channelID === channels.betaSteamIDS) return true;
 	if (channelID === channels.modlog) return true;
 	if (channelID === channels.serverlog) return true;
-	if (channelID === channels.setSpecialTitleChannel) return true;
+	if (channelID === channels.setSpecialTitle) return true;
 	if (channelID === channels.setTitle) return true;
 	if (channelID === channels.showcase) return true;
 	if (channelID === channels.suggestion) return true;

@@ -40,7 +40,7 @@ module.exports = {
             });
         client.guilds
             .get(serverInfo.guildId)
-            .channels.get(serverInfo.channels.setSpecialTitleChannel)
+            .channels.get(serverInfo.channels.setSpecialTitle)
             .overwritePermissions(message.guild.id, {
                 SEND_MESSAGES: false
             });

@@ -30,7 +30,7 @@ module.exports = {
             // client.guilds.get(serverInfo.guildId).channels.get(serverInfo.suggestionsChannel).overwritePermissions(message.guild.id, {
             //     SEND_MESSAGES: false
             // });
-            // client.guilds.get(serverInfo.guildId).channels.get(serverInfo.setSpecialTitleChannel).overwritePermissions(message.guild.id, {
+            // client.guilds.get(serverInfo.guildId).channels.get(serverInfo.setSpecialTitle).overwritePermissions(message.guild.id, {
             //     SEND_MESSAGES: false
             // });
             //message.channel.send('Channels locked. Executing shell commands...')
