@@ -33,6 +33,8 @@ module.exports = {
 
     run: async ({ client, serverInfo, message, args, sql, config, sendEmbed, checkStatus }) => {
 
+        if (!message.member.isAdmin) return;
+
         if (args.length === 1) {
             //* !Status command
             sql.query("Select * from Statuses", [], (err, res) => {
