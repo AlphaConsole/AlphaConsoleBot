@@ -7,6 +7,7 @@
 const Discord = require('discord.js');
 
 module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbed }, cmd) => {
+    let keys = config.keys;
 
     //! First all the filters before continueing
 
@@ -143,6 +144,98 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
         })
     }
 
+
+    // ! Beta Steam IDs for instant beta signup
+    if (message.channel.id === serverInfo.channels.betaSteamIDS) {
+        message.delete();
+
+        //maybe move this to commands so you can force a user aswell
+        //Maybe question if it's the correct URL??
+        function setBeta(member, steamID) {
+            var request = require("request");
+            var url = keys.SetBetaURL +
+                "?DiscordID=" + member.id +
+                "&key=" + keys.Password +
+                "&SteamID=" + steamID;
+            request({ method: "GET", url: url }, function (err, response, body) {
+                if (err)
+                    return member.send("An error occured. Please try again later.");
+
+                if (body) 
+                    member.send(body);    
+            });
+        }
+
+        function getSteamID(args) {
+            if (args.length != 1) {
+                message.author.send("Your input is incorrect. Valid inputs are: Steam link, SteamID64 or Steam Custom URL.");
+                return;
+            } else {
+                var incorrectInput = false;
+                var steamID = args[0];
+                var shouldQuerySteamAPI = false;
+                if (steamID.includes("steamcommunity.com")) {
+                    var splited = steamID.split("/").filter(v => v != '');
+                    var commIndex = splited.indexOf("steamcommunity.com");
+                    if (splited.length > commIndex + 2) {
+                        var field = splited[commIndex + 1];
+                        if (!(field == "id" || field == "profiles")) {
+                            message.author.send("Your input is incorrect. Valid inputs are: Steam link, SteamID64 or Steam Custom URL.");
+                            return;
+                            return;
+                        } else {
+                            steamID = splited[commIndex + 2];
+                        }
+                    } else {
+                        message.author.send("Your input is incorrect. Valid inputs are: Steam link, SteamID64 or Steam Custom URL.");
+                        return;
+                    }
+                } else {
+                    if (steamID.match(/^[a-z0-9]+$/i) === null) incorrectInput = true;
+                }
+                if (!steamID.match(/^7\d{16}$/)) shouldQuerySteamAPI = true;
+                if (shouldQuerySteamAPI) {
+                    var request = require("request");
+                    var url = keys.SteamAPIURL;
+                    url += '?key=' + keys.SteamAPIKey + '&vanityurl=' + steamID;
+                    request({
+                            method: "GET",
+                            url: url
+                        },
+                        function (err, response, body) {
+                            if (err) {
+                                message.author.send("An error occured. Please try again later.");
+                                return;
+                            } else {
+                                if (body) {
+                                    var jsonObject = JSON.parse(body);
+                                    if (jsonObject != null && jsonObject.response && jsonObject.response.success) {
+                                        if (jsonObject.response.success == 1) {
+                                            steamID = jsonObject.response.steamid;
+                                            setBeta(message.author, steamID);
+                                        } else {
+                                            message.author.send("Your input is incorrect. Valid inputs are: Steam link, SteamID64 or Steam Custom URL.");
+                                            return;
+                                        }
+                                    } else {
+                                        message.author.send("An error occured. Please try again later.");
+                                        return;
+                                    }
+
+                                } else {
+                                    message.author.send("An error occured. Please try again later.");
+                                    return;
+                                }
+                            }
+                        }
+                    );
+                } else {
+                    setBeta(message.author, steamID);
+                }
+            }
+        }
+        getSteamID(args);
+    }
 
     // ! Add reaction when bot is mentioned
 		message.mentions.users.forEach(user => {
