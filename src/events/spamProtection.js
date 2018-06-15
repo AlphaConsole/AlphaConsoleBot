@@ -10,6 +10,8 @@ let warned = [];
 let mutes = {};
 
 module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbed }) => {
+
+    if (ignore()) return;
     
     // Set options
     const warnBuffer = 5;
@@ -77,5 +79,28 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
                 });
             });
         }
+    }
+
+
+
+
+
+
+    function ignore() {
+        let m = message.member;
+        let c = message.channel.id;
+
+        if (m.roles.has(serverInfo.roles.streamTeam)) return true;
+        if (m.roles.has(serverInfo.roles.ch)) return true;
+        if (m.roles.has(serverInfo.roles.staff)) return true;
+        if (m.roles.has(serverInfo.roles.support)) return true;
+        if (m.roles.has(serverInfo.roles.moderator)) return true;
+        if (m.roles.has(serverInfo.roles.admin)) return true;
+        if (m.roles.has(serverInfo.roles.developer)) return true;
+
+        if (c === serverInfo.channels.slaughter) return true;
+        if (c === serverInfo.channels.staff) return true;
+        if (c === serverInfo.channels.botConfig) return true;
+        return false;
     }
 }
