@@ -134,53 +134,6 @@ async function messageProcess(message) {
   if (message.author.bot) return;
   var args = message.content.split(/[ ]+/);
 
-  /**
-   * ! Fetching the user
-   * 
-   * ? Due to the Discord server having a lot of members there is a chance that the user itself is not fetched.
-   * ? That's why we do so on every command, if the user is already fetched it'll take his information
-   * ? from the cache anyway without extra effort. This is just to insure the user can always be used
-   * ? in the command
-   */
-  await client.guilds.get(serverInfo.guildId).members.fetch(message.author.id).then(m => {
-    message.member = m;
-
-    /**
-     * ! Assigning all positions to the member to easily detect if he is allowed to do certain commands
-     * 
-     * ? We are saving these varibales in the message.member object. This way at any point of time
-     * ? we can request the information and detect if he is allowed to execute the command.
-     */
-    if (message.member.roles.has(serverInfo.roles.developer)) 
-      message.member.isDeveloper = true;
-    else
-      message.member.isDeveloper = false;
-    
-    if (message.member.roles.has(serverInfo.roles.admin) || message.member.isDeveloper)
-      message.member.isAdmin = true;
-    else
-      message.member.isAdmin = false;
-
-    if (message.member.roles.has(serverInfo.roles.moderator) || message.member.isAdmin)
-      message.member.isModerator = true;
-    else
-      message.member.isModerator = false;
-
-    if (message.member.roles.has(serverInfo.roles.support) || message.member.isModerator)
-      message.member.isSupport = true;
-    else
-      message.member.isSupport = false;
-
-    if (message.member.roles.has(serverInfo.roles.staff) || message.member.isSupport)
-      message.member.isStaff = true;
-    else
-      message.member.isStaff = false;
-
-    if (message.member.roles.has(serverInfo.roles.ch) || message.member.isStaff)
-      message.member.isCH = true;
-    else
-      message.member.isCH = false;
-
     /** 
      * ! Assigned all data to a var
      * 
@@ -206,6 +159,53 @@ async function messageProcess(message) {
 
     if (message.channel.type === "text") {
       if (message.guild.id !== serverInfo.guildId) return;
+
+      /**
+       * ! Fetching the user
+       * 
+       * ? Due to the Discord server having a lot of members there is a chance that the user itself is not fetched.
+       * ? That's why we do so on every command, if the user is already fetched it'll take his information
+       * ? from the cache anyway without extra effort. This is just to insure the user can always be used
+       * ? in the command
+       */
+      await client.guilds.get(serverInfo.guildId).members.fetch(message.author.id).then(m => {
+        message.member = m;
+
+        /**
+         * ! Assigning all positions to the member to easily detect if he is allowed to do certain commands
+         * 
+         * ? We are saving these varibales in the message.member object. This way at any point of time
+         * ? we can request the information and detect if he is allowed to execute the command.
+         */
+        if (message.member.roles.has(serverInfo.roles.developer)) 
+          message.member.isDeveloper = true;
+        else
+          message.member.isDeveloper = false;
+        
+        if (message.member.roles.has(serverInfo.roles.admin) || message.member.isDeveloper)
+          message.member.isAdmin = true;
+        else
+          message.member.isAdmin = false;
+
+        if (message.member.roles.has(serverInfo.roles.moderator) || message.member.isAdmin)
+          message.member.isModerator = true;
+        else
+          message.member.isModerator = false;
+
+        if (message.member.roles.has(serverInfo.roles.support) || message.member.isModerator)
+          message.member.isSupport = true;
+        else
+          message.member.isSupport = false;
+
+        if (message.member.roles.has(serverInfo.roles.staff) || message.member.isSupport)
+          message.member.isStaff = true;
+        else
+          message.member.isStaff = false;
+
+        if (message.member.roles.has(serverInfo.roles.ch) || message.member.isStaff)
+          message.member.isCH = true;
+        else
+          message.member.isCH = false;
         
         /**
          * ! All possible commands
@@ -346,16 +346,65 @@ async function messageProcess(message) {
           default:
             break;
         }
-        
+
+      }).catch(e => { })        
     } else {
       //* ALL DM COMMANDS
 
-      if (args[0].toLowerCase() == "!help" || args[0].toLowerCase() == "!h")
-        require('./cmds/help').run(data, true);
+      /**
+       * ! Fetching the user
+       * 
+       * ? Due to the Discord server having a lot of members there is a chance that the user itself is not fetched.
+       * ? That's why we do so on every command, if the user is already fetched it'll take his information
+       * ? from the cache anyway without extra effort. This is just to insure the user can always be used
+       * ? in the command
+       */
+      await client.guilds.get(serverInfo.guildId).members.fetch(message.author.id).then(m => {
+
+        /**
+         * ! Assigning all positions to the member to easily detect if he is allowed to do certain commands
+         * 
+         * ? We are saving these varibales in the message.member object. This way at any point of time
+         * ? we can request the information and detect if he is allowed to execute the command.
+         */
+        if (m.roles.has(serverInfo.roles.developer)) 
+          m.isDeveloper = true;
+        else
+          m.isDeveloper = false;
+        
+        if (m.roles.has(serverInfo.roles.admin) || m.isDeveloper)
+          m.isAdmin = true;
+        else
+          m.isAdmin = false;
+
+        if (m.roles.has(serverInfo.roles.moderator) || m.isAdmin)
+          m.isModerator = true;
+        else
+          m.isModerator = false;
+
+        if (m.roles.has(serverInfo.roles.support) || m.isModerator)
+          m.isSupport = true;
+        else
+          m.isSupport = false;
+
+        if (m.roles.has(serverInfo.roles.staff) || m.isSupport)
+          m.isStaff = true;
+        else
+          m.isStaff = false;
+
+        if (m.roles.has(serverInfo.roles.ch) || m.isStaff)
+          m.isCH = true;
+        else
+          m.isCH = false;
+
+        data.member = m;
+
+        if (args[0].toLowerCase() == "!help" || args[0].toLowerCase() == "!h")
+          require('./cmds/help').run(data, true);
+      });
+
 
     }
-
-  }).catch(e => { })
 }
 
 

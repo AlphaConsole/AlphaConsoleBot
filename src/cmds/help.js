@@ -15,7 +15,7 @@ module.exports = {
         }
     ],
 
-    run: ({ client, serverInfo, message, args, sql, config, sendEmbed }, isDM) => {
+    run: ({ client, serverInfo, message, args, sql, config, sendEmbed, member }, isDM) => {
 
         if (args.length === 1) {
             let a = config.commands;
@@ -40,11 +40,11 @@ module.exports = {
                 .setAuthor("Help command", client.user.displayAvatarURL())
                 .setFooter('Execute "!help <Command>" for details')
                 if (help.everyone.length !== 0) emb.addField("Everyone commands", help.everyone.join("\n"))
-                if (message.member.isStaff && help.staff.length !== 0) emb.addField("Staff commands", help.staff.join("\n"))
-                if (message.member.isSupport && help.support.length !== 0) emb.addField("Support commands", help.support.join("\n"))
-                if (message.member.isModerator && help.moderator.length !== 0) emb.addField("Moderator commands", help.moderator.join("\n"))
-                if (message.member.isAdmin && help.admin.length !== 0) emb.addField("Admin commands", help.admin.join("\n"))
-                if (message.member.isDeveloper && help.developer.length !== 0) emb.addField("Developer commands", help.developer.join("\n"))
+                if (member.isStaff && help.staff.length !== 0) emb.addField("Staff commands", help.staff.join("\n"))
+                if (member.isSupport && help.support.length !== 0) emb.addField("Support commands", help.support.join("\n"))
+                if (member.isModerator && help.moderator.length !== 0) emb.addField("Moderator commands", help.moderator.join("\n"))
+                if (member.isAdmin && help.admin.length !== 0) emb.addField("Admin commands", help.admin.join("\n"))
+                if (member.isDeveloper && help.developer.length !== 0) emb.addField("Developer commands", help.developer.join("\n"))
                 message.channel.send(emb);
 
 
