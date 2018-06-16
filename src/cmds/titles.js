@@ -25,7 +25,6 @@ module.exports = {
 			//* Just to make it easy since we'll use it by times
 			let blacklist = config.blacklistedWords;
 			let keys = config.keys;
-			message.delete().catch(() => {});
 
 			/**
 			 * ! All functions used for the titles section.

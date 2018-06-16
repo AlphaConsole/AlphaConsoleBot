@@ -8,6 +8,7 @@ const Discord = require('discord.js');
 
 module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbed }, cmd) => {
     let keys = config.keys;
+    if (message.channel.id === serverInfo.channels.setTitle) message.delete().catch(e => { });
 
     //! First all the filters before continueing
 
