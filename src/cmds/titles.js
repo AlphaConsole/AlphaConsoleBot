@@ -96,7 +96,7 @@ module.exports = {
 
 
 			function setTitle() {
-				if (message.channel.id !== serverInfo.channels.setTitle) return;
+				if (message.channel.id !== serverInfo.channels.setTitle || args.length > 3) return;
 				let userTitle = createTitle(args, 2);
 				let titles = userTitle.split(/[::]+/);
 
@@ -123,7 +123,7 @@ module.exports = {
 			}
 
 			function setColour() {
-				if (message.channel.id !== serverInfo.channels.setTitle) return;
+				if (message.channel.id !== serverInfo.channels.setTitle || args.length > 3) return;
 				let colours = args[2].split("::");
 
 				let valid = isValidColor(message, colours, serverInfo);
