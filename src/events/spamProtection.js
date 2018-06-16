@@ -30,7 +30,7 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
     if (messagesInInterval >= warnBuffer && !warned.includes(message.author.id)) {
         if (!mutes[message.author.id] || (mutes[message.author.id] && mutes[message.author.id] < new Date().getTime())) {
             //* User has been spamming for the first time. Warn him and add it to the warned list
-            message.author.send("Alright buddy... Keep it calm, reduce the spam or you'll be muted.");
+            sendEmbed(message.author, "Alright buddy... Keep it calm, reduce the spam or you'll be muted.")
             sendEmbed(message.channel, `${message.author.tag} has been warned.`)
             warned.push(message.author.id);
         }

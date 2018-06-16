@@ -137,7 +137,7 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
                     if (bodydata !== "Not signed up for DB") {
                         reportTitle(client, serverInfo, sql, message, bodydata, message.author.id)
                     } else {
-                        message.author.send("I did not find any title based on that DiscordID / SteamID. Please **only** provide me the ID in that channel")
+                        sendEmbed(message.author, "I did not find any title based on that DiscordID / SteamID. Please **only** provide me the ID in that channel")
                     }
                 })
             }
@@ -168,7 +168,7 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
 
         function getSteamID(args) {
             if (args.length != 1) {
-                message.author.send("Your input is incorrect. Valid inputs are: Steam link, SteamID64 or Steam Custom URL.");
+                sendEmbed(message.author, "Your input is incorrect. Valid inputs are: Steam link, SteamID64 or Steam Custom URL.");
                 return;
             } else {
                 var incorrectInput = false;
@@ -180,14 +180,14 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
                     if (splited.length > commIndex + 2) {
                         var field = splited[commIndex + 1];
                         if (!(field == "id" || field == "profiles")) {
-                            message.author.send("Your input is incorrect. Valid inputs are: Steam link, SteamID64 or Steam Custom URL.");
+                            sendEmbed(message.author, "Your input is incorrect. Valid inputs are: Steam link, SteamID64 or Steam Custom URL.");
                             return;
                             return;
                         } else {
                             steamID = splited[commIndex + 2];
                         }
                     } else {
-                        message.author.send("Your input is incorrect. Valid inputs are: Steam link, SteamID64 or Steam Custom URL.");
+                        sendEmbed(message.author, "Your input is incorrect. Valid inputs are: Steam link, SteamID64 or Steam Custom URL.");
                         return;
                     }
                 } else {
@@ -204,7 +204,7 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
                         },
                         function (err, response, body) {
                             if (err) {
-                                message.author.send("An error occured. Please try again later.");
+                                sendEmbed(message.author, "An error occured. Please try again later.");
                                 return;
                             } else {
                                 if (body) {
@@ -214,16 +214,16 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
                                             steamID = jsonObject.response.steamid;
                                             setBeta(message.author, steamID);
                                         } else {
-                                            message.author.send("Your input is incorrect. Valid inputs are: Steam link, SteamID64 or Steam Custom URL.");
+                                            sendEmbed(message.author, "Your input is incorrect. Valid inputs are: Steam link, SteamID64 or Steam Custom URL.");
                                             return;
                                         }
                                     } else {
-                                        message.author.send("An error occured. Please try again later.");
+                                        sendEmbed(message.author, "An error occured. Please try again later.");
                                         return;
                                     }
 
                                 } else {
-                                    message.author.send("An error occured. Please try again later.");
+                                    sendEmbed(message.author, "An error occured. Please try again later.");
                                     return;
                                 }
                             }
@@ -314,11 +314,11 @@ function reportTitle(client, serverInfo, sql, message, titleInfo, Reporter) {
 	sql.query(`select * from TitleReports where SteamID = ? order by ID desc`, [ steamID ], (err, res) => {
         if (res[0]) {
             if (res[0].Permitted === 1) {
-                if (!message.author.bot) message.author.send("This user has been reported before and has been permitted to use this title.")
+                if (!message.author.bot) sendEmbed(message.author, "This user has been reported before and has been permitted to use this title.")
                 return;
             }
             if (res[0].Fixed === 0) {
-                if (!message.author.bot) message.author.send("This user has an open report currently.");
+                if (!message.author.bot) sendEmbed(message.author, "This user has an open report currently.");
                 return;
             }
         }
