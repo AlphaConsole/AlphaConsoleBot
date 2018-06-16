@@ -228,6 +228,10 @@ async function messageProcess(message) {
             require('./cmds/titles').run(data);
             break;
 
+          case "get":
+            require('./cmds/gettitle').run(data);
+            break;
+
           case "disable":
             require('./cmds/disable').run(data);
             break;
