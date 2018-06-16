@@ -101,6 +101,11 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
         if (c === serverInfo.channels.slaughter) return true;
         if (c === serverInfo.channels.staff) return true;
         if (c === serverInfo.channels.botConfig) return true;
+        if (c === serverInfo.channels.setTitle) return true;
+        if (c === serverInfo.channels.setSpecialTitle) return true;
+        if (c === serverInfo.channels.betaSteamIDS) return true;
+        if (c === serverInfo.channels.showcase) return true;
+        if (c === serverInfo.channels.suggestion) return true;
         return false;
     }
 }
