@@ -31,7 +31,6 @@ module.exports = {
         if (!message.member.isAdmin) return;
         if (args.length < 2) return sendEmbed(message.channel, "Incorrect Usage: !blacklist <check|add|remove> <word>")
         let blackListedWords = config.blacklistedWords;
-        console.log(blackListedWords)
 
         if (args[1].toLowerCase() == "check") {
             var badWord = makeWord(args);

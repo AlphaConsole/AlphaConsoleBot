@@ -224,7 +224,6 @@ function inBlacklist(message, blackListedWords, userTitle, exemptWords) {
 	blackListedWords.forEach(badWord => {
 		if (badWord != "" && !exemptWords.includes(badWord)) {
 			if (userTitle.toLowerCase().includes(badWord)) {
-				console.log(badWord);
 				userTitleBad = true;
 			}
 		}
