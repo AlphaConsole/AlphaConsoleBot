@@ -21,11 +21,14 @@ module.exports.run = (client, serverInfo, { sql }, checkStatus) => {
     //* For Status rotation & channel cleanup
     let b = schedule.scheduleJob({ minute: 1 }, function() {
         statusRotation();
+        titleCleanUp();
     });
 
     let c = schedule.scheduleJob({ minute: 31 }, function() {
         statusRotation();
+        titleCleanUp();
     });
+
 
 
 
@@ -48,5 +51,22 @@ module.exports.run = (client, serverInfo, { sql }, checkStatus) => {
                 checkStatus();
             }
         })
+    }
+
+    function titleCleanUp() {
+        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.setTitle).messages.fetch()
+        .then(messages => {
+            for (var message of messages.values()) {
+                if (
+                    message.author.id !== client.user.id &&
+                    message.author.id !== "345769053538746368" &&
+                    message.author.id !== "181076473757696000" &&
+                    !message.member.roles.has(serverInfo.roles.admin) &&
+                    !message.member.roles.has(serverInfo.roles.developer)
+                ) {
+                    message.delete();
+                }
+            }
+        });
     }
 }
