@@ -26,7 +26,6 @@ module.exports = {
             require('../helpers/checkUser').run(sql, m.user, (err, user) => {
 
                 let newWarnings = parseInt(user.Warnings + 1);
-                sendEmbed(message.channel, `${m.user.tag} has been warned.`)
 
                 let reason = "";
                 for (i = 2; i < args.length; i++) reason += args[i] + " ";
@@ -37,6 +36,7 @@ module.exports = {
                     if (err) return console.error(err);
 
                     let caseId = res.insertId;
+                    sendEmbed(message.channel, `${m.user.tag} has been warned. Case ID: ${caseId}`)
 
                     //* Warning user in DM
                     let warningMsg = "You have received another warning! You'll now be muted, and the staff will look into your behaviour for further actions."
