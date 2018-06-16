@@ -219,7 +219,8 @@ async function messageProcess(message) {
 
         switch (cmd) {
           case "ping":
-            require('./cmds/ping').run(data);
+            if (!denyCommands(message.channel.id, serverInfo.channels))
+              require('./cmds/ping').run(data);
             break;
 
           case "set":
@@ -417,7 +418,18 @@ function setStatus(r) {
 }
 
 
-
+function denyCommands(channelID, channels) {
+	if (channelID === channels.aclog) return true;
+	if (channelID === channels.betaSteamIDS) return true;
+	if (channelID === channels.modlog) return true;
+	if (channelID === channels.serverlog) return true;
+	if (channelID === channels.setSpecialTitle) return true;
+	if (channelID === channels.setTitle) return true;
+	if (channelID === channels.showcase) return true;
+	if (channelID === channels.suggestion) return true;
+	//Else return false
+	return false;
+}
 function numberWithSpaces(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
