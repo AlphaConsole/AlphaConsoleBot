@@ -17,7 +17,6 @@ module.exports.run = (client, serverInfo, config, oldMember, newMember) => {
         }
 
         //* If roles are different, we'll save the new roles but also check if the user still has access to certain things
-        console.log(oldMember.roles.map(r => r.name), newMember.roles.map(r => r.name))
         if (oldMember.roles.size !== newMember.roles.size) {
             let oldRoles = "";
             oldMember.roles.array().forEach(role => {
