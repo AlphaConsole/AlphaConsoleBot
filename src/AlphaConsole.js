@@ -222,6 +222,11 @@ async function messageProcess(message) {
             require('./cmds/ping').run(data);
             break;
 
+          case "set":
+          case "override":
+            require('./cmds/titles').run(data);
+            break;
+
           case "togglelinks":
             require('./cmds/toggleLinks').run(data);
             break;
