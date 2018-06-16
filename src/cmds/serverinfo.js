@@ -24,7 +24,7 @@ module.exports = {
     title: "ServerInfo",
     details: [
         {
-            perms      : "Admin",
+            perms      : "Staff",
             command    : "!serverinfo",
             description: "Returns an embed with information of the server"
         }
@@ -32,43 +32,48 @@ module.exports = {
 
     run: ({ client, serverInfo, message, args, sql, config, sendEmbed }) => {
 
-        if (!message.member.isAdmin) return;
+        if (!message.member.isStaff) return;
 
-        var guild = message.guild;
-        var creationDate = new Date(guild.createdTimestamp);
+        try {
+          var guild = message.guild;
+          var creationDate = new Date(guild.createdTimestamp);
 
-        var now = new Date();
-        var timeDiff = Math.abs(now.getTime() - creationDate.getTime());
-        var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+          var now = new Date();
+          var timeDiff = Math.abs(now.getTime() - creationDate.getTime());
+          var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
-        const embed = new Discord.MessageEmbed()
-        .setColor([255, 255, 0])
-        .setThumbnail(guild.iconURL({ format: "png" }))
-        .addField(
-          guild.name,
-          `Created ${creationDate.getDate()} ${
-            monthNames[creationDate.getMonth()]
-          } ${creationDate.getFullYear()} ${creationDate.getUTCHours()}:${creationDate.getMinutes()}. That's over ${diffDays} days ago!`
-        )
-        .addField("Region", guild.region, true)
-        .addField(
-          "Users",
-          `${guild.members.array().filter(m => m.presence.status.toLowerCase() !== "offline").length}/${guild.memberCount}`,
-          true
-        )
-        .addField(
-          "Text Channels",
-          guild.channels.array().filter(c => c.type.toLowerCase() == "text").length,
-          true
-        )
-        .addField(
-          "Voice Channels",
-          guild.channels.array().filter(c => c.type.toLowerCase() == "voice").length,
-          true
-        )
-        .addField("Roles", guild.roles.size, true)
-        .addField("Owner", guild.owner.user, true)
-        //.addField("Emojis", guild.emojis.map(m => m.toString()).join("")) -- Somehow brakes it without any warning
-        message.channel.send(embed);
+          const embed = new Discord.MessageEmbed()
+          .setColor([255, 255, 0])
+          .setThumbnail(guild.iconURL({ format: "png" }))
+          .addField(
+            guild.name,
+            `Created ${creationDate.getDate()} ${
+              monthNames[creationDate.getMonth()]
+            } ${creationDate.getFullYear()} ${creationDate.getUTCHours()}:${creationDate.getMinutes()}. That's over ${diffDays} days ago!`
+          )
+          .addField("Region", guild.region, true)
+          .addField(
+            "Users",
+            `${guild.members.array().filter(m => m.presence.status.toLowerCase() !== "offline").length}/${guild.memberCount}`,
+            true
+          )
+          .addField(
+            "Text Channels",
+            guild.channels.array().filter(c => c.type.toLowerCase() == "text").length,
+            true
+          )
+          .addField(
+            "Voice Channels",
+            guild.channels.array().filter(c => c.type.toLowerCase() == "voice").length,
+            true
+          )
+          .addField("Roles", guild.roles.size, true)
+          .addField("Owner", guild.owner.user, true)
+          //.addField("Emojis", guild.emojis.map(m => m.toString()).join("")) -- Somehow brakes it without any warning
+          message.channel.send(embed);
+
+        } catch (error) {
+          console.log(error)
+        }
     }
 }
