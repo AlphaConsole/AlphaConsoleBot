@@ -11,15 +11,15 @@ module.exports = {
      details: [
         {
             perms      : "Support",
-            command    : "!Warn <@tag | user Id> <?Reason>",
-            description: "Adds a warning to the user and in case it’s the second warning or higher he gets muted"
+            command    : "!Check <@tag | user Id>",
+            description: "Checks all warns, mutes etc... from the user."
         }
     ],
 
     run: ({ client, serverInfo, message, args, sql, config, sendEmbed }) => {
 
         if (!message.member.isSupport) return;
-        if (args.length < 2) return sendEmbed(message.channel, "You must have forgotten the user", "`!Warn <@tag | user Id> <?Reason>`")
+        if (args.length < 2) return sendEmbed(message.channel, "You must have forgotten the user", "`!Check <@tag | user Id>`")
 
         let user = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
         sql.query("Select * from Logs where Member = ? order by Time desc", [ user ], (err, res) => {
