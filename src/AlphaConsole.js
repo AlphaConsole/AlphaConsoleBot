@@ -237,6 +237,10 @@ async function messageProcess(message) {
             require('./cmds/disable').run(data);
             break;
 
+          case "checkdb":
+            require('./cmds/checkdb').run(data);
+            break;
+
           case "togglelinks":
             require('./cmds/toggleLinks').run(data);
             break;
