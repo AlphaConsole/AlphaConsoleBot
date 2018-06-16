@@ -76,7 +76,7 @@ module.exports = {
 					if (body) {
 						if (args[0].toLowerCase() == "!set") {
 							if (body.toLowerCase().includes("done")) 
-								sendEmbed(message.author, "Your title has been updated to: `" + colour + "`")
+								sendEmbed(message.author, "Your colour has been updated to: `" + colour + "`")
 							else if (body.toLowerCase().includes("the user does not exist"))
 								sendEmbed(message.author, "Hi, in order to use our custom title service you must authorize your discord account. \n" +
 								"Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.")
@@ -96,7 +96,7 @@ module.exports = {
 
 
 			function setTitle() {
-				if (message.channel.id !== serverInfo.channels.setTitle || args.length > 3) return;
+				if (message.channel.id !== serverInfo.channels.setTitle || args.length < 3) return;
 				let userTitle = createTitle(args, 2);
 				let titles = userTitle.split(/[::]+/);
 
@@ -123,7 +123,7 @@ module.exports = {
 			}
 
 			function setColour() {
-				if (message.channel.id !== serverInfo.channels.setTitle || args.length > 3) return;
+				if (message.channel.id !== serverInfo.channels.setTitle || args.length < 3) return;
 				let colours = args[2].split("::");
 
 				let valid = isValidColor(message, colours, serverInfo);
@@ -241,6 +241,13 @@ function isValidColor(message, colours, serverInfo) {
 	for (let i = 0; i < colours.length; i++) {
 		
 		switch (colours[i]) {
+			case "0":
+			case "1":
+			case "3":
+			case "4":
+			case "5":
+			case "7":
+				break;
 			case "2":
 			case "6":
 				if (!validUser(message, serverInfo)) 
@@ -253,6 +260,8 @@ function isValidColor(message, colours, serverInfo) {
 		}
 		
 	}
+
+	return validColour;
 }
 
 function validUser(message, serverInfo) {
