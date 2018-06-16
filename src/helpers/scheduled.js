@@ -11,7 +11,7 @@ module.exports.run = (client, serverInfo, { sql, keys }, checkStatus) => {
             res.forEach(r => {
                 if (r.MutedUntil < new Date().getTime()) {
                     client.guilds.get(serverInfo.guildId).members.fetch(r.DiscordID).then(m => {
-                        m.removeRole(serverInfo.roles.muted);
+                        m.roles.remove(serverInfo.roles.muted);
                         sql.query('Update Members set MutedUntil = null where ID = ?', [ r.ID ]);
                     })
                 }

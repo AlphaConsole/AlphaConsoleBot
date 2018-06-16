@@ -45,7 +45,7 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
 
             message.guild.members.fetch(message.author.id).then(m => {
                 require('../helpers/checkUser').run(sql, m.user, (err, user) => {
-                    m.addRole(serverInfo.roles.muted);
+                    m.roles.add(serverInfo.roles.muted);
                     m.send(`The bot has muted you for 1 hour.\n\n__For the following reason:__\n${reason}\n\nFor more information, please read the <#448536110537244672> channel in the server.`);
 
                     let MutedUntil = new Date().getTime() + 3600000;

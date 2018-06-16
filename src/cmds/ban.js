@@ -55,8 +55,10 @@ module.exports = {
 
             });
         }).catch(e => {
-            console.log(e);
-            sendEmbed(message.channel, "User not found..")
+            if (e.message.startsWith("user_id: Value"))
+                sendEmbed(message.channel, "User not found..")
+            else
+                console.log(e);
         })
     }
 };

@@ -28,10 +28,10 @@ module.exports = {
 
                 if (args[1].toLowerCase() === "giveaways" || args[1].toLowerCase() === "ga") {
                     if (message.member.roles.has(serverInfo.roles.events)) {
-                        message.member.removeRole(serverInfo.roles.events);
+                        message.member.roles.remove(serverInfo.roles.events);
                         sendEmbed(message.channel, "Role removed from your profile.")
                     } else {
-                        message.member.addRole(serverInfo.roles.events);
+                        message.member.roles.add(serverInfo.roles.events);
                         sendEmbed(message.channel, "Role added to your profile.")
                     }
                 }
@@ -50,16 +50,19 @@ module.exports = {
                     if (!role) return sendEmbed(message.channel, "Role not found..")
 
                     if (m.roles.has(role.id)) {
-                        m.removeRole(role.id);
+                        m.roles.remove(role.id);
                         sendEmbed(message.channel, `${role.name} removed from ${m.user.tag}`)
 
                     } else {
-                        m.addRole(role.id);
+                        m.roles.add(role.id);
                         sendEmbed(message.channel, `${role.name} given to ${m.user.tag}`)
                     }
 
                 }).catch(e => {
-                    sendEmbed(message.channel, "User not found..")
+                    if (e.message.startsWith("user_id: Value"))
+                        sendEmbed(message.channel, "User not found..")
+                    else
+                        console.log(e);
                 })
             }
 

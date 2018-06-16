@@ -57,13 +57,13 @@ module.exports = {
 
                     //* If he has 2 or more warnings he'll get muted.
                     if (newWarnings === 2) {
-                        m.addRole(serverInfo.roles.muted);
+                        m.roles.add(serverInfo.roles.muted);
 
                         let timeextra = new Date().getTime() + 1000 * 60 * 15;
                         sql.query("Update Members set Warnings = ?, MutedUntil = ? where DiscordID = ?", [ newWarnings, timeextra, m.id ]);
 
                     } if (newWarnings > 2) {
-                        m.addRole(serverInfo.roles.muted);
+                        m.roles.add(serverInfo.roles.muted);
 
                         sql.query("Update Members set Warnings = ?, MutedUntil = null where DiscordID = ?", [ newWarnings, m.id ]);
 
@@ -75,8 +75,10 @@ module.exports = {
 
             });
         }).catch(e => {
-            console.log(e);
-            sendEmbed(message.channel, "User not found..")
+            if (e.message.startsWith("user_id: Value"))
+                sendEmbed(message.channel, "User not found..")
+            else
+                console.log(e);
         })
     }
 };

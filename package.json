@@ -4,18 +4,18 @@
   "description": "Bot for AlphaConsole discord",
   "main": "alphaconsole.js",
   "scripts": {
-    "test": "nodemon --inspect src/alphaconsole.js -serverfile=../src/serverInfo.js",
+    "test": "nodemon src/alphaconsole.js -serverfile=../src/serverInfo.js",
     "prod": "node src/AlphaConsole.js -serverfile=../src/serverInfo-OfficialDiscord.js"
   },
   "author": "Hayden Meloche",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "github:hydrabolt/discord.js",
+    "discord.js": "github:discordjs/discord.js",
     "mysql": "^2.15.0",
     "node-schedule": "^1.3.0",
-    "nodemon": "^1.14.11",
-    "request": "^2.83.0",
-    "sentiment": "^4.1.0",
+    "nodemon": "^1.17.5",
+    "request": "^2.87.0",
+    "sentiment": "^4.2.0",
     "shelljs": "^0.7.8"
   }
 }

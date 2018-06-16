@@ -27,7 +27,7 @@ module.exports = {
             if (!m.roles.has(serverInfo.roles.muted))
                 return sendEmbed(message.channel, "Cannot unmute a user that isn't muted.");
 
-            m.removeRole(serverInfo.roles.muted);
+            m.roles.remove(serverInfo.roles.muted);
             sendEmbed(message.channel, `${m.user.tag} has been unmuted!`);
 
             require('../helpers/checkUser').run(sql, m.user, (err, user) => {
@@ -42,8 +42,10 @@ module.exports = {
             message.guild.channels.get(serverInfo.channels.modlog).send(embedlog);
 
         }).catch(e => {
-            console.log(e);
-            sendEmbed(message.channel, "User not found..")
+            if (e.message.startsWith("user_id: Value"))
+                sendEmbed(message.channel, "User not found..")
+            else
+                console.log(e);
         })
     }
 };

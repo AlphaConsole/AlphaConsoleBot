@@ -76,7 +76,7 @@ module.exports = {
             if (reason === "") reason = "No reason provided";
 
             require('../helpers/checkUser').run(sql, m.user, (err, user) => {
-                m.addRole(serverInfo.roles.muted);
+                m.roles.add(serverInfo.roles.muted);
 
                 m.send(timeArg == 0 ?
                     `**<@${message.author.id}>** has **permanently** muted you.\n\n__For the following reason:__\n${reason}\n\nFor more information, please read the <#448536110537244672> channel in the server.`
@@ -130,8 +130,10 @@ module.exports = {
 
 
         }).catch(e => {
-            console.log(e);
-            sendEmbed(message.channel, "User not found..")
+            if (e.message.startsWith("user_id: Value"))
+                sendEmbed(message.channel, "User not found..")
+            else
+                console.log(e);
         })
 
     }

@@ -355,7 +355,7 @@ async function messageProcess(message) {
 
     }
 
-  }).catch(e => { })
+  })
 }
 
 

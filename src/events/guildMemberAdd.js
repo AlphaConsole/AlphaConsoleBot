@@ -9,7 +9,7 @@ module.exports.run = (client, serverInfo, config, member) => {
             let roleIDs = user.Roles.split(/[ ]+/);
 
             for (let i = 0; i < roleIDs.length; i++)
-                member.addRole(roleIDs[i]).catch(err => console.log(err));
+                member.roles.add(roleIDs[i]).catch(err => console.log(err));
         }
     })
 

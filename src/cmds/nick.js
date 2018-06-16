@@ -37,11 +37,15 @@ module.exports = {
                 sendEmbed(message.channel, "Nickname updated.")
             })
             .catch(e => {
-                sendEmbed(message.channel, `${e}`)
+                sendEmbed(message.channel, `Error occured`, `${e}`)
             })
         })
         .catch(e => {
-            sendEmbed(message.channel, "Provided user not found.")
+            if (e.message.startsWith("user_id: Value"))
+                sendEmbed(message.channel, "Provided user not found.")
+            else
+                console.log(e);
+            sendEmbed(message.channel, )
         });
     }
 };
