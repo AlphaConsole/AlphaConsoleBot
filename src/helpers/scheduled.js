@@ -1,4 +1,6 @@
-module.exports.run = (client, serverInfo, { sql }, checkStatus) => {
+const request = require('request');
+
+module.exports.run = (client, serverInfo, { sql, keys }, checkStatus) => {
     const schedule = require("node-schedule");
 
     //* Check every minute (For automated unmutes etc...)
@@ -35,20 +37,43 @@ module.exports.run = (client, serverInfo, { sql }, checkStatus) => {
 
 
     async function statusRotation() {
-        sql.query("Select * from Statuses", [], (err, res) => {
+        let clientID = keys.TwitchClientID
+        const twitchUserName = "alphaconsole";
+        const url = `https://api.twitch.tv/kraken/streams/${twitchUserName}?client_id=${clientID}`;
+
+        request({ method: "GET", url: url }, function(err, response, body) {
             if (err) return console.error(err);
 
-            let active = res.filter(r => r.Active == 1)[0];
-            if (active) {
-                let index = res.indexOf(active);
-                let newID = res[index + 1] ? res[index + 1].ID : res[0].ID;
-                sql.query("Update Statuses set Active = 0 where ID = ?", [ active.ID ], () => {
-                    sql.query("Update Statuses set Active = 1 where ID = ?", [ newID ], () => {
-                        checkStatus();
-                    });
-                })
-            } else {
-                checkStatus();
+            if (body) {
+                const twitchData = JSON.parse(body);
+
+                if (twitchData["stream"] != null) {
+                    //Update status
+                    client.user.setActivity(
+                        twitchData["stream"]["channel"]["status"],
+                        {
+                            type: "STREAMING",
+                            url: "https://www.twitch.tv/alphaconsole"
+                        }
+                    );
+                } else {
+                    sql.query("Select * from Statuses", [], (err, res) => {
+                        if (err) return console.error(err);
+            
+                        let active = res.filter(r => r.Active == 1)[0];
+                        if (active) {
+                            let index = res.indexOf(active);
+                            let newID = res[index + 1] ? res[index + 1].ID : res[0].ID;
+                            sql.query("Update Statuses set Active = 0 where ID = ?", [ active.ID ], () => {
+                                sql.query("Update Statuses set Active = 1 where ID = ?", [ newID ], () => {
+                                    checkStatus();
+                                });
+                            })
+                        } else {
+                            checkStatus();
+                        }
+                    })
+                }
             }
         })
     }
