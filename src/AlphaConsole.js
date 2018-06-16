@@ -401,7 +401,7 @@ async function messageProcess(message) {
 
         if (args[0].toLowerCase() == "!help" || args[0].toLowerCase() == "!h")
           require('./cmds/help').run(data, true);
-      });
+      }).catch(e => { })
 
 
     }
