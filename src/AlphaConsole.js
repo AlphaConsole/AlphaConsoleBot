@@ -259,6 +259,11 @@ async function messageProcess(message) {
             require('./cmds/delcom').run(data);
             break;
 
+          case "listcom":
+          case "listcoms":
+            require('./cmds/listcom').run(data);
+            break;
+
           case "help":
             require("./cmds/help").run(data, false);
             break;
