@@ -1,145 +1,73 @@
-const Discord = require("discord.js");
+/**
+ * ! Kick command
+ * 
+ * ? Kinda obvious, too lazy to write anything smart anyway
+ * ? We also have command description for a reason. So I actually don't know why I added this here. Welp...
+ */
+const Discord = require('discord.js');
 
 module.exports = {
-  title: "kick",
-  perms: "Moderator",
-  commands: ["!Kick <@tag> <?Reason>"],
-  description: ["Kicks the person with the given reason"],
-
-  run: async (client, serverInfo, sql, message, args) => {
-    if (
-      hasRole(message.member, "Moderator") ||
-      hasRole(message.member, "Admin") ||
-      hasRole(message.member, "Developer")
-    ) {
-      //Check if someone is tagged
-      let discordid = "";
-      if (message.mentions.users.first()) discordid = message.mentions.users.first().id
-      else discordid = args[1];
-      
-      let member = message.guild.member(discordid);
-      if (!member) {
-        const embed = new Discord.MessageEmbed()
-            .setColor([255, 255, 0])
-            .setAuthor("I did not find any user with that tag / discordid", serverInfo.logo);
-        return message.channel.send(embed);
-      }
-      
-      if (isStaff(message.guild.member(message.mentions.users.first()))) {
-        const embed = new Discord.MessageEmbed()
-          .setColor([255, 255, 0])
-          .setTitle("You cannot kick a staff member.");
-        return message.channel.send(embed);
-      }
-      
-      //Check if there is a reason
-      if (args.length == 2) {
-        var TheReason = "No reason provided";
-      } else {
-        var TheReason = "";
-        for (i = 2; i < args.length; i++) {
-          TheReason += args[i] + " ";
+     title: "Kick",
+     details: [
+        {
+            perms      : "Moderator",
+            command    : "!Kick <@tag> <?Reason>",
+            description: "Kicks the person with the given reason"
         }
-      }
+    ],
 
-      //Let's start kicking the user
-      let KickedUser = message.guild.member(member.id);
-      KickedUser.kick(TheReason);
+    run: ({ client, serverInfo, message, args, sql, config, sendEmbed }) => {
 
-      //Insert the log into the database
-      sql
-        .run(
-          `Insert into logs(Action, Member, Moderator, Reason, Time, ChannelID) VALUES('kick', '${
-            KickedUser.id
-          }', '${message.author.id}', '${mysql_real_escape_string(
-            TheReason
-          )}', '${new Date().getTime()}', '${message.channel.id}')`
-        )
-        .then(() => {
-          var CaseID = "Error";
-          sql
-            .get(
-              `select * from logs where Member = '${
-                KickedUser.id
-              }' order by ID desc`
-            )
-            .then(roww => {
-              if (!roww) return message.channel.send("An error occured");
+        if (!message.member.isModerator) return;
+        if (args.length < 2) return sendEmbed(message.channel, "You must have forgotten the user", "`!Kick <@tag | user Id> <?Reason>`")
 
-              CaseID = roww.ID;
+        let user = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
+        message.guild.members.fetch(user).then(m => {
+            require('../helpers/checkUser').run(sql, m.user, (err, user) => {
+                
+                if (isStaff(m, serverInfo)) 
+                    return sendEmbed(message.channel, "You cannot kick a staff member.");
 
-              //Make a notice & Log it to the log-channel
-              const embed = new Discord.MessageEmbed()
-                .setColor([255, 255, 0])
-                .setAuthor(
-                  `${
-                    member.user.tag
-                  } has been kicked from the server. Case number: ${CaseID}`,
-                  serverInfo.logo
-                );
-              message.channel.send(embed); //Remove this line if you don't want it to be public.
+                let reason = "";
+                for (i = 2; i < args.length; i++) reason += args[i] + " ";
+                if (reason === "") reason = "No reason provided";
 
-              const embedlog = new Discord.MessageEmbed()
-                .setColor([255, 255, 0])
-                .setAuthor(`Case ${CaseID} | User Kick`, serverInfo.logo)
-                .setDescription(
-                  `**${member.tag}** (${
-                    member.id
-                  }) has been kicked by ${message.member}`
-                )
-                .setTimestamp()
-                .addField("Reason", TheReason);
-              message.guild.channels
-                .get(serverInfo.modlogChannel)
-                .send(embedlog)
-                .then(msg => {
-                  sql.run(
-                    `update logs set MessageID = '${
-                      msg.id
-                    }' where ID = '${CaseID}'`
-                  );
+                m.kick(reason);
+
+                sql.query("Insert into `Logs`(Action, Member, Moderator, Reason, Time, ChannelID) values(?, ?, ?, ?, ?, ?)", 
+                [ 'kick', m.id, message.author.id, reason, new Date().getTime(), message.channel.id ], (err, res) => {
+                    if (err) return console.error(err);
+
+                    let caseId = res.insertId;
+                    sendEmbed(message.channel, `${m.user.tag} has been kicked from the server. Case number: ${caseId}`);
+
+                    const embedlog = new Discord.MessageEmbed()
+                        .setColor([255, 255, 0])
+                        .setAuthor(`Case ${caseId} | User Kick`, client.user.displayAvatarURL({ format: "png" }))
+                        .setDescription(`**${m.user.tag}** (${ m.id }) has been kicked by ${message.member}`)
+                        .setTimestamp()
+                        .addField("Reason", reason);
+                    message.guild.channels.get(serverInfo.channels.modlog).send(embedlog).then(msg => {
+                        sql.query(`update Logs set MessageID = ? where ID = ?`, [ msg.id, caseId ]);
+                    });
+
                 });
+
             });
+        }).catch(e => {
+            if (e.message.startsWith("user_id: Value"))
+                sendEmbed(message.channel, "User not found..")
+            else
+                console.log(e);
         })
-        .catch(err => console.log(err));
     }
-  }
 };
 
-//Functions used to check if a player has the desired role
-function pluck(array) {
-  return array.map(function(item) {
-    return item["name"];
-  });
-}
-function hasRole(mem, role) {
-  if (pluck(mem.roles).includes(role)) {
-    return true;
-  } else {
+function isStaff(m, serverInfo) {
+    if (m.roles.has(serverInfo.roles.staff)) return true;
+    if (m.roles.has(serverInfo.roles.support)) return true;
+    if (m.roles.has(serverInfo.roles.moderator)) return true;
+    if (m.roles.has(serverInfo.roles.admin)) return true;
+    if (m.roles.has(serverInfo.roles.developer)) return true;
     return false;
-  }
-}
-
-function mysql_real_escape_string(str) {
-  return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
-    switch (char) {
-      case "\0":
-        return "\\0";
-      case "\x08":
-        return "\\b";
-      case "\x09":
-        return "\\t";
-      case "\x1a":
-        return "\\z";
-      case "\n":
-        return "\\n";
-      case "\r":
-        return "\\r";
-      case "'":
-        return char + char; // prepends a backslash to backslash, percent,
-      // and double/single quotes
-      default:
-        return char
-    }
-  });
 }

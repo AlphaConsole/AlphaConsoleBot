@@ -1,106 +1,51 @@
-const Discord = require("discord.js");
+/**
+ * ! Nickname command
+ * 
+ * ? This is mainly for phone moderators to easily change someone's username
+ */
+const Discord = require('discord.js');
 
 module.exports = {
-  title: "nick",
-  perms: "Moderator",
-  commands: ["!nick <@tag or id> <Nickname>"],
-  description: ["Changes the nickname of the user"],
+    title: "Nick",
+    details: [
+        {
+            perms      : "Moderator",
+            command    : "!nick <@tag or id> <Nickname>",
+            description: "Changes the nickname of the user"
+        }
+    ],
 
-  run: async (client, serverInfo, sql, message, args) => {
-    if (
-      hasRole(message.member, "Moderator") ||
-      hasRole(message.member, "Admin") ||
-      hasRole(message.member, "Developer")
-    ) {
-      if (args.length < 3) {
-        const embed = new Discord.MessageEmbed()
-          .setColor([255, 255, 0])
-          .setAuthor(
-            "Please include the user and his new nickname",
-            serverInfo.logo
-          );
-        return message.channel.send(embed);
-      }
+    run: ({ client, serverInfo, message, args, sql, config, sendEmbed }) => {
 
-      var userID = message.mentions.users.first()
-        ? message.mentions.users.first().id
-        : args[1];
+        if (!message.member.isModerator) return;
 
-      message.guild.members
-        .fetch(userID)
-        .then(member => {
-          var newName = "";
-          for (let i = 2; i < args.length; i++) {
-            newName += args[i] + " ";
-          }
+        if (args.length < 3) 
+            return sendEmbed(message.channel, "Please include the user and his new nickname");
+        
+        let userID = message.mentions.users.first()
+            ? message.mentions.users.first().id
+            : args[1];
 
-          member.setNickname(newName);
-          const embed = new Discord.MessageEmbed()
-            .setColor([255, 255, 0])
-            .setAuthor("Nickname updated.", serverInfo.logo);
-          return message.channel.send(embed);
+        message.guild.members.fetch(userID).then(member => {
+            var newName = "";
+            for (let i = 2; i < args.length; i++) {
+                newName += args[i] + " ";
+            }
+
+            member.setNickname(newName.trim())
+            .then(() => {
+                sendEmbed(message.channel, "Nickname updated.")
+            })
+            .catch(e => {
+                sendEmbed(message.channel, `Error occured`, `${e}`)
+            })
         })
         .catch(e => {
-          const embed = new Discord.MessageEmbed()
-            .setColor([255, 255, 0])
-            .setAuthor("Provided user not found.", serverInfo.logo);
-          return message.channel.send(embed);
+            if (e.message.startsWith("user_id: Value"))
+                sendEmbed(message.channel, "Provided user not found.")
+            else
+                console.log(e);
+            sendEmbed(message.channel, )
         });
     }
-  }
 };
-
-//Functions used to check if a player has the desired role
-function pluck(array) {
-  return array.map(function(item) {
-    return item["name"];
-  });
-}
-function hasRole(mem, role) {
-  if (pluck(mem.roles).includes(role)) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-function mysql_real_escape_string(str) {
-  return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
-    switch (char) {
-      case "\0":
-        return "\\0";
-      case "\x08":
-        return "\\b";
-      case "\x09":
-        return "\\t";
-      case "\x1a":
-        return "\\z";
-      case "\n":
-        return "\\n";
-      case "\r":
-        return "\\r";
-      case "'":
-        return char + char; // prepends a backslash to backslash, percent,
-      // and double/single quotes
-      default:
-        return char
-    }
-  });
-}
-
-/**
- * Returns true if user is part of staff
- * @param {user} user
- */
-function isStaff(user) {
-  if (
-    hasRole(user, "Developer") ||
-    hasRole(user, "Admin") ||
-    hasRole(user, "Moderator") ||
-    hasRole(user, "Support")
-  ) {
-    return true;
-  } else {
-    return false;
-  }
-}

@@ -1,160 +1,122 @@
-const Discord = require("discord.js");
+/**
+ * ! Case command
+ * 
+ * ? Kinda obvious, too lazy to write anything smart anyway
+ * ? We also have command description for a reason. So I actually don't know why I added this here. Welp...
+ */
+const Discord = require('discord.js');
 
 module.exports = {
-  title: "case",
-  perms: "Support",
-  commands: [
-    "!Case <Number>",
-    "!Case edit <Number> <Reason>",
-    "!Case remove <Number>"
-  ],
-  description: [
-    "Shows all details of a case",
-    "Changes the reason of a case",
-    "Removes the case"
-  ],
+     title: "Case",
+     details: [
+        {
+            perms      : "Support",
+            command    : "!Case <Number>",
+            description: "Shows all details of a case"
+        },
+        {
+            perms      : "Support",
+            command    : "!Case edit <Number> <Reason>",
+            description: "Changes the reason of a case"
+        },
+        {
+            perms      : "Support",
+            command    : "!Case remove <Number>",
+            description: "Removes the case"
+        }
+    ],
 
-  run: async (client, serverInfo, sql, message, args) => {
-    if (
-      hasRole(message.member, "Support") ||
-      hasRole(message.member, "Moderator") ||
-      hasRole(message.member, "Admin") ||
-      hasRole(message.member, "Developer")
-    ) {
-      if (args.length == 2) {
-        CaseID = args[1];
+    run: ({ client, serverInfo, message, args, sql, config, sendEmbed }) => {
 
-        sql.get(`Select * from logs where ID = '${CaseID}'`).then(row => {
-          if (row) {
-            const embed = new Discord.MessageEmbed()
-              .setColor([255, 255, 0])
-              .setAuthor(`Case check`, serverInfo.logo)
-              .addField(`Case ID`, row.ID, true)
-              .addField(`Member`, `<@${row.Member}>`, true)
-              .addField(`Action`, capitalizeFirstLetter(row.Action))
-              .addField(`Reason`, row.Reason, true);
+        if (!message.member.isSupport) return;
 
-            if (row.Value != null) {
-              if (row.Value == 0) {
-                embed.addField(`Time`, "Permanent", true);
-              } else {
-                embed.addField(`Time`, row.Value, true);
-              }
-            }
+        if (args.length === 2) {
+            let caseId = args[1];
 
-            embed.setThumbnail(
-              "https://upload.wikimedia.org/wikipedia/commons/c/c4/600_px_Transparent_flag.png"
-            );
-            embed.addField("Case by", `<@${row.Moderator}>`, true);
-            embed.addField("At channel", `<#${row.ChannelID}>`, true);
+            sql.query("Select * from Logs where ID = ?", [ caseId ], (err, res) => {
+                if (err) return console.error(err);
 
-            var date = new Date(parseInt(row.Time)).toUTCString();
-            embed.setFooter(`Time of case: ${date}`);
-            message.channel.send(embed);
-          } else {
-            const embed = new Discord.MessageEmbed()
-              .setColor([255, 255, 0])
-              .setAuthor(`No case found with this ID`, serverInfo.logo);
-            message.channel.send(embed);
-          }
-        });
-      } else if (args.length > 3 && args[1].toLowerCase() == "edit") {
-        CaseID = args[2];
+                let row = res[0];
+                if (row) {
+                    const embed = new Discord.MessageEmbed()
+                        .setColor([255, 255, 0])
+                        .setAuthor(`Case check`, serverInfo.logo)
+                        .addField(`Case ID`, row.ID, true)
+                        .addField(`Member`, `<@${row.Member}>`, true)
+                        .addField(`Action`, capitalizeFirstLetter(row.Action))
+                        .addField(`Reason`, row.Reason, true);
 
-        sql.get(`Select * from logs where ID = '${CaseID}'`).then(row => {
-          if (row) {
-            var TheReason = "";
-            for (let i = 3; i < args.length; i++) {
-              TheReason += args[i] + " ";
-            }
+                    if (row.Value != null) {
+                        if (row.Value == 0) embed.addField(`Time`, "Permanent", true)
+                        else embed.addField(`Time`, dhm(row.Value), true);
+                    }
 
-            sql
-              .run(
-                `update logs set Reason = '${mysql_real_escape_string(
-                  TheReason
-                )}' where ID = '${CaseID}'`
-              )
-              .then(() => {
-                const embed = new Discord.MessageEmbed()
-                  .setColor([255, 255, 0])
-                  .setAuthor(`Case ${CaseID} updated!`, serverInfo.logo);
-                message.channel.send(embed);
-              });
-          } else {
-            const embed = new Discord.MessageEmbed()
-              .setColor([255, 255, 0])
-              .setAuthor(`No case found with this ID`, serverInfo.logo);
-            message.channel.send(embed);
-          }
-        });
-      } else if (args.length == 3 && args[1].toLowerCase() == "remove") {
-        CaseID = args[2];
+                    embed.setThumbnail("https://upload.wikimedia.org/wikipedia/commons/c/c4/600_px_Transparent_flag.png");
+                    embed.addField("Case by", `<@${row.Moderator}>`, true);
+                    embed.addField("At channel", `<#${row.ChannelID}>`, true);
 
-        sql.get(`Select * from logs where ID = '${CaseID}'`).then(row => {
-          if (row) {
-            sql.run(`delete from logs where ID = '${CaseID}'`).then(() => {
-              const embed = new Discord.MessageEmbed()
-                .setColor([255, 255, 0])
-                .setAuthor(`Case ${CaseID} deleted!`, serverInfo.logo);
-              message.channel.send(embed);
+                    var date = new Date(parseInt(row.Time));
+                    embed.setFooter(`Time of case`)
+                    embed.setTimestamp(date)
+                    message.channel.send(embed);
+                } else {
+                    sendEmbed(message.channel, "Case not found.")
+                }
+            })
+        } else if (args.length > 2 && args[1].toLowerCase() === "edit") {
 
-              message.guild.channels
-                .get(serverInfo.modlogChannel)
-                .messages.fetch(row.MessageID)
-                .then(msg => {
-                  if (msg) msg.delete();
-                });
-            });
-          } else {
-            const embed = new Discord.MessageEmbed()
-              .setColor([255, 255, 0])
-              .setAuthor(`No case found with this ID`, serverInfo.logo);
-            message.channel.send(embed);
-          }
-        });
-      }
+            let caseId = args[2];
+            let reason = "";
+            for (i = 3; i < args.length; i++) reason += args[i] + " ";
+            if (reason === "") reason = "No reason provided";
+
+            sql.query("Update Logs set Reason = ? where ID = ?", [ reason, caseId ], (err, res) => {
+                if (err) return console.error(err);
+
+                if (res.affectedRows === 0) 
+                    sendEmbed(message.channel, "No case found with this id.")
+                else
+                    sendEmbed(message.channel, `Case ${caseId} updated!`)
+            })
+
+        } else if (args.length > 2 && (args[1].toLowerCase() === "remove" || args[1].toLowerCase() === "delete")) {
+
+            let caseId = args[2];
+
+            sql.query("delete from Logs where ID = ?", [ caseId ], (err, res) => {
+                if (err) return console.error(err);
+
+                if (res.affectedRows === 0) 
+                    sendEmbed(message.channel, "No case found with this id.")
+                else
+                    sendEmbed(message.channel, `Case ${caseId} deleted!`)
+            })
+
+        } else {
+            sendEmbed(message.channel, "You must have forgotten the case id.", "`!Case <Number>`")
+        }
+
     }
-  }
 };
 
-//Functions used to check if a player has the desired role
-function pluck(array) {
-  return array.map(function(item) {
-    return item["name"];
-  });
-}
-function hasRole(mem, role) {
-  if (pluck(mem.roles).includes(role)) {
-    return true;
-  } else {
-    return false;
+function dhm(t){
+    var cd = 24 * 60 * 60 * 1000,
+        ch = 60 * 60 * 1000,
+        d = Math.floor(t / cd),
+        h = Math.floor( (t - d * cd) / ch),
+        m = Math.round( (t - d * cd - h * ch) / 60000),
+        pad = function(n){ return n < 10 ? '0' + n : n; };
+  if( m === 60 ){
+    h++;
+    m = 0;
   }
+  if( h === 24 ){
+    d++;
+    h = 0;
+  }
+  return `${d}d ${pad(h)}h ${pad(m)}m`
 }
 
 function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-function mysql_real_escape_string(str) {
-  return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
-    switch (char) {
-      case "\0":
-        return "\\0";
-      case "\x08":
-        return "\\b";
-      case "\x09":
-        return "\\t";
-      case "\x1a":
-        return "\\z";
-      case "\n":
-        return "\\n";
-      case "\r":
-        return "\\r";
-      case "'":
-        return char + char; // prepends a backslash to backslash, percent,
-      // and double/single quotes
-      default:
-        return char
-    }
-  });
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }

@@ -1,80 +1,44 @@
-const Discord = require("discord.js");
+/**
+ * ! Check command
+ * 
+ * ? Kinda obvious, too lazy to write anything smart anyway
+ * ? We also have command description for a reason. So I actually don't know why I added this here. Welp...
+ */
+const Discord = require('discord.js');
 
 module.exports = {
-  title: "check",
-  perms: "Support",
-  commands: ["!Check <@tag or ID>"],
-  description: ["Checks the persons Warnings and shows them"],
+     title: "Check",
+     details: [
+        {
+            perms      : "Support",
+            command    : "!Check <@tag | user Id>",
+            description: "Checks all warns, mutes etc... from the user."
+        }
+    ],
 
-  run: async (client, serverInfo, sql, message, args) => {
-    if (
-      hasRole(message.member, "Support") ||
-      hasRole(message.member, "Moderator") ||
-      hasRole(message.member, "Admin") ||
-      hasRole(message.member, "Developer")
-    ) {
-      if (message.mentions.users.first() == undefined) {
-        var DiscordID = args[1];
-      } else {
-        var DiscordID = message.mentions.users.first().id;
-      }
+    run: ({ client, serverInfo, message, args, sql, config, sendEmbed }) => {
 
-      sql
-        .get(`select * from Members where DiscordID = '${DiscordID}'`)
-        .then(row => {
-          if (row) {
+        if (!message.member.isSupport) return;
+        if (args.length < 2) return sendEmbed(message.channel, "You must have forgotten the user", "`!Check <@tag | user Id>`")
+
+        let user = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
+        sql.query("Select * from Logs where Member = ? order by Time desc", [ user ], (err, res) => {
+
+            let mutes = res.filter(c => c.Action === "mute");
+            let warns = res.filter(c => c.Action === "warn");
+            let kicks = res.filter(c => c.Action === "kick");
+            let bans = res.filter(c => c.Action === "ban");
+            
             const embed = new Discord.MessageEmbed()
-              .setColor([255, 255, 0])
-              .setAuthor(
-                `User check on ${
-                  message.guild.members.get(DiscordID).user.username
-                }`,
-                serverInfo.logo
-              );
-
-            if (row.Warnings != 0) {
-              var Reasons = "";
-
-              sql
-                .all(
-                  `Select * from logs where Member = '${DiscordID}' and Action = 'warn' order by Time ASC`
-                )
-                .then(rows => {
-                  rows.forEach(row => {
-                    Reasons += "**" + row.ID + "**: " + row.Reason + "\n";
-                  });
-
-                  embed.addField("Warnings", rows.length);
-                  if (Reasons != "") {
-                    embed.addField("Reasons", Reasons);
-                  }
-                  message.channel.send(embed);
-                });
-            } else {
-              embed.addField("Warnings", row.Warnings);
-              message.channel.send(embed);
-            }
-          } else {
-            const embed = new Discord.MessageEmbed()
-              .setColor([255, 255, 0])
-              .setAuthor("No user found in the database", serverInfo.logo);
+                .setAuthor("Cases check", client.user.displayAvatarURL({ format: "png" }))
+                .setColor([255, 255, 0])
+                .setThumbnail("http://www.pngmart.com/files/5/Snow-PNG-Transparent-Image.png")
+                .addField("Mutes", mutes.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n") === "" ? "Nothing found" : mutes.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n").substring(0, 245), true)
+                .addField("Warnings", warns.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n") === "" ? "Nothing found" : warns.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n").substring(0, 245), true)
+                .addField("Kicks", kicks.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n") === "" ? "Nothing found" : kicks.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n").substring(0, 245), true)
+                .addField("Bans", bans.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n") === "" ? "Nothing found" : bans.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n").substring(0, 245), true)
             message.channel.send(embed);
-          }
-        });
-    }
-  }
-};
+        })
 
-//Functions used to check if a player has the desired role
-function pluck(array) {
-  return array.map(function(item) {
-    return item["name"];
-  });
-}
-function hasRole(mem, role) {
-  if (pluck(mem.roles).includes(role)) {
-    return true;
-  } else {
-    return false;
-  }
-}
+    }
+};

@@ -1,69 +1,36 @@
-const Discord = require("discord.js");
+/**
+ * ! Permit
+ * 
+ * ? This command will allow the provided user to post links for x amount of time
+ */
 
 module.exports = {
-  title: "permit",
-  perms: "Moderator",
-  commands: ["!permit <@tag | id>"],
-  description: ["Permits the user to post links for 5 minutes"],
+    title: "Permit",
+    details: [
+        {
+            perms      : "Moderator",
+            command    : "!Permit <@user | user Id>",
+            description: "Permits the user to post links"
+        }
+    ],
 
-  run: async (client, serverInfo, sql, message, args, permits) => {
-    if (
-      hasRole(message.member, "Moderator") ||
-      hasRole(message.member, "Admin") ||
-      hasRole(message.member, "Developer")
-    ) {
-      if (message.mentions.users.first() == undefined) {
-        var TheUser = args[1];
-      } else {
-        var TheUser = message.mentions.users.first().id;
-      }
+    run: ({ client, serverInfo, message, args, sql, config, sendEmbed }) => {
+        if (!message.member.isModerator) return;
 
-      permits[TheUser] = {
-        until: new Date().getTime() + 300000,
-        channel: message.channel.id
-      };
+        let user = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
+        message.guild.members.fetch(user).then(m => {
+            config.permits[m.id] = {
+                id: m.id,
+                channel: message.channel.id,
+                until: new Date().getTime() + 300000
+            }
 
-      const embed = new Discord.MessageEmbed()
-        .setColor([255, 255, 0])
-        .setAuthor(
-          `${
-            client.users.get(TheUser).tag
-          } is now permitted to post links for 5 minutes.`,
-          serverInfo.logo
-        );
-      message.channel.send(embed);
-
-      const embedlog = new Discord.MessageEmbed()
-        .setColor([255, 255, 0])
-        .setAuthor("Link Permit", serverInfo.logo)
-        .addField(
-          "The user",
-          `**${client.users.get(TheUser).tag}** (<@${TheUser}>)`
-        )
-        .addField(
-          `has been permitted at`,
-          `**${message.channel.name}** (${message.channel})`
-        )
-        .addField("by", `**${message.member.user.tag}** (${message.member})`)
-        .setTimestamp();
-      client.guilds
-        .get(serverInfo.guildId)
-        .channels.get(serverInfo.aclogChannel)
-        .send(embedlog);
+            sendEmbed(message.channel, `${m.user.tag} may now post links for 5 minutes.`)
+        }).catch(e => {
+            if (e.message.startsWith("user_id: Value"))
+                sendEmbed(message.channel, "User not found..")
+            else
+                console.log(e);
+        })
     }
-  }
-};
-
-//Functions used to check if a player has the desired role
-function pluck(array) {
-  return array.map(function(item) {
-    return item["name"];
-  });
-}
-function hasRole(mem, role) {
-  if (pluck(mem.roles).includes(role)) {
-    return true;
-  } else {
-    return false;
-  }
 }

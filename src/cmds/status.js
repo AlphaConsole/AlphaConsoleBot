@@ -1,163 +1,82 @@
-const Discord = require("discord.js");
+/**
+ * ! Status command
+ * 
+ * ? Kinda obvious, too lazy to write anything smart anyway
+ * ? We also have command description for a reason. So I actually don't know why I added this here. Welp...
+ */
+const Discord = require('discord.js');
 
 module.exports = {
-  title: "status",
-  perms: "Admin",
-  commands: [
-    "!Status",
-    "!Status Add <Watching / Playing /Streaming / Listening> <Rest of status>",
-    "!Status Remove <ID>"
-  ],
-  description: [
-    "Shows all statuses of the bot",
-    "Adds a status to the bot to cycle through",
-    "Removes a status. ID findable in `!Status`"
-  ],
+     title: "Status",
+     details: [
+        {
+            perms      : "Admin",
+            command    : "!Status",
+            description: "Shows all statuses of the bot"
+        },
+        {
+            perms      : "Admin",
+            command    : "!Status Add <Watching / Playing /Streaming / Listening> <Rest of status>",
+            description: "Adds a status to the bot to cycle through"
+        },
+        {
+            perms      : "Admin",
+            command    : "!Status Remove <ID>",
+            description: "Removes a status. ID findable in `!Status`"
+        },
+        {
+            perms      : "Admin",
+            command    : "!Status Clear",
+            description: "Removes all statuses and resets the IDs"
+        }
+    ],
 
-  run: async (client, serverInfo, sql, message, args) => {
-    if (
-      hasRole(message.member, "Admin") ||
-      hasRole(message.member, "Developer")
-    ) {
-      // <---   If you would like to change role perms. Change [BontControl] to your role name
-      if (args.length == 1) {
-        sql.all("Select * from Statuses").then(rows => {
-          if (rows.length != 0) {
-            StatusMSG = "";
-            rows.forEach(row => {
-              StatusMSG +=
-                row.ID + ": " + row.StatusType + " " + row.StatusText;
-              if (row.Active == 1) StatusMSG += " [ACTIVE]";
-              StatusMSG += "\n";
-            });
-          } else {
-            StatusMSG = "No statuses found.";
-          }
+    run: async ({ client, serverInfo, message, args, sql, config, sendEmbed, checkStatus }) => {
 
-          const embed = new Discord.MessageEmbed()
-            .setColor([255, 255, 0])
-            .setAuthor("Bot Statuses", serverInfo.logo)
-            .setDescription(StatusMSG);
-          message.channel.send(embed);
-        });
-      } else if (args[1].toLowerCase() == "add" && args.length > 2) {
-        if (args[2].toLowerCase() == "watching") StatusType = "WATCHING";
-        else if (args[2].toLowerCase() == "playing") StatusType = "PLAYING";
-        else if (args[2].toLowerCase() == "streaming") StatusType = "STREAMING";
-        else if (args[2].toLowerCase() == "listening") StatusType = "LISTENING";
-        else {
-          const embed = new Discord.MessageEmbed()
-            .setColor([255, 255, 0])
-            .setAuthor("Status type not found!", serverInfo.logo)
-            .setDescription(
-              "Supported types: Watching, Playing, Streaming & Listening."
-            );
-          return message.channel.send(embed);
+        if (!message.member.isAdmin) return;
+
+        if (args.length === 1) {
+            //* !Status command
+            sql.query("Select * from Statuses", [], (err, res) => {
+                if (err) return console.error(err);
+
+                sendEmbed(message.channel, "All statuses of the bot", res.map(r => `\`${r.ID}.\` ${r.StatusType} ${r.StatusText} ${r.Active == 1 ? "  -ACTIVE" : ""}`).join("\n"))
+            })
+
+
+        } else if (args[1].toLowerCase() === "add" || args[1].toLowerCase() === "a") {
+            //* !Status Add command
+
+            if (args.length < 4) return sendEmbed(message.channel, "You did not include the type or any text!");
+
+            let type = args[2].toUpperCase();
+            if (type !== "PLAYING" &&
+                type !== "WATCHING" &&
+                type !== "LISTENING" &&
+                type !== "STREAMING") return sendEmbed(message.channel, "Status type is incorrect", "Possible values are: PLAYING, WATCHING, LISTENING or STREAMING")
+
+            let text = "";
+            for (let i = 3; i < args.length; i++) text += args[i] + " ";
+
+            await sql.query("Insert into Statuses(StatusType, StatusText) Values(?, ?)", [ type, text.trim() ]);
+            sendEmbed(message.channel, "Status added to the bot!");
+            checkStatus();
+
+        } else if (args[1].toLowerCase() === "remove" || args[1].toLowerCase() === "delete" || args[1].toLowerCase() === "r" || args[1].toLowerCase() === "d") {
+            //* !Status Remove command
+
+            sql.query("Select * from Statuses where ID = ?", [ args[2] ], async (err, res) => {
+                if (err) return console.error(err);
+
+                if (!res[0]) return sendEmbed(message.channel, "Status ID not found.");
+                await sql.query("Delete from Statuses where ID = ?", [ args[2] ]);
+                sendEmbed(message.channel, "Status removed.");
+                checkStatus();
+            })
+        } else if (args[1].toLowerCase() === "clear") {
+            sql.query("TRUNCATE TABLE Statuses", [])
+            sendEmbed(message.channel, "All statuses have been cleared!")
         }
 
-        var StatusText = "";
-        for (i = 3; i < args.length; i++) {
-          StatusText += args[i] + " ";
-        }
-
-        await sql.all("Select * from Statuses").then(rows => {
-          if (rows.length == 0) {
-            client.user.setActivity(
-              StatusText.replace(
-                "counter",
-                client.guilds.get(serverInfo.guildId).memberCount
-              ),
-              { type: StatusType, url: "https://www.twitch.tv/alphaconsole" }
-            );
-          }
-        });
-
-        await sql
-          .run(
-            `Insert into Statuses(StatusType, StatusText) VALUES ('${mysql_real_escape_string(
-              StatusType
-            )}', '${mysql_real_escape_string(StatusText)}')`
-          )
-          .then(() => {
-            const embed = new Discord.MessageEmbed()
-              .setColor([255, 255, 0])
-              .setAuthor("Status added to the list.", serverInfo.logo);
-            message.channel.send(embed);
-          });
-      } else if (args[1].toLowerCase() == "remove") {
-        sql
-          .run(
-            `delete from Statuses where ID = '${mysql_real_escape_string(
-              args[2]
-            )}'`
-          )
-          .then(() => {
-            const embed = new Discord.MessageEmbed()
-              .setColor([255, 255, 0])
-              .setAuthor("Status removed from the list.", serverInfo.logo);
-            message.channel.send(embed);
-
-            sql.all("Select * from Statuses").then(rows => {
-              if (rows.length == 0) {
-                client.user.setActivity(
-                  `with ${message.guild.memberCount} users`,
-                  { url: "https://www.twitch.tv/alphaconsole" }
-                );
-              }
-            });
-          });
-      } else if (args[1].toLowerCase() == "removeall") {
-        sql.run(`Delete from Statuses;`).then(() => {
-          sql
-            .run("delete from sqlite_sequence where name='Statuses'")
-            .then(() => {
-              const embed = new Discord.MessageEmbed()
-                .setColor([255, 255, 0])
-                .setAuthor("Status list reset.", serverInfo.logo);
-              message.channel.send(embed);
-              client.user.setActivity(
-                `with ${message.guild.memberCount} users`,
-                { url: "https://www.twitch.tv/alphaconsole" }
-              );
-            });
-        });
-      }
     }
-  }
 };
-
-//Functions used to check if a player has the desired role
-function pluck(array) {
-  return array.map(function(item) {
-    return item["name"];
-  });
-}
-function hasRole(mem, role) {
-  if (pluck(mem.roles).includes(role)) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-function mysql_real_escape_string(str) {
-  return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
-    switch (char) {
-      case "\0":
-        return "\\0";
-      case "\x08":
-        return "\\b";
-      case "\x09":
-        return "\\t";
-      case "\x1a":
-        return "\\z";
-      case "\n":
-        return "\\n";
-      case "\r":
-        return "\\r";
-      case "'":
-        return char + char; // prepends a backslash to backslash, percent,
-      // and double/single quotes
-    }
-  });
-}

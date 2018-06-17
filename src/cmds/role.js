@@ -1,136 +1,72 @@
+/**
+ * ! Role command
+ * 
+ * ? This way you can easily add roles to users.
+ * ? This is mainly used once on phone since adding roles on phone is kinda shite
+ */
 const Discord = require("discord.js");
 
 module.exports = {
-  title: "role",
-  perms: "everyone",
-  commands: ["!role <Giveaways or ga>"],
-  description: [
-    "It will add or remove the role depending if you have the role or not [Only works in #bot-spam]"
-  ],
-
-  run: async (client, serverInfo, sql, message, args) => {
-    if (message.channel.id == serverInfo.BotSpam) {
-      if (args.length > 1) {
-        if (
-          args[1].toLowerCase() == "giveaways" ||
-          args[1].toLowerCase() == "ga"
-        ) {
-          if (message.member.roles.has(serverInfo.EventsRole)) {
-            message.member.removeRole(serverInfo.EventsRole);
-            const embed = new Discord.MessageEmbed()
-              .setColor([255, 255, 0])
-              .setAuthor("Role removed from your profile.", serverInfo.logo);
-            message.channel.send(embed);
-          } else {
-            message.member.addRole(serverInfo.EventsRole);
-            const embed = new Discord.MessageEmbed()
-              .setColor([255, 255, 0])
-              .setAuthor("Role added to your profile.", serverInfo.logo);
-            message.channel.send(embed);
-          }
+    title: "Role",
+    details: [
+        {
+            perms      : "Everyone",
+            command    : "!role <Giveaways or ga>",
+            description: "Assign or unassign the giveaway role to yourself [Only works in #bot-spam]"
+        },
+        {
+            perms      : "Moderator",
+            command    : "!role <@user || user Id> <role name>",
+            description: "Assign or unassign a role to a user based on role name"
         }
-      }
-    } else {
-      if (
-        hasRole(message.member, "Admin") ||
-        hasRole(message.member, "Developer") ||
-        hasRole(message.member, "Moderator")
-      ) {
-        if (args.length > 2) {
-          var theMember;
-          if (message.mentions.members.first()) {
-            theMember = message.mentions.members.first();
-          } else {
-            await message.guild.members.fetch(args[1]).then(m => {
-              theMember = m;
-            });
-          }
+    ],
 
-          if (theMember) {
-            var rolename = "";
-            for (let i = 2; i < args.length; i++) {
-              rolename += args[i] + " ";
-            }
+    run: ({ client, serverInfo, message, args, sql, config, sendEmbed }) => {
 
-            theRole = message.guild.roles.find(
-              r => r.name.toLowerCase() == rolename.trim().toLowerCase()
-            );
-            if (theRole) {
-              const embed = new Discord.MessageEmbed().setColor([255, 255, 0]);
+        if (message.channel.id == serverInfo.channels.botSpam) {
+            if (args.length === 2) {
 
-              if (theMember.roles.has(theRole.id)) {
-                await theMember.removeRole(theRole);
-                embed.setAuthor(
-                  `${theRole.name} has been removed from ${theMember.user.tag}`,
-                  serverInfo.logo
-                );
+                if (args[1].toLowerCase() === "giveaways" || args[1].toLowerCase() === "ga") {
+                    if (message.member.roles.has(serverInfo.roles.events)) {
+                        message.member.roles.remove(serverInfo.roles.events);
+                        sendEmbed(message.channel, "Role removed from your profile.")
+                    } else {
+                        message.member.roles.add(serverInfo.roles.events);
+                        sendEmbed(message.channel, "Role added to your profile.")
+                    }
+                }
 
-                const embedlog = new Discord.MessageEmbed()
-                  .setColor([255, 255, 0])
-                  .setAuthor("Roles updated by Staff", serverInfo.logo)
-                  .addField("Info", `${theRole} was removed from ${theMember}`)
-                  .addField("By", `${message.member}`)
-                  .setTimestamp();
-                client.guilds
-                  .get(serverInfo.guildId)
-                  .channels.get(serverInfo.aclogChannel)
-                  .send(embedlog);
-              } else {
-                await theMember.addRole(theRole);
-                embed.setAuthor(
-                  `${theRole.name} has been added to ${theMember.user.tag}`,
-                  serverInfo.logo
-                );
-
-                const embedlog = new Discord.MessageEmbed()
-                  .setColor([255, 255, 0])
-                  .setAuthor("Roles updated by Staff", serverInfo.logo)
-                  .addField("Info", `${theRole} was added to ${theMember}`)
-                  .addField("By", `${message.member}`)
-                  .setTimestamp();
-                client.guilds
-                  .get(serverInfo.guildId)
-                  .channels.get(serverInfo.aclogChannel)
-                  .send(embedlog);
-              }
-
-              message.channel.send(embed);
-            } else {
-              const embed = new Discord.MessageEmbed()
-                .setColor([255, 255, 0])
-                .setAuthor("The role was not found", serverInfo.logo);
-              message.channel.send(embed);
-            }
-          } else {
-            const embed = new Discord.MessageEmbed()
-              .setColor([255, 255, 0])
-              .setAuthor("The member was not found", serverInfo.logo);
-            message.channel.send(embed);
-          }
+            } 
         } else {
-          const embed = new Discord.MessageEmbed()
-            .setColor([255, 255, 0])
-            .setAuthor(
-              "You did not include the users or the role",
-              serverInfo.logo
-            );
-          message.channel.send(embed);
-        }
-      }
-    }
-  }
-};
+            if (message.member.isModerator && args.length > 2) {
 
-//Functions used to check if a player has the desired role
-function pluck(array) {
-  return array.map(function(item) {
-    return item["name"];
-  });
-}
-function hasRole(mem, role) {
-  if (pluck(mem.roles).includes(role)) {
-    return true;
-  } else {
-    return false;
-  }
+                let user = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
+                message.guild.members.fetch(user).then(m => {
+                    
+                    let rolename = "";
+                    for (let i = 2; i < args.length; i++) rolename += args[i] + " ";
+
+                    let role = message.guild.roles.find(r => r.name.toLowerCase() == rolename.trim().toLowerCase());
+                    if (!role) return sendEmbed(message.channel, "Role not found..")
+
+                    if (m.roles.has(role.id)) {
+                        m.roles.remove(role.id);
+                        sendEmbed(message.channel, `${role.name} removed from ${m.user.tag}`)
+
+                    } else {
+                        m.roles.add(role.id);
+                        sendEmbed(message.channel, `${role.name} given to ${m.user.tag}`)
+                    }
+
+                }).catch(e => {
+                    if (e.message.startsWith("user_id: Value"))
+                        sendEmbed(message.channel, "User not found..")
+                    else
+                        console.log(e);
+                })
+            }
+
+        }
+
+    }
 }

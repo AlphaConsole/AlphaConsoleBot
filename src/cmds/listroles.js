@@ -1,83 +1,44 @@
-const Discord = require("discord.js");
+/**
+ * ! List roles command
+ * 
+ * ? Lists up all the roles in the server
+ */
+const Discord = require('discord.js');
 
 module.exports = {
-  title: "listroles",
-  perms: "Moderator",
-  commands: ["!listroles"],
-  description: ["Shows all roles of the Discord"],
-
-  run: async (client, serverInfo, sql, message, args) => {
-    if (
-      hasRole(message.member, "Moderator") ||
-      hasRole(message.member, "Admin") ||
-      hasRole(message.member, "Developer")
-    ) {
-      var rolesmsg = "";
-
-      message.guild.roles.array().forEach(role => {
-        rolesmsg += role.name;
-        for (let i = role.name.length; i < 25; i++) {
-          rolesmsg += " ";
+     title: "Listroles",
+     details: [
+        {
+            perms      : "Moderator",
+            command    : "!listroles",
+            description: "List all the roles from the server"
         }
-        rolesmsg += "::  " + role.id + "\n";
-      });
+    ],
 
-      message.channel.send(rolesmsg, { code: "asciidoc" });
+    run: ({ client, serverInfo, message, args, sql, config, sendEmbed }) => {
+
+        if (!message.member.isModerator) return;
+
+        let rolesmsg = [];
+        let index = 0;
+        rolesmsg[index] = "";
+
+        message.guild.roles.array().forEach(role => {
+            rolesmsg[index] += role.name;
+            for (let i = role.name.length; i < 25; i++) {
+            rolesmsg[index] += " ";
+            }
+            rolesmsg[index] += "::  " + role.id + "\n";
+
+            if (rolesmsg[index].length > 1500) {
+                index++;
+                rolesmsg[index] = "";
+            }
+        });
+
+        for (let i = 0; i < rolesmsg.length; i++) {
+            message.channel.send(rolesmsg[i], { code: "asciidoc" });    
+        }
+
     }
-  }
 };
-
-//Functions used to check if a player has the desired role
-function pluck(array) {
-  return array.map(function(item) {
-    return item["name"];
-  });
-}
-function hasRole(mem, role) {
-  if (pluck(mem.roles).includes(role)) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-function mysql_real_escape_string(str) {
-  return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
-    switch (char) {
-      case "\0":
-        return "\\0";
-      case "\x08":
-        return "\\b";
-      case "\x09":
-        return "\\t";
-      case "\x1a":
-        return "\\z";
-      case "\n":
-        return "\\n";
-      case "\r":
-        return "\\r";
-      case "'":
-        return char + char; // prepends a backslash to backslash, percent,
-      // and double/single quotes
-      default:
-        return char
-    }
-  });
-}
-
-/**
- * Returns true if user is part of staff
- * @param {user} user
- */
-function isStaff(user) {
-  if (
-    hasRole(user, "Developer") ||
-    hasRole(user, "Admin") ||
-    hasRole(user, "Moderator") ||
-    hasRole(user, "Support")
-  ) {
-    return true;
-  } else {
-    return false;
-  }
-}

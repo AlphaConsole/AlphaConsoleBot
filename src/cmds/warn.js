@@ -1,286 +1,84 @@
-const Discord = require("discord.js");
+/**
+ * ! Warn command
+ * 
+ * ? Kinda obvious, too lazy to write anything smart anyway
+ * ? We also have command description for a reason. So I actually don't know why I added this here. Welp...
+ */
+const Discord = require('discord.js');
 
 module.exports = {
-  title: "warn",
-  perms: "Support",
-  commands: ["!Warn <@tag> <?Reason>"],
-  description: [
-    "Adds a warning to the user and in case it’s the second warning or higher he gets muted"
-  ],
-
-  run: async (client, serverInfo, sql, message, args) => {
-    if (
-      hasRole(message.member, "Support") ||
-      hasRole(message.member, "Moderator") ||
-      hasRole(message.member, "Admin") ||
-      hasRole(message.member, "Developer")
-    ) {
-      let discordid = "";
-      if (message.mentions.users.first()) discordid = message.mentions.users.first().id
-      else discordid = args[1];
-
-      message.guild.members.fetch(discordid).then(async member => {
-        if (!member) {
-          const embed = new Discord.MessageEmbed()
-              .setColor([255, 255, 0])
-              .setAuthor("I did not find any user with that tag / discordid", serverInfo.logo);
-          return message.channel.send(embed);
+     title: "Warn",
+     details: [
+        {
+            perms      : "Support",
+            command    : "!Warn <@tag | user Id> <?Reason>",
+            description: "Adds a warning to the user and in case it’s the second warning or higher he gets muted"
         }
-  
-        //Let's first check if the user even exists in the db
-        sql
-          .get(
-            `select * from Members where DiscordID = '${
-              member.id
-            }'`
-          )
-          .then(row => {
-            if (!row) {
-              var today = new Date().getTime();
-              sql
-                .run(
-                  `Insert into Members(DiscordID, Username, JoinedDate)VALUES('${
-                    member.id
-                  }', '${mysql_real_escape_string(
-                    member.user.username
-                  )}', '${today}')`
-                )
-                .then(() => {
-                  sql
-                    .get(
-                      `select * from Members where DiscordID = '${
-                        member.id
-                      }'`
-                    )
-                    .then(row => {
-                      WarnUser(client, serverInfo, sql, message, row, args, member);
+    ],
+
+    run: ({ client, serverInfo, message, args, sql, config, sendEmbed }) => {
+
+        if (!message.member.isSupport) return;
+        if (args.length < 2) return sendEmbed(message.channel, "You must have forgotten the user", "`!Warn <@tag | user Id> <?Reason>`")
+
+        let user = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
+        message.guild.members.fetch(user).then(m => {
+            require('../helpers/checkUser').run(sql, m.user, (err, user) => {
+
+                let newWarnings = parseInt(user.Warnings + 1);
+
+                let reason = "";
+                for (i = 2; i < args.length; i++) reason += args[i] + " ";
+                if (reason === "") reason = "No reason provided";
+
+                sql.query("Insert Into Logs(Action, Member, Moderator, Reason, Time, ChannelID) values(?, ?, ?, ?, ?, ?)",
+                [ 'warn', m.id, message.author.id, reason, new Date().getTime(), message.channel.id ], (err, res) => {
+                    if (err) return console.error(err);
+
+                    let caseId = res.insertId;
+                    sendEmbed(message.channel, `${m.user.tag} has been warned. Case ID: ${caseId}`)
+
+                    //* Warning user in DM
+                    let warningMsg = "You have received another warning! You'll now be muted, and the staff will look into your behaviour for further actions."
+                    if (newWarnings === 1) warningMsg = "You have received a warning. Next warning will result in a temporary mute!";
+                    if (newWarnings === 2) warningMsg = "You have received a second warning! You'll now be muted for 15 minutes, you are warned!";
+                    sendEmbed(m.user, "Warning received.", warningMsg);
+
+                    //* Logging
+                    const embedLog = new Discord.MessageEmbed()
+                        .setColor([255, 255, 0])
+                        .setAuthor(`Case ${caseId} | Warn`, client.user.displayAvatarURL({ format: "png" }))
+                        .setTitle("==> WARNING " + newWarnings)
+                        .setDescription(`New warning of <@${m.id}> (${m.id}) by <@${message.author.id}>`)
+                        .addField("Reason", reason);
+                    message.guild.channels.get(serverInfo.channels.modlog).send(embedLog).then(msg => {
+                        sql.query(`update Logs set MessageID = ? where ID = ?`, [ msg.id, caseId ]);
                     });
+
+                    //* If he has 2 or more warnings he'll get muted.
+                    if (newWarnings === 2) {
+                        m.roles.add(serverInfo.roles.muted);
+
+                        let timeextra = new Date().getTime() + 1000 * 60 * 15;
+                        sql.query("Update Members set Warnings = ?, MutedUntil = ? where DiscordID = ?", [ newWarnings, timeextra, m.id ]);
+
+                    } if (newWarnings > 2) {
+                        m.roles.add(serverInfo.roles.muted);
+
+                        sql.query("Update Members set Warnings = ?, MutedUntil = null where DiscordID = ?", [ newWarnings, m.id ]);
+
+                    } else {
+                        sql.query("Update Members set Warnings = ? where DiscordID = ?", [ newWarnings, m.id ]);
+                    }
                 })
-                .catch(err => console.log(err));
-            } else {
-              sql
-                .get(
-                  `select * from Members where DiscordID = '${
-                    member.id
-                  }'`
-                )
-                .then(row => {
-                  WarnUser(client, serverInfo, sql, message, row, args, member);
-                });
-            }
-          })
-          .catch(err => console.log(err));
-      })
-      
+
+
+            });
+        }).catch(e => {
+            if (e.message.startsWith("user_id: Value"))
+                sendEmbed(message.channel, "User not found..")
+            else
+                console.log(e);
+        })
     }
-  }
 };
-
-//Functions used to check if a player has the desired role
-function pluck(array) {
-  return array.map(function(item) {
-    return item["name"];
-  });
-}
-function hasRole(mem, role) {
-  if (pluck(mem.roles).includes(role)) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-function getRandomIntInclusive(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function WarnUser(client, serverInfo, sql, message, row, args, member) {
-  var user = member.user;
-
-  if (args.length == 2) var TheReason = "No reason provided";
-  else {
-    var TheReason = "";
-    for (i = 2; i < args.length; i++) {
-      TheReason += args[i] + " ";
-    }
-  }
-
-  sql
-    .run(
-      `Insert Into logs(Action, Member, Moderator, Reason, Time, ChannelID) VALUES('warn', '${
-        user.id
-      }', '${message.author.id}', '${mysql_real_escape_string(
-        TheReason
-      )}', '${new Date().getTime()}', '${message.channel.id}')`
-    )
-    .then(() => {
-      var CaseID = "Error";
-      sql
-        .get(`select * from logs where Member = '${user.id}' order by ID desc`)
-        .then(roww => {
-          if (!roww) return message.channel.send("An error occured");
-
-          CaseID = roww.ID;
-          const embedChannel = new Discord.MessageEmbed()
-            .setColor([255, 255, 0])
-            .setAuthor(
-              `${user.tag} has been warned! Case number: ${CaseID}`,
-              serverInfo.logo
-            );
-          message.channel.send(embedChannel);
-
-          if (row.Warnings == 0) {
-            const embed = new Discord.MessageEmbed()
-              .setColor([255, 255, 0])
-              .setAuthor(
-                "You have received a warning. Next warning will result in a temporary mute!",
-                serverInfo.logo
-              );
-            user.send(embed);
-
-            const embedLog = new Discord.MessageEmbed()
-              .setColor([255, 255, 0])
-              .setAuthor(`Case ${CaseID} | Warn`, serverInfo.logo)
-              .setTitle("==> WARNING 1")
-              .setDescription(
-                "New warning of <@" +
-                  user.id +
-                  "> (" +
-                  user.id +
-                  ") by <@" +
-                  message.author.id +
-                  ">"
-              )
-              .addField("Reason", TheReason);
-            client.guilds
-              .get(serverInfo.guildId)
-              .channels.get(serverInfo.modlogChannel)
-              .send(embedLog)
-              .then(msg => {
-                sql.run(
-                  `update logs set MessageID = '${
-                    msg.id
-                  }' where ID = '${CaseID}'`
-                );
-              });
-
-            sql.run(
-              `update Members set Warnings = '1' where DiscordID = '${user.id}'`
-            );
-          } else if (row.Warnings == 1) {
-            const embed = new Discord.MessageEmbed()
-              .setColor([255, 255, 0])
-              .setAuthor(
-                "You have received a second warning! You'll now be muted for 15 minutes, you are warned!",
-                serverInfo.logo
-              );
-            user.send(embed);
-
-            const embedLog = new Discord.MessageEmbed()
-              .setColor([255, 255, 0])
-              .setAuthor(`Case ${CaseID} | Warn`, serverInfo.logo)
-              .setTitle("==> WARNING 2")
-              .setDescription(
-                "New warning of <@" +
-                  user.id +
-                  "> (" +
-                  user.id +
-                  ") by <@" +
-                  message.author.id +
-                  ">"
-              )
-              .addField("Reason", TheReason);
-            client.guilds
-              .get(serverInfo.guildId)
-              .channels.get(serverInfo.modlogChannel)
-              .send(embedLog)
-              .then(msg => {
-                sql.run(
-                  `update logs set MessageID = '${msg.id}' where ID = ${CaseID}`
-                );
-              });
-
-            timeextra = new Date().getTime({ limit: 100 }) + 1000 * 60 * 15;
-            sql.run(
-              `update Members set Warnings = '2', MutedUntil = '${timeextra}' where DiscordID = '${
-                user.id
-              }'`
-            );
-
-            let TheRole = message.guild.roles.find("name", "Muted");
-            let TheUser = message.guild.member(
-              member.id
-            );
-            TheUser.addRole(TheRole);
-          } else if (row.Warnings > 1) {
-            const embed = new Discord.MessageEmbed()
-              .setColor([255, 255, 0])
-              .setAuthor(
-                "You have received another warning! You'll now be muted, and the staff will look into your behaviour for further actions.",
-                serverInfo.logo
-              );
-            user.send(embed);
-
-            const embedLog = new Discord.MessageEmbed()
-              .setColor([255, 255, 0])
-              .setAuthor(`Case ${CaseID} | Warn`, serverInfo.logo)
-              .setTitle("==> WARNING 3")
-              .setDescription(
-                "New warning of <@" +
-                  user.id +
-                  "> (" +
-                  user.id +
-                  ") by <@" +
-                  message.author.id +
-                  ">"
-              )
-              .addField("Reason", TheReason);
-            client.guilds
-              .get(serverInfo.guildId)
-              .channels.get(serverInfo.modlogChannel)
-              .send(embedLog)
-              .then(msg => {
-                sql.run(
-                  `update logs set MessageID = '${msg.id}' where ID = ${CaseID}`
-                );
-              });
-
-            sql.run(
-              `update Members set Warnings = '3' where DiscordID = '${user.id}'`
-            );
-
-            let TheRole = message.guild.roles.find("name", "Muted");
-            let TheUser = message.guild.member(
-              member.id
-            );
-            TheUser.addRole(TheRole);
-          }
-        });
-    });
-}
-
-function mysql_real_escape_string(str) {
-  return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
-    switch (char) {
-      case "\0":
-        return "\\0";
-      case "\x08":
-        return "\\b";
-      case "\x09":
-        return "\\t";
-      case "\x1a":
-        return "\\z";
-      case "\n":
-        return "\\n";
-      case "\r":
-        return "\\r";
-      case "'":
-        return char + char; // prepends a backslash to backslash, percent,
-      // and double/single quotes
-      default:
-        return char
-    }
-  });
-}

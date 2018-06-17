@@ -1,13 +1,21 @@
-const Discord = require("discord.js");
-var cd = 0;
+/**
+ * ! Ping command
+ * 
+ * ? Any further questions?
+ */
+let cd = 0;
 
 module.exports = {
-    title: "ping",
-    perms: "everyone",
-    commands: ["!ping"],
-    description: ["Check latency of the bot"],
+    title: "Ping",
+    details: [
+        {
+            perms      : "Everyone",
+            command    : "!ping",
+            description: "Shows the delay of the bot"
+        }
+    ],
 
-    run: async (client, serverInfo, message) => {
+    run: ({ client, serverInfo, message, args, sql, config, sendEmbed }) => {
 
         if (cd > new Date().getTime()) return;
 
@@ -15,5 +23,6 @@ module.exports = {
             m.edit(`🏓 Pong! Latency is \`${ m.createdTimestamp - message.createdTimestamp }ms\`.`);
             cd = new Date().getTime() + 5000;
         })
+
     }
-};
+}
