@@ -344,14 +344,16 @@ function postPin(client, message, sql, serverInfo, something) {
         let sugg = res[0];
 
 		if (sugg) {
-			message.channel.messages.fetch(sugg.message).then(msg => msg.delete())
+            message.channel.messages.fetch(sugg.message).then(msg => msg.delete())
 			message.channel.send(embed).then(msg => {
 				sql.query(`update Misc set message = ? where value = ?`, [ msg.id, something ])
 			})
 		} else {
 			message.channel.send(embed).then(msg => {
 				sql.query(`insert into Misc(message, value) VALUES(?, ?)`, [ msg.id, something ])
-			})
+			}).catch(e => {
+                console.log("Catch on sending message: ", e)
+            })
 		}
 	})
 }
