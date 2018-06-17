@@ -9,10 +9,10 @@ module.exports.run = (client, serverInfo, config, oldMember, newMember) => {
         if (oldMember.nickname != newMember.nickname) {
             if (newMember.nickname == null) 
                 client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.serverlog)
-                    .send(`:man_with_gua_pi_mao: \`[${new Date().toTimeString().split(" ")[0]}]\` **\`${newMember.user.tag}\`** has reset their nickname to **\`${newMember.user.username}\`**`);
+                    .send(`:spy: \`[${new Date().toTimeString().split(" ")[0]}]\` **\`${newMember.user.tag}\`** has reset their nickname to **\`${newMember.user.username}\`**`);
             else 
                 client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.serverlog)
-                    .send(`:man_with_gua_pi_mao: \`[${new Date().toTimeString().split(" ")[0]}]\` **\`${newMember.user.tag}\`** has changed their nickname to **\`${newMember.nickname}\`**`);
+                    .send(`:spy: \`[${new Date().toTimeString().split(" ")[0]}]\` **\`${newMember.user.tag}\`** has changed their nickname to **\`${newMember.nickname}\`**`);
             
         }
 
