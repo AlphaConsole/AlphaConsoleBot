@@ -36,7 +36,7 @@ module.exports = {
 			 * ? This way we don't have to send serverInfo & those vars to every single function over & over again.
 			 */
 
-			function setUsersTitle(id, title) {
+			function setUsersTitle(id, title, ignoreMsg) {
 				let url = keys.SetTitleURL + 
 					"?DiscordID=" + id +
 					"&key=" + keys.Password +
@@ -48,7 +48,7 @@ module.exports = {
 					if (body) {
 						if (args[0].toLowerCase() == "!set") {
 							if (body.toLowerCase().includes("done")) 
-								sendEmbed(message.author, "Your title has been updated to: `" + title + "`")
+								if (!ignoreMsg) sendEmbed(message.author, "Your title has been updated to: `" + title + "`")
 							else if (body.toLowerCase().includes("the user does not exist"))
 								sendEmbed(message.author, "Hi, in order to use our custom title service you must authorize your discord account. \n" +
 								"Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.")
@@ -64,7 +64,7 @@ module.exports = {
 				})
 			}
 
-			function setUsersColour(id, colour) {
+			function setUsersColour(id, colour, ignoreMsg) {
 				let url = keys.SetTitleURL + 
 					"?DiscordID=" + id +
 					"&key=" + keys.Password +
@@ -76,9 +76,9 @@ module.exports = {
 					if (body) {
 						if (args[0].toLowerCase() == "!set") {
 							if (body.toLowerCase().includes("done")) 
-								sendEmbed(message.author, "Your colour has been updated to: `" + colour + "`")
+							 	if (!ignoreMsg) sendEmbed(message.author, "Your colour has been updated to: `" + colour + "`")
 							else if (body.toLowerCase().includes("the user does not exist"))
-								sendEmbed(message.author, "Hi, in order to use our custom title service you must authorize your discord account. \n" +
+								if (!ignoreMsg) sendEmbed(message.author, "Hi, in order to use our custom title service you must authorize your discord account. \n" +
 								"Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.")
 						} else {
 							if (body.toLowerCase().includes("done")) 
@@ -145,7 +145,28 @@ module.exports = {
 			}
 
 			function setSpecialTitle() {
+				if (message.channel.id !== serverInfo.channels.setSpecialTitle || args.length < 3) return;
 
+				sql.query("select * from SpecialTitles where ID = ?", [ args[2] ], (err, res) => {
+					if (err) return console.error(err);
+
+					if (res.length === 0) return sendEmbed(message.author, "Error setting special title", "No special title found with provided id.");
+					
+					let preset = res[0];
+					let roles = JSON.parse(preset.PermittedRoles);
+
+					let valid = userInOnOfRoles(message.member, roles);
+					if (valid) {
+
+						setUsersTitle(message.author.id, preset.Title, true);
+						setUsersColour(message.author.id, preset.Color, true);
+
+						sendEmbed(message.author, "Your special title has been set!", `Title: ${preset.Title}\nColor: ${preset.Color}`)
+
+					} else {
+						sendEmbed(message.author, "Error setting special title", "You are not allowed to use this preset.")
+					}
+				})
 			}
 
 			/**
@@ -276,4 +297,18 @@ function validUser(message, serverInfo) {
     if (message.member.roles.has(serverInfo.roles.admin)) return true;
     if (message.member.roles.has(serverInfo.roles.developer)) return true;
     return false;
+}
+
+
+
+
+
+function userInOnOfRoles(member, roles) {
+	let inRole = false;
+
+	for (let i = 0; i < roles.length; i++) {
+		if (member.roles.has(roles[i])) inRole = true;
+	}
+
+	return inRole;
 }
