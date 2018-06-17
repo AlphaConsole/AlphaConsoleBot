@@ -305,6 +305,7 @@ function validUser(message, serverInfo) {
 
 function userInOnOfRoles(member, roles) {
 	let inRole = false;
+	if (member.isAdmin) return true;
 
 	for (let i = 0; i < roles.length; i++) {
 		if (member.roles.has(roles[i])) inRole = true;
