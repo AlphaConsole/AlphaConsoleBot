@@ -29,7 +29,7 @@ module.exports = {
     serverlog             : "389536059177828374",
     aclog                 : "389536034041495562",
     modlog                : "389536131089432596",
-    ingameReports         : "451959218858229770",
+    ingameReports         : "457862052237541387",
     editPartners          : "413841364032159764",
     botConfig             : "377992732418768907",
 

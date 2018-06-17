@@ -138,7 +138,7 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
                     if (bodydata !== "Not signed up for DB") {
                         reportTitle(client, serverInfo, sql, message, bodydata, message.author.id)
                     } else {
-                        sendEmbed(message.author, "I did not find any title based on that DiscordID / SteamID. Please **only** provide me the ID in that channel")
+                        sendEmbed(message.author, "Error whilst fetching information", "I did not find any title based on that DiscordID / SteamID. Please **only** provide me the ID in that channel")
                     }
                 })
             }
@@ -289,13 +289,17 @@ function CustomCommandsChannel(channelID, channels) {
 module.exports.botMessage = (client, serverInfo, sql, message) => {
     if (message.channel.id === serverInfo.channels.ingameReports && message.author.bot && message.author.username == "Title reports") {
         let data = JSON.parse(message.content);
+        message.delete();
 
         message.guild.channels.get(serverInfo.channels.ingameReports).send(
             `**================================**\n` +
             `Reports by <@${data.Issuer.DiscordID}>\n` +
             `\`👍 ${data.Issuer.GoodReports}\`\n` +
             `\`👎 ${data.Issuer.BadReports}\`\n`
-        ).then(m => { m.react("❌"); })
+        ).then(async m => {
+            await m.react("✅");
+            await m.react("❌");
+        })
 
         for (let i = 0; i < data.Users.length; i++) {
             let r = data.Users[i];

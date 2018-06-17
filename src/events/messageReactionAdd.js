@@ -48,44 +48,46 @@ module.exports.run = (client, serverInfo, config, reaction, user, sendEmbed) => 
         //* Title reports
         if (member.isAdmin && reaction.message.channel.id === serverInfo.channels.ingameReports) {
 
-            if (reaction._emoji.name == "🔨") {
-                config.sql.query(`select * from TitleReports where MessageID = ?`, [ reaction.message.id ], (err, res) => {
-                    if (res && res[0]) {
-                        let url = config.keys.SetTitleURL +
-                        "?DiscordID=" + res[0].DiscordID +
-                        "&key=" + config.keys.Password +
-                        "&title=" + escape("Title reset by admin!");
-                        
-                        request(url, (err, result, body) => {
-                            if (err) return console.error(err);
+            if (!reaction.message.content.startsWith("**===")) {
+                if (reaction._emoji.name == "🔨") {
+                    config.sql.query(`select * from TitleReports where MessageID = ?`, [ reaction.message.id ], (err, res) => {
+                        if (res && res[0]) {
+                            let url = config.keys.SetTitleURL +
+                            "?DiscordID=" + res[0].DiscordID +
+                            "&key=" + config.keys.Password +
+                            "&title=" + escape("Title reset by admin!");
+                            
+                            request(url, (err, result, body) => {
+                                if (err) return console.error(err);
 
-                            if (body.toLowerCase().includes("done")) {
-                                config.sql.query(`update TitleReports set Fixed = 1 where MessageID = ?`, [ reaction.message.id ]);
-                                reaction.message.delete();
-            
-                                let urlRating = config.keys.RatingURL +
-                                    "?DiscordID=" + res[0].Reporter +
-                                    "&key=" + config.keys.Password +
-                                    "&Type=1"
-                                request(urlRating, (err) => {
-                                    if (err) console.error(err);
-                                })
-                            } else {
-                                user.send("I did not receive a confirmation from the server. This is what the server sent back:\n`" + body + "`")
-                            }
-                        })
-                    }
-                })
-            }
+                                if (body.toLowerCase().includes("done")) {
+                                    config.sql.query(`update TitleReports set Fixed = 1 where MessageID = ?`, [ reaction.message.id ]);
+                                    reaction.message.delete();
+                
+                                    let urlRating = config.keys.RatingURL +
+                                        "?DiscordID=" + res[0].Reporter +
+                                        "&key=" + config.keys.Password +
+                                        "&Type=1"
+                                    request(urlRating, (err) => {
+                                        if (err) console.error(err);
+                                    })
+                                } else {
+                                    user.send("I did not receive a confirmation from the server. This is what the server sent back:\n`" + body + "`")
+                                }
+                            })
+                        }
+                    })
+                }
 
-            if (reaction._emoji.name == "✅") {
-                config.sql.query(`update TitleReports set Permitted = 1, Fixed = 1 where MessageID = ?`, [ reaction.message.id ]);
-                reaction.message.delete();
-            }
+                if (reaction._emoji.name == "✅") {
+                    config.sql.query(`update TitleReports set Permitted = 1, Fixed = 1 where MessageID = ?`, [ reaction.message.id ]);
+                    reaction.message.delete().catch(e => { });
+                }
 
-            if (reaction._emoji.name == "❎") {
-                config.sql.run(`delete from TitleReports where MessageID = `, [ reaction.message.id ]);
-                reaction.message.delete();
+                if (reaction._emoji.name == "❎") {
+                    config.sql.query(`delete from TitleReports where MessageID = ?`, [ reaction.message.id ]);
+                    reaction.message.delete().catch(e => { });
+                }
             }
 
             //* Title user reporter

@@ -68,5 +68,5 @@ module.exports.run = (client, serverInfo, config, checkStatus) => {
         client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.showcase).messages.fetch();
         client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.suggestion).messages.fetch();
         client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.ingameReports).messages.fetch();
-    }, 30000);
+    }, 10000);
 }
