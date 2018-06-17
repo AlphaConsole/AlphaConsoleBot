@@ -8,7 +8,6 @@ let fs = require('fs');
 
 module.exports.run = (client, serverInfo, config, checkStatus) => {
     console.log("AlphaConsole Bot logged in and ready.");
-    checkStatus();
 
     /**
      * ! Config variables setup
@@ -60,9 +59,14 @@ module.exports.run = (client, serverInfo, config, checkStatus) => {
      * 
      * ? Channels like showcase & suggestions requires fetching because reactions won't work
      * ? if the messages aren't fetched. So by fetching them at least the last 100 messages will work
+     * 
+     * ? We also delay this by 30 seconds. Since yea, AC is a big Discord and it takes time for all channels to be fetched.
      */
     
-    client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.showcase).messages.fetch();
-    client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.suggestion).messages.fetch();
-    client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.ingameReports).messages.fetch();
+    setTimeout(() => {
+        checkStatus();
+        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.showcase).messages.fetch();
+        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.suggestion).messages.fetch();
+        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.ingameReports).messages.fetch();
+    }, 30000);
 }
