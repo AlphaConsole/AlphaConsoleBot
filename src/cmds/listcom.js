@@ -15,7 +15,7 @@ module.exports = {
     ],
 
     run: ({ client, serverInfo, message, args, sql, config, sendEmbed }) => {
-        if (!message.member.isStaff) return;
+        if (!message.member.isCH) return;
         
         sql.query("Select * from Commands", [], (err, rows) => {
             if (err) return console.error(err);

@@ -19,7 +19,7 @@ module.exports = {
 
     run: ({ client, serverInfo, message, args, sql, config, sendEmbed }) => {
 
-        if (!message.member.isSupport) return;
+        if (!message.member.isCH) return;
         if (args.length < 2) return sendEmbed(message.channel, "You must have forgotten the user", "`!Checkdb <@tag | user Id>`")
 
         try {

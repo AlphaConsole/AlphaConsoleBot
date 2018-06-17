@@ -41,7 +41,7 @@ For a breakdown of event calls you can go to `src\events`
 If you are interested in contributing to this project it will require some setup. 
 
 #### Tokens
-You will need to create a `tokens.js` file in `src/` file that looks like [this](https://gist.github.com/HaydenMeloche/88ff8b1687a13633d2c0de87c0caea73) and fill in a Discord API key which can be generated from [here.](https://discordapp.com/developers/applications/me)
+You will need to create a `tokens.js` file in `src/`. Currently there is a template file called `tokens.example.js` if you prefer renaming that and using that.
 
 Due to security reasons the rest of `tokens.js` must be blank otherwise people could mess with our database (meaning you can't use some of the bots functionality like `!set title`).
 
@@ -51,7 +51,8 @@ Due to security reasons the rest of `tokens.js` must be blank otherwise people c
 
 #### Database
 
-This bot writes a lot into a SQLite database. A blank default one can be downloaded from [here](https://cdn.discordapp.com/attachments/286658762113155073/399640885710815233/Bot.db). It needs to be placed into `src/sqlite`.
+We are using a MySQL database. You can link your details of your MySQL server in the `tokens.js` file.
+You can copy the create statements from `tokens.example.js` if you would like to copy over the tables.
 
 
 ##### Please create a pull request into the `dev` branch :)
@@ -59,9 +60,10 @@ This bot writes a lot into a SQLite database. A blank default one can be downloa
 
 ### Questions?
 
-Feel free to message me on Discord, my ID is
+Feel free to message us on Discord, our Discord tag is
 
 <img src="https://i.imgur.com/gPrtZaA.png" width="20%">
+<img src="https://i.imgur.com/CxvpSYm.png" width="20%">
 
 ----------
 
