@@ -346,6 +346,10 @@ async function messageProcess(message) {
           case "blacklist":
             require('./cmds/blacklist').run(data);
             break;
+
+          case "update":
+            require('./cmds/update').run(data);
+            break;
         
           default:
             break;
