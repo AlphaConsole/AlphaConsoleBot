@@ -16,7 +16,7 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
     //* Swear words filter
     if (!message.member.isStaff) {
         for (let i = 0; i < config.swearwords.length; i++) {
-            if (message.content.includes(config.swearwords[i])) {
+            if (message.content.toLowerCase().includes(config.swearwords[i].toLowerCase())) {
                 message.delete().catch(e => { });
             }
         }
@@ -40,8 +40,8 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
     //* Invite guard
     if (!message.member.isAdmin) {
         if (!(config.permits[message.author.id] && config.permits[message.author.id].channel === message.channel.id && config.permits[message.author.id].until > new Date().getTime())) {
-            if ((message.content.includes("discord.me/") || message.content.includes("discord.gg/") || message.content.includes("discordapp.com/invite/"))
-                && !message.content.includes("discord.gg/alphaconsole")) {
+            if ((message.content.toLowerCase().includes("discord.me/") || message.content.toLowerCase().includes("discord.gg/") || message.content.toLowerCase().includes("discordapp.com/invite/"))
+                && !message.content.toLowerCase().includes("discord.gg/alphaconsole")) {
 
                 message.delete().catch(e => { });
                 sendEmbed(message.author, "Discord invites are not allowed in this channel")
@@ -57,7 +57,7 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
                 let counter = 0;
 
                 for (let i = 0; i < words.length; i++) {
-                    if (message.content.includes(words[i])) counter++;
+                    if (message.content.toLowerCase().includes(words[i].toLowerCase())) counter++;
                 }
 
                 if (counter == words.length) {
