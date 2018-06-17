@@ -95,7 +95,7 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
                 await message.react("👍");
                 await message.react("👎");
                 await message.react("❌");
-                postPin(client, message, sql, serverInfo, "showcase");
+                //postPin(client, message, sql, serverInfo, "showcase");
 
                 sql.query("Update Members set Showcase = ? where DiscordID = ?", [ new Date().getTime() + 300000, message.author.id ]);
             } else {
