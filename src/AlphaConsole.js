@@ -327,6 +327,10 @@ async function messageProcess(message) {
             require('./cmds/check').run(data);
             break;
 
+          case "lastseen":
+            require('./cmds/lastseen').run(data);
+            break;
+
           case "case":
             require('./cmds/case').run(data);
             break;
