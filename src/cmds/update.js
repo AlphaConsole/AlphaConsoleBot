@@ -5,6 +5,7 @@
  * ? We also have command description for a reason. So I actually don't know why I added this here. Welp...
  */
 const Discord = require('discord.js');
+var shell = require("shelljs");
 
 module.exports = {
      title: "Update",
