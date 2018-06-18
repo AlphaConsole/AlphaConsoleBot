@@ -69,7 +69,7 @@ module.exports.run = (client, serverInfo, config, oldMember, newMember) => {
             }
 
             //* User just lost Twitch Sub role
-            if (oldRoles.includes("Twitch Sub") && !newRoles.includes("Twitch Sub") && !canKeepTitle(newMember)) {
+            if (oldRoles.includes("Twitch Sub") && !newRoles.includes("Twitch Sub") && !canKeepTitle(newMember, serverInfo)) {
                 let user = newMember;
                 let url = config.keys.SetTitleURL +
                     "?DiscordID=" + user.id + 
@@ -106,4 +106,16 @@ module.exports.run = (client, serverInfo, config, oldMember, newMember) => {
         console.log(error)
     }
 
+}
+
+
+function canKeepTitle(m, serverInfo) {
+    if (m.roles.has(serverInfo.roles.partnerP)) return true;
+    if (m.roles.has(serverInfo.roles.orgPartner)) return true;
+    if (m.roles.has(serverInfo.roles.legacy)) return true;
+    if (m.roles.has(serverInfo.roles.support)) return true;
+    if (m.roles.has(serverInfo.roles.moderator)) return true;
+    if (m.roles.has(serverInfo.roles.admin)) return true;
+    if (m.roles.has(serverInfo.roles.developer)) return true;
+    return false;
 }
