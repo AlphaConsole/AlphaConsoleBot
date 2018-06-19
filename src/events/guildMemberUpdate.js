@@ -38,7 +38,7 @@ module.exports.run = (client, serverInfo, config, oldMember, newMember) => {
                 newMember.send(
                     "Congratulations on becoming a Legacy member! :smile: You now have access to several benefits including:\n\n" +
                     "Green & Purple title colors\n" +
-                    "Our beta program (Please read `#beta-info` and the pin in `#beta-steam-ids` carefully!)\n" +
+                    "Our beta program (Please read `#beta-info` and the pin in `#beta-signup` carefully!)\n" +
                     "The `#subs-and-legacy` text channel and priority support\n" +
                     "Various Discord server enhancements such as nickname perms\n\n" +
                     "You will keep these benefits forever! Thank you for your support of AlphaConsole!"
@@ -51,7 +51,7 @@ module.exports.run = (client, serverInfo, config, oldMember, newMember) => {
                     "Thank you for subscribing to our twitch! :smile: You now have access to several benefits including:\n\n" +
                     "Green & Purple title colors\n" +
                     "The `AlphaConsole Twitch Sub` special title (found in `#set-special-title`)\n" +
-                    "Our beta program (Please read `#beta-info` and the pin in `#beta-steam-ids` carefully!)\n" +
+                    "Our beta program (Please read `#beta-info` and the pin in `#beta-signup` carefully!)\n" +
                     "The `#subs-and-legacy` text channel and priority support\n" +
                     "Various Discord server enhancements such as nickname perms\n\n" +
                     "You will keep these benefits for as long as you are subscribed, and you will have a 3 day window to resubscribe if your subscription runs out. Thank you again for your subscription and your extra level of support for AlphaConsole!"
