@@ -141,7 +141,7 @@ module.exports = {
 				else 
 					id = args[2];
 
-				setUsersTitle(id, args[3]);
+				setUsersColour(id, args[3]);
 			}
 
 			function setSpecialTitle() {
