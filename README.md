@@ -62,8 +62,8 @@ You can copy the create statements from `tokens.example.js` if you would like to
 
 Feel free to message us on Discord, our Discord tag is
 
-<img src="https://i.imgur.com/KaDj0zI.png" width="20%">
-<img src="https://i.imgur.com/1C8lDR4.png" width="20%">
+<img src="https://i.imgur.com/A2C1rjt.png" width="30%">
+<img src="https://i.imgur.com/63WuRal.png" width="30%">
 
 ----------
 
