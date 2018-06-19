@@ -413,6 +413,10 @@ async function messageProcess(message) {
 
         if (args[0].toLowerCase() == "!help" || args[0].toLowerCase() == "!h")
           require('./cmds/help').run(data, true);
+
+        if (args[0].toLowerCase() == "!override")
+          require('./cmds/titles').run(data);
+
       }).catch(e => { })
 
 

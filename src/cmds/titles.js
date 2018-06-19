@@ -19,7 +19,7 @@ module.exports = {
         }
     ],
 
-    run: ({ client, serverInfo, message, args, sql, config, sendEmbed }) => {
+    run: ({ client, serverInfo, message, args, sql, config, sendEmbed, member }) => {
 		try {
 			
 		
@@ -116,7 +116,7 @@ module.exports = {
 			}
 
 			function overrideTitle() {
-				if (!message.member.isModerator) return;
+				if (!(message.member && message.member.isModerator) && !(member && member.isModerator)) return;
 				if (message.mentions.users.first()) 
 					id = message.mentions.users.first().id;
 				else 
@@ -164,7 +164,7 @@ module.exports = {
 						.addField("Title of", `**<@${id}>** (${id})`)
 						.addField("Edited by", message.author.tag)
 						.setTimestamp();
-					message.guild.channels.get(serverInfo.channels.aclog).send(embedlog);
+					client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.aclog).send(embedlog);
 				});
 			}
 
@@ -181,7 +181,7 @@ module.exports = {
 			}
 
 			function overrideColour() {
-				if (!message.member.isModerator) return;
+				if (!(message.member && message.member.isModerator) && !(member && member.isModerator)) return;
 				if (message.mentions.users.first()) 
 					id = message.mentions.users.first().id;
 				else 
@@ -226,7 +226,7 @@ module.exports = {
 						.addField("Title of", `**<@${id}>** (${id})`)
 						.addField("Edited by", message.author.tag)
 						.setTimestamp();
-					message.guild.channels.get(serverInfo.channels.aclog).send(embedlog);
+					client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.aclog).send(embedlog);
 				});
 			}
 
