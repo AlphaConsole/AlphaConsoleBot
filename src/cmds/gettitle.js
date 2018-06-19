@@ -23,7 +23,7 @@ module.exports = {
             var user = message.author;
             request({ method: "GET", url: url }, function (err, response, body) {
                 if (err)
-                    return sendEmbed("There was an error. Send this to Pollie or Root", err);
+                    return sendEmbed(message.author, "There was an error. Send this to Pollie or Root", err);
 
                 let result = "";
 

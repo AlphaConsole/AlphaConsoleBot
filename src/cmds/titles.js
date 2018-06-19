@@ -2,6 +2,7 @@
  * ! Titles command
  */
 const request = require('request');
+const Discord = require('discord.js');
 
 module.exports = {
     title: "Titles",
@@ -118,8 +119,48 @@ module.exports = {
 				else 
 					id = args[2];
 
-				let title = createTitle(args, 3);
-				setUsersTitle(id, title);
+				let url = config.keys.CheckdbURL
+
+				if (id.length === 17)
+					url += "?SteamID=" + id;
+				else
+					url += "?DiscordID=" + id;
+				request({ method: "GET", url: url }, function (err, response, body) {
+					if (err)
+						return sendEmbed(message.author, "There was an error. Send this to Pollie or Root", err);
+						
+					let oldTitle = "";
+
+					if (body) {
+						if (body.toLowerCase().includes("not signed up for db")) {
+							oldTitle = ":x: Not signed up in database"
+							
+						} else if (body.toLowerCase().includes("no title set")) {
+							oldTitle = ":x: No title set yet"
+								
+						} else {
+							var info = body.split(" ");
+							id = info[info.length - 1];
+							for (let index = 0; index < info.length - 3; index++) oldTitle += info[index] + " ";
+						}
+					} else {
+						oldTitle = ":x: Couldn't fetch his title from the server"
+					}
+
+
+					let title = createTitle(args, 3);
+					setUsersTitle(id, title);
+
+					const embedlog = new Discord.MessageEmbed()
+						.setColor([255, 255, 0])
+						.setAuthor("Custom title override", client.user.displayAvatarURL())
+						.addField("Old Title", oldTitle)
+						.addField("New Title", title)
+						.addField("Title of", `**<@${id}>** (${id})`)
+						.addField("Edited by", message.author.tag)
+						.setTimestamp();
+					message.guild.channels.get(serverInfo.channels.aclog).send(embedlog);
+				});
 			}
 
 			function setColour() {
@@ -141,7 +182,47 @@ module.exports = {
 				else 
 					id = args[2];
 
-				setUsersColour(id, args[3]);
+				let url = config.keys.CheckdbURL
+
+				if (id.length === 17)
+					url += "?SteamID=" + id;
+				else
+					url += "?DiscordID=" + id;
+				request({ method: "GET", url: url }, function (err, response, body) {
+
+					if (err)
+						return sendEmbed(message.author, "There was an error. Send this to Pollie or Root", err);
+						
+					let colour = "";
+
+					if (body) {
+						if (body.toLowerCase().includes("not signed up for db")) {
+							colour = ":x: Not signed up in database"
+							
+						} else if (body.toLowerCase().includes("no title set")) {
+							colour = ":x: No title set yet"
+								
+						} else {
+							var info = body.split(" ");
+							id = info[info.length - 1];
+							colour = info[info.length - 3];
+						}
+					} else {
+						colour = ":x: Couldn't fetch his title from the server"
+					}
+
+					setUsersColour(id, args[3]);
+
+					const embedlog = new Discord.MessageEmbed()
+						.setColor([255, 255, 0])
+						.setAuthor("Custom title override", client.user.displayAvatarURL())
+						.addField("Old Color", colour)
+						.addField("New Color", args[3])
+						.addField("Title of", `**<@${id}>** (${id})`)
+						.addField("Edited by", message.author.tag)
+						.setTimestamp();
+					message.guild.channels.get(serverInfo.channels.aclog).send(embedlog);
+				});
 			}
 
 			function setSpecialTitle() {

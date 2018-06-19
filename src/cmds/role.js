@@ -47,16 +47,29 @@ module.exports = {
                     for (let i = 2; i < args.length; i++) rolename += args[i] + " ";
 
                     let role = message.guild.roles.find(r => r.name.toLowerCase() == rolename.trim().toLowerCase());
-                    if (!role) return sendEmbed(message.channel, "Role not found..")
+                    if (!role) return sendEmbed(message.channel, "Role not found..");
+
+                    if (roleDisallowed(role.id, serverInfo)) return sendEmbed(message.channel, "This role cannot be given by command.");
+
+                    let addOrRemove;
 
                     if (m.roles.has(role.id)) {
                         m.roles.remove(role.id);
                         sendEmbed(message.channel, `${role.name} removed from ${m.user.tag}`)
-
+                        addOrRemove = "removed from"
                     } else {
                         m.roles.add(role.id);
                         sendEmbed(message.channel, `${role.name} given to ${m.user.tag}`)
+                        addOrRemove = "added to";
                     }
+
+                    const embedlog = new Discord.MessageEmbed()
+						.setColor([255, 255, 0])
+						.setAuthor("Role update by command", client.user.displayAvatarURL())
+						.addField("Info", `${role.name} ${addOrRemove} <@${m.id}> (${m.id})`)
+						.addField("Executed by", message.author.tag)
+						.setTimestamp();
+					message.guild.channels.get(serverInfo.channels.aclog).send(embedlog);
 
                 }).catch(e => {
                     if (e.message.startsWith("user_id: Value"))
@@ -69,4 +82,17 @@ module.exports = {
         }
 
     }
+}
+
+function roleDisallowed(id, serverInfo) {
+    if (id === serverInfo.roles.developer) return true;
+    if (id === serverInfo.roles.admin) return true;
+    if (id === serverInfo.roles.moderator) return true;
+    if (id === serverInfo.roles.support) return true;
+    if (id === serverInfo.roles.staff) return true;
+    if (id === serverInfo.roles.ch) return true;
+    if (id === serverInfo.roles.streamTeam) return true;
+    if (id === serverInfo.roles.designer) return true;
+    if (id === serverInfo.roles.botDev) return true;
+    return false
 }
