@@ -27,7 +27,16 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
         if (!(config.permits[message.author.id] && config.permits[message.author.id].channel === message.channel.id && config.permits[message.author.id].until > new Date().getTime())) {
             if (!config.whitelistedLinksChannel.includes(message.channel.id)) {
                 let matches = message.content.match(new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/ig));
-                let filtered = matches ? matches.filter(m => !m.endsWith("discord.gg/alphaconsole")) : null;
+                let filtered = matches ? matches.filter(m => {
+                    if (m.endsWith("discord.gg/alphaconsole")  ||
+                        m.includes("imgur.com") ||
+                        m.includes("reddit.com") ||
+                        m.includes("gyazo.com") ||
+                        m.includes("prntscr.com"))
+                        return false
+                    else
+                        return true
+                }) : null;
 
                 if (filtered && filtered[0]) {
                     message.delete().catch(e => { });
@@ -259,6 +268,7 @@ function AutoResponseChannel(channelID, channels) {
 	if (channelID === channels.showcase) return true;
 	if (channelID === channels.suggestion) return true;
 	if (channelID === channels.staff) return true;
+	if (channelID === channels.slaughter) return true;
 	//Else return false
 	return false;
 }
