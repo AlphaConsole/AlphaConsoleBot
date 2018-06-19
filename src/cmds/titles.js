@@ -119,11 +119,13 @@ module.exports = {
 				else 
 					id = args[2];
 
-				var url = config.keys.CheckdbURL + "?DiscordID=" + id;
-				request({ method: "GET", url: url }, function (err, response, body) {
-					let title = createTitle(args, 3);
-					setUsersTitle(id, title);
+				let url = config.keys.CheckdbURL
 
+				if (id.length === 17)
+					url += "?SteamID=" + id;
+				else
+					url += "?DiscordID=" + id;
+				request({ method: "GET", url: url }, function (err, response, body) {
 					if (err)
 						return sendEmbed(message.author, "There was an error. Send this to Pollie or Root", err);
 						
@@ -138,11 +140,16 @@ module.exports = {
 								
 						} else {
 							var info = body.split(" ");
+							id = info[info.length - 1];
 							for (let index = 0; index < info.length - 3; index++) oldTitle += info[index] + " ";
 						}
 					} else {
 						oldTitle = ":x: Couldn't fetch his title from the server"
 					}
+
+
+					let title = createTitle(args, 3);
+					setUsersTitle(id, title);
 
 					const embedlog = new Discord.MessageEmbed()
 						.setColor([255, 255, 0])
@@ -175,9 +182,13 @@ module.exports = {
 				else 
 					id = args[2];
 
-				var url = config.keys.CheckdbURL + "?DiscordID=" + id;
+				let url = config.keys.CheckdbURL
+
+				if (id.length === 17)
+					url += "?SteamID=" + id;
+				else
+					url += "?DiscordID=" + id;
 				request({ method: "GET", url: url }, function (err, response, body) {
-					setUsersColour(id, args[3]);
 
 					if (err)
 						return sendEmbed(message.author, "There was an error. Send this to Pollie or Root", err);
@@ -193,11 +204,14 @@ module.exports = {
 								
 						} else {
 							var info = body.split(" ");
+							id = info[info.length - 1];
 							colour = info[info.length - 3];
 						}
 					} else {
 						colour = ":x: Couldn't fetch his title from the server"
 					}
+
+					setUsersColour(id, args[3]);
 
 					const embedlog = new Discord.MessageEmbed()
 						.setColor([255, 255, 0])
