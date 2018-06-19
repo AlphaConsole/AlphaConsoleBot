@@ -104,6 +104,9 @@ module.exports = {
 				if (titles.length > 5)
 					return sendEmbed(message.author, "AlphaConsole does not support more than 5 rotations in your custom title. Please try again.")
 
+				if (userTitle.includes("\n"))
+					return sendEmbed(message.author, "Your title cannot be multiple lines. It must be in 1 line.")
+
 				let valid = isValidTitle(message, blacklist, userTitle, serverInfo);
 				if (valid)
 					setUsersTitle(message.author.id, userTitle);
@@ -149,6 +152,8 @@ module.exports = {
 
 
 					let title = createTitle(args, 3);
+					if (title.includes("\n"))
+						return sendEmbed(message.author, "The title cannot be multiple lines. It must be in 1 line.")
 					setUsersTitle(id, title);
 
 					const embedlog = new Discord.MessageEmbed()
