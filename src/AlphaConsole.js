@@ -339,6 +339,10 @@ async function messageProcess(message) {
             require('./cmds/case').run(data);
             break;
 
+          case "givebeta":
+            require('./cmds/givebeta').run(data);
+            break;
+
           case "status":
             require('./cmds/status').run(data);
             break;

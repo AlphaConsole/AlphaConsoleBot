@@ -5,14 +5,26 @@ module.exports.run = (client, serverInfo, { sql, keys }, checkStatus) => {
 
     //* Check every minute (For automated unmutes etc...)
     let a = schedule.scheduleJob({ second: 1 }, function() {
-        sql.query("Select * from Members where MutedUntil IS NOT NULL", [], (err, res) => {
+        sql.query("Select * from Members where MutedUntil IS NOT NULL or tempBeta IS NOT NULL", [], (err, res) => {
             if (err) return console.error(err);
 
-            res.forEach(r => {
+            let mutes = res.filter(r => r.MutedUntil);
+            let betas = res.filter(r => r.tempBeta);
+
+            mutes.forEach(r => {
                 if (r.MutedUntil < new Date().getTime()) {
                     client.guilds.get(serverInfo.guildId).members.fetch(r.DiscordID).then(m => {
                         m.roles.remove(serverInfo.roles.muted);
                         sql.query('Update Members set MutedUntil = null where ID = ?', [ r.ID ]);
+                    }).catch(e => { })
+                }
+            });
+
+            betas.forEach(r => {
+                if (r.tempBeta < new Date().getTime()) {
+                    client.guilds.get(serverInfo.guildId).members.fetch(r.DiscordID).then(m => {
+                        m.roles.remove(serverInfo.roles.beta);
+                        sql.query('Update Members set tempBeta = null where ID = ?', [ r.ID ]);
                     }).catch(e => { })
                 }
             });
