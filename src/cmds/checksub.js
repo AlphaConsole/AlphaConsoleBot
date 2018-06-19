@@ -23,6 +23,7 @@ module.exports = {
 
         try {
             if (!message.member.isModerator) return;
+            if (args.length < 2) return sendEmbed(message.channel, "You must have forgotten the user", "`!checksub <Twitch name>`")
 
             let twitchName = "";
             for (let i = 1; i < args.length; i++) twitchName += args[i] + " ";
