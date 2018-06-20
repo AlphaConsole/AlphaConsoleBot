@@ -302,15 +302,19 @@ module.exports.botMessage = (client, serverInfo, sql, message) => {
         let data = JSON.parse(message.content);
         message.delete();
 
-        message.guild.channels.get(serverInfo.channels.ingameReports).send(
-            `**================================**\n` +
-            `Reports by <@${data.Issuer.DiscordID}>\n` +
-            `\`👍 ${data.Issuer.GoodReports}\`\n` +
-            `\`👎 ${data.Issuer.BadReports}\`\n`
-        ).then(async m => {
-            await m.react("✅");
-            await m.react("❌");
-        })
+        if (data.Issuer.GoodReports) {
+
+            message.guild.channels.get(serverInfo.channels.ingameReports).send(
+                `**================================**\n` +
+                `Reports by <@${data.Issuer.DiscordID}>\n` +
+                `\`👍 ${data.Issuer.GoodReports}\`\n` +
+                `\`👎 ${data.Issuer.BadReports}\`\n`
+            ).then(async m => {
+                await m.react("✅");
+                await m.react("❌");
+            })
+
+        }
 
         for (let i = 0; i < data.Users.length; i++) {
             let r = data.Users[i];
