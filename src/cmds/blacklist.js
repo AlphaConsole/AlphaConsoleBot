@@ -28,7 +28,7 @@ module.exports = {
 
     run: async ({ client, serverInfo, message, args, sql, config, sendEmbed, checkStatus }) => {
 
-        if (!message.member.isAdmin) return;
+        if (!message.member.isSupport) return;
         if (args.length < 2) return sendEmbed(message.channel, "Incorrect Usage: !blacklist <check|add|remove> <word>")
         let blackListedWords = config.blacklistedWords;
 
@@ -41,6 +41,8 @@ module.exports = {
                 sendEmbed(message.channel, `${badWord} -> was not found in the blacklist`)
             
         } else if (args[1].toLowerCase() == "add") {
+            if (!message.member.isAdmin) return;
+
             var badWord = makeWord(args);
             var index = blackListedWords.indexOf(badWord);
 
@@ -52,6 +54,8 @@ module.exports = {
                 sendEmbed(message.channel, `${badWord} -> is already in the blacklist`)
 
         } else if (args[1].toLowerCase() == "remove") {
+            if (!message.member.isAdmin) return;
+            
             var badWord = makeWord(args);
 
             var index = blackListedWords.indexOf(badWord);
