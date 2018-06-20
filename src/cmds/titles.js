@@ -53,6 +53,8 @@ module.exports = {
 							else if (body.toLowerCase().includes("the user does not exist"))
 								sendEmbed(message.author, "Hi, in order to use our custom title service you must authorize your discord account. \n" +
 								"Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.")
+							else
+								console.log("Somebody didn't receive a response from the bot due to unknown body response:", body);
 						} else {
 							if (body.toLowerCase().includes("done")) 
 								sendEmbed(message.author, `User Title update`, `Updated title of <@${id}> to \`${title}\``)
