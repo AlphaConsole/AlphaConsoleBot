@@ -25,7 +25,7 @@ module.exports.run = (client, serverInfo, config, checkStatus) => {
                 if (result[i].Config === "autoResponds") 
                     config[result[i].Config][result[i].Value1] = result[i].Value2
                 else 
-                    config[result[i].Config].push(result[i].Value1)
+                    config[result[i].Config].push(result[i].Value1.toLowerCase())
                 
             }
         }
