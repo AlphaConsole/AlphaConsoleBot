@@ -75,7 +75,7 @@ module.exports = {
 function makeWord(args) {
     var badWord = "";
     for (let index = 2; index < args.length; index++) {
-        badWord += " " + args[index];
+        badWord += " " + args[index].toLowerCase();
     }
     return badWord.trim();
 }
