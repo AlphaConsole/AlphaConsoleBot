@@ -21,16 +21,16 @@ module.exports = {
         if (!message.member.isModerator) return;
         if (args.length < 2) return sendEmbed(message.channel, "You must have forgotten the user", "`!Ban <@tag | user Id> <?Reason>`")
 
+        let reason = "";
+        for (i = 2; i < args.length; i++) reason += args[i] + " ";
+        if (reason === "") reason = "No reason provided";
+                
         let user = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
         message.guild.members.fetch(user).then(m => {
             require('../helpers/checkUser').run(sql, m.user, (err, user) => {
                 
                 if (isStaff(m, serverInfo)) 
                     return sendEmbed(message.channel, "You cannot ban a staff member.");
-
-                let reason = "";
-                for (i = 2; i < args.length; i++) reason += args[i] + " ";
-                if (reason === "") reason = "No reason provided";
 
                 m.ban({ reason: reason });
 
@@ -55,8 +55,33 @@ module.exports = {
 
             });
         }).catch(e => {
-            if (e.message.startsWith("user_id: Value"))
-                sendEmbed(message.channel, "User not found..")
+            if (e.message == "Unknown Member") {
+                sql.query("Select * from Members where DiscordID = ?", [ user ], (err, res) => {
+                    let dbUser = res[0];
+                    if (dbUser) {
+                        sql.query("Update Members set Banned = 1 where DiscordID = ?", [ user ]);
+
+                        sql.query("Insert into `Logs`(Action, Member, Moderator, Reason, Time, ChannelID) values(?, ?, ?, ?, ?, ?)", 
+                        [ 'ban', user, message.author.id, reason, new Date().getTime(), message.channel.id ], (err, res) => {
+                            if (err) return console.error(err);
+
+                            let caseId = res.insertId;
+                            sendEmbed(message.channel, `Ban on rejoin. Case number: ${caseId}`, "I could not find the user in this server but I did find the user in the database.\nOn his next rejoin he'll automatically be banned.");
+
+                            const embedlog = new Discord.MessageEmbed()
+                                .setColor([255, 255, 0])
+                                .setAuthor(`Case ${caseId} | User ban`, client.user.displayAvatarURL({ format: "png" }))
+                                .setDescription(`**${dbUser.Username}** (${ user }) has been banned by ${message.member}`)
+                                .setTimestamp()
+                                .addField("Reason", reason);
+                            message.guild.channels.get(serverInfo.channels.modlog).send(embedlog).then(msg => {
+                                sql.query(`update Logs set MessageID = ? where ID = ?`, [ msg.id, caseId ]);
+                            });
+
+                        });
+                    }
+                })
+            }
             else
                 console.log(e);
         })

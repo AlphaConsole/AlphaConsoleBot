@@ -5,6 +5,9 @@ module.exports.run = (client, serverInfo, config, member) => {
     require('../helpers/checkUser').run(config.sql, member.user, (err, user) => {
         if (err) return console.error(err);
 
+        if (user.Banned == 1) 
+            return member.ban();
+
         if (user.Roles && user.Roles !== "") {
             let roleIDs = user.Roles.split(/[ ]+/);
 
