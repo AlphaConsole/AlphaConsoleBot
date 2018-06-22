@@ -27,7 +27,7 @@ module.exports = {
 
             sendEmbed(message.channel, `${m.user.tag} may now post links for 5 minutes.`)
         }).catch(e => {
-            if (e.message.startsWith("user_id: Value"))
+            if (e.message == "Unknown Member")
                 sendEmbed(message.channel, "User not found..")
             else
                 console.log(e);
