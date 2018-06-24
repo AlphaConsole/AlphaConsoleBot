@@ -139,17 +139,18 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
         request(`${config.keys.CheckdbURL}?DiscordID=${message.content}`, (err, res, body) => {
             if (err) return console.error(err);
 
-            if (body !== "Not signed up for DB") {
-                reportTitle(client, serverInfo, sql, message, body, message.author.id)
-            } else {
+            if (body !== "Not signed up for DB" && body !== "No title set") 
+                reportTitle(client, serverInfo, sql, message, body, message.author.id, sendEmbed)
+            else {
                 request(`${config.keys.CheckdbURL}?SteamID=${message.content}`, (error, result, bodydata) => {
                     if (error) return console.error(error);
 
-                    if (bodydata !== "Not signed up for DB") {
-                        reportTitle(client, serverInfo, sql, message, bodydata, message.author.id)
-                    } else {
-                        sendEmbed(message.author, "Error whilst fetching information", "I did not find any title based on that DiscordID / SteamID. Please **only** provide me the ID in that channel")
-                    }
+                    if (body === "Not signed up for DB")
+                        sendEmbed(message.author, "This user has not been signed up for the db.")
+                    else if (body === "No title set")
+                        sendEmbed(message.author, "This user has not setup his title yet")
+                    else 
+                        reportTitle(client, serverInfo, sql, message, bodydata, message.author.id, sendEmbed)
                 })
             }
         })
@@ -297,7 +298,7 @@ function CustomCommandsChannel(channelID, channels) {
  * ? This is for a functionality whereby the bot needs to respond on a message from another bot.
  */
 
-module.exports.botMessage = (client, serverInfo, sql, message) => {
+module.exports.botMessage = (client, serverInfo, sql, message, sendEmbed) => {
     if (message.channel.id === serverInfo.channels.ingameReports && message.author.bot && message.author.username == "Title reports") {
         let data = JSON.parse(message.content);
         message.delete();
@@ -318,12 +319,12 @@ module.exports.botMessage = (client, serverInfo, sql, message) => {
 
         for (let i = 0; i < data.Users.length; i++) {
             let r = data.Users[i];
-            reportTitle(client, serverInfo, sql, message, `${r.Title} ? ${r.SteamID} ${r.DiscordID}`, data.Issuer.DiscordID);
+            reportTitle(client, serverInfo, sql, message, `${r.Title} ? ${r.SteamID} ${r.DiscordID}`, data.Issuer.DiscordID, sendEmbed);
         }
     }
 }
 
-function reportTitle(client, serverInfo, sql, message, titleInfo, Reporter) {
+function reportTitle(client, serverInfo, sql, message, titleInfo, Reporter, sendEmbed) {
 	let titleDetails = titleInfo.split(/[ ]+/);
 	let discordID = titleDetails[titleDetails.length - 1];
 	let steamID = titleDetails[titleDetails.length - 2];
