@@ -241,6 +241,11 @@ async function messageProcess(message) {
             require('./cmds/checkdb').run(data);
             break;
 
+          case "checkwhitelist":
+          case "checkw":
+            require('./cmds/checkwhitelist').run(data);
+            break;
+
           case "togglelinks":
             require('./cmds/toggleLinks').run(data);
             break;

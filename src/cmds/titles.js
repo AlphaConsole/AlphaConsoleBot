@@ -100,7 +100,7 @@ module.exports = {
 
 
 
-			function setTitle() {
+			async function setTitle() {
 				if (message.channel.id !== serverInfo.channels.setTitle || args.length < 3) return;
 				let userTitle = createTitle(args, 2);
 				let titles = userTitle.split(/[::]+/);
@@ -111,7 +111,7 @@ module.exports = {
 				if (userTitle.includes("\n"))
 					return sendEmbed(message.author, "Your title cannot be multiple lines. It must be in 1 line.")
 
-				let valid = isValidTitle(message, blacklist, userTitle, serverInfo);
+				let valid = await isValidTitle(message, blacklist, userTitle, serverInfo, sql);
 				if (valid)
 					setUsersTitle(message.author.id, userTitle);
 				else 
@@ -302,32 +302,45 @@ function createTitle(args, indexStart) {
 }
 
 
-function isValidTitle(message, blackListedWords, userTitle, serverInfo) {
-	var validTitle = true;
-	if (!message.member.isAdmin) {
-		if (message.member.isModerator) {
-			var exemptWords = ["alphaconsole", "mod", "moderator", "staff"];
-			validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
+function isValidTitle(message, blackListedWords, userTitle, serverInfo, sql) {
+	return new Promise((resolve, reject) => {
+		sql.query("Select * from TitleReports where DiscordID = ? AND Title = ? AND Permitted = 1", [ message.author.id, userTitle ], (err, res) => {
+			if (err) {
+				console.error(err);
+				return resolve(false);
+			}
 
-		} else if (message.member.isSupport) {
-			var exemptWords = ["alphaconsole", "support", "staff"];
-			validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
+			var validTitle = true;
 
-		} else if (message.member.isCH) {
-			var exemptWords = ["alphaconsole", "community helper"];
-			validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
-
-		} else if (message.member.roles.has(serverInfo.roles.legacy)) {
-			var exemptWords = ["alphaconsole", "legacy"];
-			validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
-
-		} else {
-			var exemptWords = [];
-			validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
-
-		}
-	}
-	return validTitle;
+			if (res[0])
+				resolve(validTitle)
+		
+			if (!message.member.isAdmin) {
+				if (message.member.isModerator) {
+					var exemptWords = ["alphaconsole", "mod", "moderator", "staff"];
+					validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
+		
+				} else if (message.member.isSupport) {
+					var exemptWords = ["alphaconsole", "support", "staff"];
+					validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
+		
+				} else if (message.member.isCH) {
+					var exemptWords = ["alphaconsole", "community helper"];
+					validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
+		
+				} else if (message.member.roles.has(serverInfo.roles.legacy)) {
+					var exemptWords = ["alphaconsole", "legacy"];
+					validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
+		
+				} else {
+					var exemptWords = [];
+					validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
+		
+				}
+			}
+			resolve(validTitle)
+		})
+	})
 }
 
 function inBlacklist(message, blackListedWords, userTitle, exemptWords) {
