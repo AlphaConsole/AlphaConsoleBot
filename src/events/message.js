@@ -333,17 +333,18 @@ function reportTitle(client, serverInfo, sql, message, titleInfo, Reporter, send
 	title = title.join(" ");
 
 	sql.query(`select * from TitleReports where SteamID = ? order by ID desc`, [ steamID ], (err, res) => {
-        if (res[0]) {
-            if (res[0].Permitted === 1) {
-                if (!message.author.bot) sendEmbed(message.author, "This user has been reported before and has been permitted to use this title.")
-                return;
-            }
-            if (res[0].Fixed === 0) {
-                if (!message.author.bot) sendEmbed(message.author, "This user has an open report currently.");
-                return;
-            }
-        }
+        let fixed = res.filter(t => t.Fixed === 0)[0];
+        let perms = res.filter(t => t.Title.toLowerCase() === title.toLowerCase() && t.Permitted === 1)[0];
 
+        if (fixed) {
+            if (!message.author.bot) sendEmbed(message.author, "This user has an open report currently.");
+            return;
+        }
+        if (perms) {
+            if (!message.author.bot) sendEmbed(message.author, "This user has been reported before and has been permitted to use this title.")
+            return;
+        }
+        
 		message.guild.channels.get(serverInfo.channels.ingameReports).send(`\`DiscordID: ${discordID} | SteamID: ${steamID} | title: ${title}\``).then(async m => {
 			sql.query(`Insert into TitleReports(DiscordID, SteamID, Title, Color, MessageID, Reporter) VALUES (?, ?, ?, ?, ?, ?)`, [ discordID, steamID, title, color, m.id, Reporter ])
 			await m.react("🔨");
