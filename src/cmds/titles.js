@@ -121,6 +121,7 @@ module.exports = {
 
 			function overrideTitle() {
 				if (!(message.member && message.member.isModerator) && !(member && member.isModerator)) return;
+				message.delete().catch(e => { })
 				if (message.mentions.users.first()) 
 					id = message.mentions.users.first().id;
 				else 
@@ -186,6 +187,8 @@ module.exports = {
 
 			function overrideColour() {
 				if (!(message.member && message.member.isModerator) && !(member && member.isModerator)) return;
+				message.delete().catch(e => { })
+
 				if (message.mentions.users.first()) 
 					id = message.mentions.users.first().id;
 				else 

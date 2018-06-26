@@ -46,7 +46,7 @@ module.exports.run = (client, serverInfo, config, reaction, user, sendEmbed) => 
         }
 
         //* Title reports
-        if (member.isAdmin && reaction.message.channel.id === serverInfo.channels.ingameReports) {
+        if ((member.isAdmin || member.isModerator) && reaction.message.channel.id === serverInfo.channels.ingameReports) {
 
             if (!reaction.message.content.startsWith("**===")) {
                 if (reaction._emoji.name == "🔨") {
