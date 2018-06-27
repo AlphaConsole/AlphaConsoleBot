@@ -30,7 +30,7 @@ module.exports = {
                     return message.channel.send("<a:typing:395451633930076190> **Fetching all Twitch users...**").then(m => {
                         getSubList(config.keys.TwitchClientID, config.keys.TwitchOauth).then(list => {
                             m.delete();
-                            
+
                             const embed = new Discord.MessageEmbed()
                                 .setAuthor(`There are currently ${list.length} subscribed to AlphaConsole!`, client.user.displayAvatarURL({ format: "png" }))
                                 .setColor([255, 255, 0])
@@ -154,7 +154,6 @@ async function getSubList(clientid, token) {
         subs = list;
         lastFetched = new Date().getTime();
 
-        console.log(subs.length, lastFetched)
         resolve(list);
     })
 }
