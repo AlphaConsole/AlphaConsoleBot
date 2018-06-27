@@ -337,6 +337,7 @@ async function messageProcess(message) {
             break;
 
           case "checksub":
+          case "subcount":
             require('./cmds/checksub').run(data);
             break;
 
