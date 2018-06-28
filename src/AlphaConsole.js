@@ -454,15 +454,19 @@ async function messageProcess(message) {
  * @param {String} message 
  * @param {String} desc (optional)
  */
-let sendEmbed = (channel, message, desc) => {
+let sendEmbed = (channel, message, desc, timeout) => {
   const embed = new Discord.MessageEmbed()
     .setColor([255, 255, 0])
     .setAuthor(message, client.user.displayAvatarURL({ format: "png" }));
     if (desc) embed.setDescription(desc)
-  channel.send(embed).catch(e => {
-    if (channel.tag) {
+  channel.send(embed)
+  .then(m => {
+    if (timeout)
+      m.delete({ timeout: timeout })
+  })
+  .catch(e => {
+    if (channel.tag) 
       client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.botSpam).send(`<@${channel.id}>, I could not DM you my message because you have your DM's disabled.`)
-    }
   });
 }
 
