@@ -21,35 +21,60 @@ module.exports = {
         if (!message.member.isAdmin) return;
         
         client.guilds
-            .get(serverInfo.guildId)
-            .channels.get(serverInfo.channels.setTitle)
-            .overwritePermissions(message.guild.id, {
-                SEND_MESSAGES: true
-            });
-        client.guilds
-            .get(serverInfo.guildId)
-            .channels.get(serverInfo.channels.showcase)
-            .overwritePermissions(message.guild.id, {
-                SEND_MESSAGES: true
-            });
-        client.guilds
-            .get(serverInfo.guildId)
-            .channels.get(serverInfo.channels.suggestion)
-            .overwritePermissions(message.guild.id, {
-                SEND_MESSAGES: true
-            });
-        client.guilds
-            .get(serverInfo.guildId)
-            .channels.get(serverInfo.channels.setSpecialTitle)
-            .overwritePermissions(message.guild.id, {
-                SEND_MESSAGES: true
-            });
-        client.guilds
-            .get(serverInfo.guildId)
-            .channels.get(serverInfo.channels.betaSteamIDS)
-            .overwritePermissions(message.guild.id, {
-                SEND_MESSAGES: true
-            });
+                .get(serverInfo.guildId)
+                .channels.get(serverInfo.channels.setTitle)
+                .overwritePermissions({
+                    overwrites: [
+                        {
+                           id: message.guild.id,
+                           allowed: ['SEND_MESSAGES'],
+                        },
+                    ]
+                });
+            client.guilds
+                .get(serverInfo.guildId)
+                .channels.get(serverInfo.channels.showcase)
+                .overwritePermissions({
+                    overwrites: [
+                        {
+                           id: message.guild.id,
+                           allowed: ['SEND_MESSAGES'],
+                        },
+                    ]
+                });
+            client.guilds
+                .get(serverInfo.guildId)
+                .channels.get(serverInfo.channels.suggestion)
+                .overwritePermissions({
+                    overwrites: [
+                        {
+                           id: message.guild.id,
+                           allowed: ['SEND_MESSAGES'],
+                        },
+                    ]
+                });
+            client.guilds
+                .get(serverInfo.guildId)
+                .channels.get(serverInfo.channels.setSpecialTitle)
+                .overwritePermissions({
+                    overwrites: [
+                        {
+                           id: message.guild.id,
+                           allowed: ['SEND_MESSAGES'],
+                        },
+                    ]
+                });
+            client.guilds
+                .get(serverInfo.guildId)
+                .channels.get(serverInfo.channels.betaSteamIDS)
+                .overwritePermissions({
+                    overwrites: [
+                        {
+                           id: message.guild.id,
+                           allowed: ['SEND_MESSAGES'],
+                        },
+                    ]
+                });
 
         sendEmbed(message.channel, "All bot reliant channels have been re-enabled.")
     }
