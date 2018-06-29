@@ -25,57 +25,32 @@ module.exports = {
             client.guilds
                 .get(serverInfo.guildId)
                 .channels.get(serverInfo.channels.setTitle)
-                .overwritePermissions({
-                    overwrites: [
-                        {
-                           id: message.guild.id,
-                           denied: ['SEND_MESSAGES'],
-                        },
-                    ]
+                .updateOverwrite(message.guild.id, {
+                    SEND_MESSAGES: false
                 });
             client.guilds
                 .get(serverInfo.guildId)
                 .channels.get(serverInfo.channels.showcase)
-                .overwritePermissions({
-                    overwrites: [
-                        {
-                           id: message.guild.id,
-                           denied: ['SEND_MESSAGES'],
-                        },
-                    ]
+                .updateOverwrite(message.guild.id, {
+                    SEND_MESSAGES: false
                 });
             client.guilds
                 .get(serverInfo.guildId)
                 .channels.get(serverInfo.channels.suggestion)
-                .overwritePermissions({
-                    overwrites: [
-                        {
-                           id: message.guild.id,
-                           denied: ['SEND_MESSAGES'],
-                        },
-                    ]
+                .updateOverwrite(message.guild.id, {
+                    SEND_MESSAGES: false
                 });
             client.guilds
                 .get(serverInfo.guildId)
                 .channels.get(serverInfo.channels.setSpecialTitle)
-                .overwritePermissions({
-                    overwrites: [
-                        {
-                           id: message.guild.id,
-                           denied: ['SEND_MESSAGES'],
-                        },
-                    ]
+                .updateOverwrite(message.guild.id, {
+                    SEND_MESSAGES: false
                 });
             client.guilds
                 .get(serverInfo.guildId)
                 .channels.get(serverInfo.channels.betaSteamIDS)
-                .overwritePermissions({
-                    overwrites: [
-                        {
-                           id: message.guild.id,
-                           denied: ['SEND_MESSAGES'],
-                        },
-                    ]
+                .updateOverwrite(message.guild.id, {
+                    SEND_MESSAGES: false
                 });
 
         } catch (error) {
