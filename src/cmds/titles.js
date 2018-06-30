@@ -20,6 +20,10 @@ module.exports = {
     ],
 
     run: ({ client, serverInfo, message, args, sql, config, sendEmbed, member }) => {
+		function saveTitleToLog(discordid, title, blacklisted) {
+			sql.query("Insert into TitlesLog(DiscordID, Title, Blacklisted, Date) VALUES(?, ?, ?, ?)", [ discordid, title, blacklisted ? 1 : 0, new Date().getTime() ])
+		}
+
 		try {
 			
 		
@@ -48,9 +52,10 @@ module.exports = {
 
 					if (body) {
 						if (args[0].toLowerCase() == "!set") {
-							if (body.toLowerCase().includes("done")) 
+							if (body.toLowerCase().includes("done")) {
 								if (!ignoreMsg) sendEmbed(message.author, "Your title has been updated to: `" + title + "`")
-							else if (body.toLowerCase().includes("the user does not exist"))
+								saveTitleToLog(message.author.id, title, false);
+							} else if (body.toLowerCase().includes("the user does not exist"))
 								sendEmbed(message.author, "Hi, in order to use our custom title service you must authorize your discord account. \n" +
 								"Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.")
 							else
@@ -114,9 +119,11 @@ module.exports = {
 				let valid = await isValidTitle(message, blacklist, userTitle, serverInfo, sql);
 				if (valid)
 					setUsersTitle(message.author.id, userTitle);
-				else 
+				else {
 					sendEmbed(message.author, "Error whilst setting title", "Your custom title was not set because it contained a blacklisted phrase. \n" +
-					"AlphaConsole does not allow faking of real titles. If you continue to try and bypass the blacklist system, it could result in loss of access to our custom titles.")
+						"AlphaConsole does not allow faking of real titles. If you continue to try and bypass the blacklist system, it could result in loss of access to our custom titles.")
+					saveTitleToLog(message.author.id, userTitle, true);
+				}
 			}
 
 			function overrideTitle() {
