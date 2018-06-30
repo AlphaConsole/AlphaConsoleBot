@@ -57,7 +57,7 @@ module.exports = {
 						if (args[0].toLowerCase() == "!set") {
 							if (body.toLowerCase().includes("done")) {
 								if (!ignoreMsg) sendEmbed(message.author, "Your title has been updated to: `" + title + "`")
-								saveTitleToLog(message.author.id, title, false);
+								saveTitleToLog(id, title, false);
 							} else if (body.toLowerCase().includes("the user does not exist"))
 								sendEmbed(message.author, "Hi, in order to use our custom title service you must authorize your discord account. \n" +
 								"Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.")
