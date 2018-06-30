@@ -31,6 +31,12 @@ module.exports = {
             sendEmbed(message.channel, `${m.user.tag} has been unmuted!`);
 
             require('../helpers/checkUser').run(sql, m.user, (err, user) => {
+                if (err) {
+                    let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                    console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                    return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+                }
+                
                 sql.query("Update Members set MutedUntil = null where DiscordID = ?", [ m.id ]);
             });
 

@@ -26,8 +26,11 @@ module.exports = {
             var id = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
             var url = config.keys.CheckdbURL + "?DiscordID=" + id;
             request({ method: "GET", url: url }, function (err, response, body) {
-                if (err)
-                    return sendEmbed(message.author, "There was an error. Send this to Pollie or Root", err);
+                if (err) {
+                    let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                    console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                    return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+                }
 
                 let result = "";
 

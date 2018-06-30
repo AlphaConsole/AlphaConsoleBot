@@ -23,6 +23,11 @@ module.exports = {
 
         let user = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
         sql.query("Select * from Logs where Member = ? order by Time desc", [ user ], (err, res) => {
+            if (err) {
+                let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+            }
 
             let mutes = res.filter(c => c.Action === "mute");
             let warns = res.filter(c => c.Action === "warn");

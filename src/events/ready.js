@@ -52,7 +52,7 @@ module.exports.run = (client, serverInfo, config, checkStatus) => {
                 })
             }
         }
-    })
+    });
 
     /**
      * ! Channel messages fetching

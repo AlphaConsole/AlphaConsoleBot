@@ -18,7 +18,11 @@ module.exports = {
         if (!message.member.isCH) return;
         
         sql.query("Select * from Commands", [], (err, rows) => {
-            if (err) return console.error(err);
+            if (err) {
+                let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+            }
 
             let allCommands = "";
             rows.forEach(row => {

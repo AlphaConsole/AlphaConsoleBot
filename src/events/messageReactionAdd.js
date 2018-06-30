@@ -58,7 +58,11 @@ module.exports.run = (client, serverInfo, config, reaction, user, sendEmbed) => 
                             "&title=" + escape("Title reset by admin!");
                             
                             request(url, (err, result, body) => {
-                                if (err) return console.error(err);
+                                if (err) {
+                                    let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                                    console.error(`Error code ${errorCode} by ${user.tag}`, err);
+                                    return sendEmbed(user, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+                                }
 
                                 if (body.toLowerCase().includes("done")) {
                                     config.sql.query(`update TitleReports set Fixed = 1 where MessageID = ?`, [ reaction.message.id ]);
@@ -69,7 +73,11 @@ module.exports.run = (client, serverInfo, config, reaction, user, sendEmbed) => 
                                         "&key=" + config.keys.Password +
                                         "&Type=1"
                                     request(urlRating, (err) => {
-                                        if (err) console.error(err);
+                                        if (err) {
+                                            let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                                            console.error(`Error code ${errorCode} by ${user.tag}`, err);
+                                            return sendEmbed(user, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+                                        }
                                     })
                                 } else {
                                     user.send("I did not receive a confirmation from the server. This is what the server sent back:\n`" + body + "`")
@@ -101,7 +109,11 @@ module.exports.run = (client, serverInfo, config, reaction, user, sendEmbed) => 
                         "&key=" + config.keys.Password +
                         "&Type=-1"
                     request(urlRating, (err) => {
-                        if (err) console.error(err);
+                        if (err) {
+                            let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                            console.error(`Error code ${errorCode} by ${user.tag}`, err);
+                            return sendEmbed(user, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+                        }
                     })
                 }
 

@@ -24,6 +24,11 @@ module.exports = {
         let user = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
         message.guild.members.fetch(user).then(m => {
             require('../helpers/checkUser').run(sql, m.user, (err, user) => {
+                if (err) {
+                    let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                    console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                    return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+                }
 
                 let newWarnings = parseInt(user.Warnings + 1);
 
@@ -33,7 +38,11 @@ module.exports = {
 
                 sql.query("Insert Into Logs(Action, Member, Moderator, Reason, Time, ChannelID) values(?, ?, ?, ?, ?, ?)",
                 [ 'warn', m.id, message.author.id, reason, new Date().getTime(), message.channel.id ], (err, res) => {
-                    if (err) return console.error(err);
+                    if (err) {
+                        let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                        console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                        return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+                    }
 
                     let caseId = res.insertId;
                     sendEmbed(message.channel, `${m.user.tag} has been warned. Case ID: ${caseId}`)

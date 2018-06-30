@@ -47,8 +47,11 @@ module.exports = {
 					"&key=" + keys.Password +
 					"&title=" + escape(title);
 				request({ method: "GET", url: url }, (err, res, body) => {
-					if (err)
-						return sendEmbed(message.author, "Their was an error updating your title. Please pm an admin.");
+					if (err) {
+						let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+						console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+						return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+					}
 
 					if (body) {
 						if (args[0].toLowerCase() == "!set") {
@@ -78,8 +81,11 @@ module.exports = {
 					"&key=" + keys.Password +
 					"&color=" + escape(colour);
 				request({ method: "GET", url: url }, (err, res, body) => {
-					if (err)
-						return sendEmbed(message.author, "Their was an error updating your colour. Please pm an admin.");
+					if (err) {
+						let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+						console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+						return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+					}
 
 					if (body) {
 						if (args[0].toLowerCase() == "!set") {
@@ -141,8 +147,11 @@ module.exports = {
 				else
 					url += "?DiscordID=" + id;
 				request({ method: "GET", url: url }, function (err, response, body) {
-					if (err)
-						return sendEmbed(message.author, "There was an error. Send this to Pollie or Root", err);
+					if (err) {
+						let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+						console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+						return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+					}
 						
 					let oldTitle = "";
 
@@ -208,9 +217,11 @@ module.exports = {
 				else
 					url += "?DiscordID=" + id;
 				request({ method: "GET", url: url }, function (err, response, body) {
-
-					if (err)
-						return sendEmbed(message.author, "There was an error. Send this to Pollie or Root", err);
+					if (err) {
+						let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+						console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+						return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+					}
 						
 					let colour = "";
 
@@ -248,7 +259,11 @@ module.exports = {
 				if (message.channel.id !== serverInfo.channels.setSpecialTitle || args.length < 3) return;
 
 				sql.query("select * from SpecialTitles where ID = ?", [ args[2] ], (err, res) => {
-					if (err) return console.error(err);
+					if (err) {
+						let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+						console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+						return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+					}
 
 					if (res.length === 0) return sendEmbed(message.author, "Error setting special title", "No special title found with provided id.");
 					

@@ -41,7 +41,11 @@ module.exports = {
                 return sendEmbed(message.channel, "Incorrect parameter. Please use mention/discordID/steamID")
             }
             request({ method: "GET", url: url }, function (err, response, body) {
-                if (err) return console.error(err);
+                if (err) {
+                    let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                    console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                    return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+                }
 
 
                 if (body) {
