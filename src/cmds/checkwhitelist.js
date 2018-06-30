@@ -29,7 +29,11 @@ module.exports = {
         try {
             var id = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
             sql.query("Select * from TitleReports where (DiscordID = ? OR SteamID = ?)  AND Permitted = 1", [ id, id ], (err, res) => {
-                if (err) return console.error(err);
+                if (err) {
+                    let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                    console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                    return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+                }
 
                 let text = "";
                 for (let i = 0; i < res.length; i++) text += `- \`${res[i].Title}\``;

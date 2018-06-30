@@ -80,7 +80,11 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
     // ! End of filters. Start of other functionalities
     if (message.content.startsWith('!') && !CustomCommandsChannel(message.channel.id, serverInfo.channels)) {
         sql.query('select * from Commands where Command = ?', [ cmd ], (err, res) => {
-            if (err) return console.error(err);
+            if (err) {
+                let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+            }
 
             if (res.length !== 0) {
                 let user = message.mentions.users.first() ? message.mentions.users.first().id : args.length === 1 ? "123456" : args[1];
@@ -101,6 +105,12 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
         }
 
         require('../helpers/checkUser').run(sql, message.author, async (err, user) => {
+            if (err) {
+                let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+            }
+
             if (user.Showcase < new Date().getTime()) {
                 await message.react("👍");
                 await message.react("👎");
@@ -117,6 +127,12 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
 
     if (message.channel.id === serverInfo.channels.suggestion) {
         require('../helpers/checkUser').run(sql, message.author, async (err, user) => {
+            if (err) {
+                let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+            }
+
             if (user.Suggestion < new Date().getTime()) {
                 await message.react("👍");
                 await message.react("👎");
@@ -137,13 +153,21 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
 
         let request = require("request");
         request(`${config.keys.CheckdbURL}?DiscordID=${message.content}`, (err, res, body) => {
-            if (err) return console.error(err);
+            if (err) {
+                    let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                    console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                    return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+                }
 
             if (body !== "Not signed up for DB" && body !== "No title set") 
                 reportTitle(client, serverInfo, sql, message, body, message.author.id, sendEmbed)
             else {
                 request(`${config.keys.CheckdbURL}?SteamID=${message.content}`, (error, result, bodydata) => {
-                    if (error) return console.error(error);
+                    if (error) {
+                        let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                        console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                        return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+                    }
 
                     if (body === "Not signed up for DB")
                         sendEmbed(message.author, "This user has not been signed up for the db.")
@@ -170,8 +194,11 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
                 "&key=" + keys.Password +
                 "&SteamID=" + steamID;
             request({ method: "GET", url: url }, function (err, response, body) {
-                if (err)
-                    return member.send("An error occured. Please try again later.");
+                if (err) {
+                    let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                    console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                    return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+                }
 
                 if (body) 
                     member.send(body);    
@@ -216,8 +243,9 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
                         },
                         function (err, response, body) {
                             if (err) {
-                                sendEmbed(message.author, "An error occured. Please try again later.");
-                                return;
+                                let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                                console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                                return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
                             } else {
                                 if (body) {
                                     var jsonObject = JSON.parse(body);
@@ -361,7 +389,12 @@ function postPin(client, message, sql, serverInfo, something) {
 		.setAuthor("Make sure to read the pins before sending a message here!", client.user.displayAvatarURL({ format: "png" }));
 
 	sql.query(`select * from Misc where value = ?`, [ something ], (err, res) => {
-        if (err) return console.error(err);
+        if (err) {
+            let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+            console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+            return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+        }
+        
         let sugg = res[0];
 
 		if (sugg) {

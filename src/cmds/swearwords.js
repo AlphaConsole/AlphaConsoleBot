@@ -31,6 +31,12 @@ module.exports = {
 
         if (args.length === 1) {
             sql.query("Select * from Config where Config = 'swearwords'", [], (err, res) => {
+                if (err) {
+                    let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                    console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                    return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+                }
+
                 let output = "";
                 for (let i = 0; i < res.length; i++) output += `\`${res[i].ID}.\` ${res[i].Value1}\n`;
 
@@ -57,7 +63,11 @@ module.exports = {
             if (args.length < 3) return sendEmbed(message.channel, "You did not include the ID to remove.");
 
             sql.query("Select * from Config where Config = 'swearwords' and ID = ?", [ args[2] ], (err, res) => {
-                if (err) return console.error(err);
+                if (err) {
+                    let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                    console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                    return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+                }
 
                 if (res.length === 0) return sendEmbed(message.channel, "No swearword found with this ID.");
 

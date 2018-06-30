@@ -22,7 +22,11 @@ module.exports = {
         let command = args[1].startsWith('!') ? args[1].substring(1,0) : args[1];
 
         sql.query("Select * from Commands where Command = ?", [ command ], (err, res) => {
-            if (err) return console.error(err);
+            if (err) {
+                let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+            }
             if (res.length === 0) return sendEmbed(message.channel, `Command "${command}" not found!`);
 
             sql.query("delete from Commands where Command = ?", [ command ]);

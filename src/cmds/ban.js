@@ -28,6 +28,11 @@ module.exports = {
         let user = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
         message.guild.members.fetch(user).then(m => {
             require('../helpers/checkUser').run(sql, m.user, (err, user) => {
+                if (err) {
+                    let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                    console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                    return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+                }
                 
                 if (isStaff(m, serverInfo)) 
                     return sendEmbed(message.channel, "You cannot ban a staff member.");
@@ -36,7 +41,11 @@ module.exports = {
 
                 sql.query("Insert into `Logs`(Action, Member, Moderator, Reason, Time, ChannelID) values(?, ?, ?, ?, ?, ?)", 
                 [ 'ban', m.id, message.author.id, reason, new Date().getTime(), message.channel.id ], (err, res) => {
-                    if (err) return console.error(err);
+                    if (err) {
+                        let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                        console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                        return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+                    }
 
                     let caseId = res.insertId;
                     sendEmbed(message.channel, `${m.user.tag} has been banned from the server. Case number: ${caseId}`);
@@ -63,7 +72,11 @@ module.exports = {
 
                         sql.query("Insert into `Logs`(Action, Member, Moderator, Reason, Time, ChannelID) values(?, ?, ?, ?, ?, ?)", 
                         [ 'ban', user, message.author.id, reason, new Date().getTime(), message.channel.id ], (err, res) => {
-                            if (err) return console.error(err);
+                            if (err) {
+                                let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                                console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                                return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+                            }
 
                             let caseId = res.insertId;
                             sendEmbed(message.channel, `Ban on rejoin. Case number: ${caseId}`, "I could not find the user in this server but I did find the user in the database.\nOn his next rejoin he'll automatically be banned.");

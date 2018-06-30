@@ -34,7 +34,11 @@ module.exports = {
             let caseId = args[1];
 
             sql.query("Select * from Logs where ID = ?", [ caseId ], (err, res) => {
-                if (err) return console.error(err);
+                if (err) {
+                    let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                    console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                    return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+                }
 
                 let row = res[0];
                 if (row) {
@@ -71,7 +75,11 @@ module.exports = {
             if (reason === "") reason = "No reason provided";
 
             sql.query("Update Logs set Reason = ? where ID = ?", [ reason, caseId ], (err, res) => {
-                if (err) return console.error(err);
+                if (err) {
+                    let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                    console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                    return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+                }
 
                 if (res.affectedRows === 0) 
                     sendEmbed(message.channel, "No case found with this id.")
@@ -84,7 +92,11 @@ module.exports = {
             let caseId = args[2];
 
             sql.query("delete from Logs where ID = ?", [ caseId ], (err, res) => {
-                if (err) return console.error(err);
+                if (err) {
+                    let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                    console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                    return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+                }
 
                 if (res.affectedRows === 0) 
                     sendEmbed(message.channel, "No case found with this id.")

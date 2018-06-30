@@ -24,6 +24,11 @@ module.exports = {
         let user = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
         message.guild.members.fetch(user).then(m => {
             require('../helpers/checkUser').run(sql, m.user, (err, user) => {
+                if (err) {
+                    let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                    console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                    return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+                }
                 
                 m.roles.add(serverInfo.roles.beta);
                 let betaUntil = new Date().getTime() + 86400000;

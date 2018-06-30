@@ -20,6 +20,10 @@ module.exports = {
     ],
 
     run: ({ client, serverInfo, message, args, sql, config, sendEmbed, member }) => {
+		function saveTitleToLog(discordid, title, blacklisted) {
+			sql.query("Insert into TitlesLog(DiscordID, Title, Blacklisted, Date) VALUES(?, ?, ?, ?)", [ discordid, title, blacklisted ? 1 : 0, new Date().getTime() ])
+		}
+
 		try {
 			
 		
@@ -43,14 +47,18 @@ module.exports = {
 					"&key=" + keys.Password +
 					"&title=" + escape(title);
 				request({ method: "GET", url: url }, (err, res, body) => {
-					if (err)
-						return sendEmbed(message.author, "Their was an error updating your title. Please pm an admin.");
+					if (err) {
+						let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+						console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+						return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+					}
 
 					if (body) {
 						if (args[0].toLowerCase() == "!set") {
-							if (body.toLowerCase().includes("done")) 
+							if (body.toLowerCase().includes("done")) {
 								if (!ignoreMsg) sendEmbed(message.author, "Your title has been updated to: `" + title + "`")
-							else if (body.toLowerCase().includes("the user does not exist"))
+								saveTitleToLog(message.author.id, title, false);
+							} else if (body.toLowerCase().includes("the user does not exist"))
 								sendEmbed(message.author, "Hi, in order to use our custom title service you must authorize your discord account. \n" +
 								"Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.")
 							else
@@ -73,8 +81,11 @@ module.exports = {
 					"&key=" + keys.Password +
 					"&color=" + escape(colour);
 				request({ method: "GET", url: url }, (err, res, body) => {
-					if (err)
-						return sendEmbed(message.author, "Their was an error updating your colour. Please pm an admin.");
+					if (err) {
+						let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+						console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+						return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+					}
 
 					if (body) {
 						if (args[0].toLowerCase() == "!set") {
@@ -114,9 +125,11 @@ module.exports = {
 				let valid = await isValidTitle(message, blacklist, userTitle, serverInfo, sql);
 				if (valid)
 					setUsersTitle(message.author.id, userTitle);
-				else 
+				else {
 					sendEmbed(message.author, "Error whilst setting title", "Your custom title was not set because it contained a blacklisted phrase. \n" +
-					"AlphaConsole does not allow faking of real titles. If you continue to try and bypass the blacklist system, it could result in loss of access to our custom titles.")
+						"AlphaConsole does not allow faking of real titles. If you continue to try and bypass the blacklist system, it could result in loss of access to our custom titles.")
+					saveTitleToLog(message.author.id, userTitle, true);
+				}
 			}
 
 			function overrideTitle() {
@@ -134,8 +147,11 @@ module.exports = {
 				else
 					url += "?DiscordID=" + id;
 				request({ method: "GET", url: url }, function (err, response, body) {
-					if (err)
-						return sendEmbed(message.author, "There was an error. Send this to Pollie or Root", err);
+					if (err) {
+						let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+						console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+						return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+					}
 						
 					let oldTitle = "";
 
@@ -201,9 +217,11 @@ module.exports = {
 				else
 					url += "?DiscordID=" + id;
 				request({ method: "GET", url: url }, function (err, response, body) {
-
-					if (err)
-						return sendEmbed(message.author, "There was an error. Send this to Pollie or Root", err);
+					if (err) {
+						let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+						console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+						return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+					}
 						
 					let colour = "";
 
@@ -241,7 +259,11 @@ module.exports = {
 				if (message.channel.id !== serverInfo.channels.setSpecialTitle || args.length < 3) return;
 
 				sql.query("select * from SpecialTitles where ID = ?", [ args[2] ], (err, res) => {
-					if (err) return console.error(err);
+					if (err) {
+						let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+						console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+						return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+					}
 
 					if (res.length === 0) return sendEmbed(message.author, "Error setting special title", "No special title found with provided id.");
 					

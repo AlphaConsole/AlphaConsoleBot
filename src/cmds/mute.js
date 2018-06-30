@@ -76,6 +76,12 @@ module.exports = {
             if (reason === "") reason = "No reason provided";
 
             require('../helpers/checkUser').run(sql, m.user, (err, user) => {
+                if (err) {
+                    let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                    console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                    return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+                }
+
                 m.roles.add(serverInfo.roles.muted);
 
                 m.send(timeArg == 0 ?
@@ -91,7 +97,11 @@ module.exports = {
                 //* Let's save it in the logs asswel for future reference
                 sql.query("Insert into `Logs`(Action, Member, Moderator, value, Reason, Time, ChannelID) values(?, ?, ?, ?, ?, ?, ?)", 
                 [ 'mute', m.id, message.author.id, timeArg, reason, new Date().getTime(), message.channel.id ], (err, res) => {
-                    if (err) return console.error(err);
+                    if (err) {
+                        let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                        console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                        return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+                    }
 
                     let caseId = res.insertId;
                     sendEmbed(message.channel, timeArg == 0 ?

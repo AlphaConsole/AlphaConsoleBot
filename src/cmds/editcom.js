@@ -36,7 +36,11 @@ module.exports = {
         }
 
         sql.query("Select * from Commands where Command = ?", [ command ], (err, res) => {
-            if (err) return console.error(err);
+            if (err) {
+                let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+                return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+            }
             if (res.length === 0) return sendEmbed(message.channel, `Command "${command}" not found!`);
 
             sql.query("update Commands set Response = ? where Command = ?", [ response, command ]);
