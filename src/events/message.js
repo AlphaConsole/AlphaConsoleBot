@@ -297,7 +297,8 @@ function AutoResponseChannel(channelID, channels) {
 	if (channelID === channels.showcase) return true;
 	if (channelID === channels.suggestion) return true;
 	if (channelID === channels.staff) return true;
-	if (channelID === channels.slaughter) return true;
+    if (channelID === channels.slaughter) return true;
+    if (channelID === channels.botConfig) return true;
 	//Else return false
 	return false;
 }
