@@ -32,7 +32,7 @@ module.exports.run = (client, serverInfo, config, reaction, user, sendEmbed) => 
 
             //* Suggestion deletion
             if (reaction.message.channel.id === serverInfo.channels.suggestion) {
-                user.send(`Please respond with the reason why you deleted the shosuggestionwcase. \n**This reason will be logged & sent to the user** \nYou have 30 seconds to respond.`)
+                user.send(`Please respond with the reason why you deleted the suggestion. \n**This reason will be logged & sent to the user** \nYou have 30 seconds to respond.`)
                 .then(msg => {
                     msg.channel.awaitMessages(response => response.content, { max: 1, time: 30000, errors: ["time"] }).then(collected => {
                         let reason = collected.first().content;

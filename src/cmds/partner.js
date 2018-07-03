@@ -13,7 +13,7 @@ module.exports = {
     ],
 
   run: async ({ client, serverInfo, message, args, sql, config }) => {
-    if (message.channel.id !== serverInfo.channels.editPartners || !message.member.isAdmin) return; // Ignore it if it's not in the edit partner channel
+    if (message.channel.id !== serverInfo.channels.editPartners || !message.member.isModerator) return; // Ignore it if it's not in the edit partner channel
 
     message.delete(500); // Delete the message, we don't need it
 
