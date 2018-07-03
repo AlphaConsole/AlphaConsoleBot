@@ -125,7 +125,6 @@ module.exports.run = (client, serverInfo, config, reaction, user, sendEmbed) => 
             }
         }
 
-        console.log(reaction.message.channel.id, serverInfo.channels.partners)
         if (`:${reaction.emoji.name}:${reaction.emoji.id}` == serverInfo.partnerEmoji && reaction.message.channel.id === serverInfo.channels.partners) {
             
             // Reacted to message, remove reaction, send messages
