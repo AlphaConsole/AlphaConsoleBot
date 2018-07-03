@@ -47,7 +47,7 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
     }
 
     //* Invite guard
-    if (!message.member.isAdmin) {
+    if (!message.member.isModerator) {
         if (!(config.permits[message.author.id] && config.permits[message.author.id].channel === message.channel.id && config.permits[message.author.id].until > new Date().getTime())) {
             if ((message.content.toLowerCase().includes("discord.me/") || message.content.toLowerCase().includes("discord.gg/") || message.content.toLowerCase().includes("discordapp.com/invite/"))
                 && !message.content.toLowerCase().includes("discord.gg/alphaconsole")) {
