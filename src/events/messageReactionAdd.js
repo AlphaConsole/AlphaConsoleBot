@@ -7,6 +7,7 @@
  */
 const Discord = require('discord.js');
 const request = require('request');
+var cooldown = {};
 
 module.exports.run = (client, serverInfo, config, reaction, user, sendEmbed) => {
 
@@ -124,6 +125,24 @@ module.exports.run = (client, serverInfo, config, reaction, user, sendEmbed) => 
             }
         }
 
+        if (`:${reaction.emoji.name}:${reaction.emoji.id}` == serverInfo.partnerEmoji && reaction.message.channel.id === serverInfo.channels.partners) {
+            
+            // Reacted to message, remove reaction, send messages
+            reaction.users.remove(user);
+            if (cooldown[user.id] && cooldown[user.id] + 5000 > new Date().getTime()) return;
+            cooldown[user.id] = new Date().getTime();
+
+            var errChannel = reaction.message.guild.channels.get(serverInfo.channels.modlog);
+
+            config.sql.query("Select * from partners where id = ?", [ reaction.message.id ], (err, res) => {
+                if (!res[0]) 
+                    return sendEmbed(errChannel, "Partner Database Error", "Something has gone wrong getting the 'message_data' from the 'partners' table. That's all I know.")
+                
+                var data = JSON.parse(res[0].message_data);
+                sendMessages(user, data, serverInfo, config.sql, errChannel);
+            })
+        }
+
     });
     
     
@@ -195,4 +214,29 @@ function handleMessage(client, serverInfo, user, reaction, reason, event, sendEm
     embedLog.addField(`Deleted by`, `${user.tag}`);
     embedLog.addField("Reason:", reason);
     client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.aclog).send(embedLog);
+}
+
+
+function sendMessages(user, data, serverInfo, sql, errChannel) {
+    // format fo messages {type: "", content: "", url: "", react: bool, id: ""}
+    // if react then is partner message, and update db to new message id where message.id
+
+    return new Promise((resolve, reject) => {
+        var chain = Promise.resolve();
+        for (let message of data.messages) {
+            chain = chain.then(() => {
+                switch (message.type) {
+                    case "hybrid":
+                        return user.send(message.content, { files: [message.url] })
+                    case "file":
+                        return user.send("", { files: [message.url] })
+                    case "text":
+                        return user.send(message.content)
+                    default:
+                        reject("A Message Type error has occurred. Please contact an AlphaConsole Admin!");
+                }
+            });
+        }
+        chain = chain.then(resolve()).catch(err => reject(err));
+    });
 }
