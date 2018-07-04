@@ -581,7 +581,7 @@ async function updatePartnersChannel(client, sql, serverInfo, message) {
 
                         // Check if there are any partners, if there are add header for this type
                         if (rows.length > 0) {
-                            for (var i = 0; i < typeData.messages.length; i++) {
+                            /* for (var i = 0; i < typeData.messages.length; i++) {
                                 var mm = typeData.messages[i];
                                 update_messages_holder.messages.push({
                                     type: mm.type,
@@ -589,7 +589,7 @@ async function updatePartnersChannel(client, sql, serverInfo, message) {
                                     url: mm.url,
                                     react: false
                                 });
-                            }
+                            } */
                         } else
                         // No partners so type is done
                         doneTypes++;
