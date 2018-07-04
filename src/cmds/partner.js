@@ -621,7 +621,8 @@ async function updatePartnersChannel(client, sql, serverInfo, message) {
                                     content: mm.content,
                                     url: mm.url,
                                     react: i === partnerData.messages.length - 1 ? true : false,
-                                    id: "" + rowPartner.id
+                                    id: "" + rowPartner.id,
+                                    identifier: rowPartner.identifier
                                 });
                                 
                             }
@@ -699,7 +700,7 @@ function sendMessages(partnerChannel, data, serverInfo, sql) {
               .send("", { files: [message.url] })
               .then(newMessage => {
                 if (message.react) {
-                    sql.query(`UPDATE partners SET id=? WHERE id=?`, [ "" + newMessage.id, "" + message.id], (err) => {
+                    sql.query(`UPDATE partners SET id=? WHERE identifier=?`, [ "" + newMessage.id, message.identifier || message.id], (err) => {
                         if (err) {
                             console.error(err)
                             return sendEmbed(partnerChannel.guild.channels.get(serverInfo.channels.editPartners), "Something went wrong", `${err}`)
