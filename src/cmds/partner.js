@@ -573,7 +573,7 @@ async function updatePartnersChannel(client, sql, serverInfo, message) {
                 rowsType.forEach(rowType => {
                     var typeData = JSON.parse(rowType.json_data);
                     // Get all partners in this type
-                    sql.query(`SELECT * FROM partners WHERE type=? AND enabled=1`, [rowType.type], (error, rows) => {
+                    sql.query(`SELECT * FROM partners WHERE type=? AND enabled=1 order by partner_name`, [rowType.type], (error, rows) => {
                         if (error) return sendEmbed(message.channel, "Something went wrong!", `${error}`);
 
                         // For each partner
@@ -581,7 +581,7 @@ async function updatePartnersChannel(client, sql, serverInfo, message) {
 
                         // Check if there are any partners, if there are add header for this type
                         if (rows.length > 0) {
-                            for (var i = 0; i < typeData.messages.length; i++) {
+                            /* for (var i = 0; i < typeData.messages.length; i++) {
                                 var mm = typeData.messages[i];
                                 update_messages_holder.messages.push({
                                     type: mm.type,
@@ -589,7 +589,7 @@ async function updatePartnersChannel(client, sql, serverInfo, message) {
                                     url: mm.url,
                                     react: false
                                 });
-                            }
+                            } */
                         } else
                         // No partners so type is done
                         doneTypes++;
@@ -621,7 +621,8 @@ async function updatePartnersChannel(client, sql, serverInfo, message) {
                                     content: mm.content,
                                     url: mm.url,
                                     react: i === partnerData.messages.length - 1 ? true : false,
-                                    id: "" + rowPartner.id
+                                    id: "" + rowPartner.id,
+                                    identifier: rowPartner.identifier
                                 });
                                 
                             }
@@ -699,7 +700,7 @@ function sendMessages(partnerChannel, data, serverInfo, sql) {
               .send("", { files: [message.url] })
               .then(newMessage => {
                 if (message.react) {
-                    sql.query(`UPDATE partners SET id=? WHERE id=?`, [ "" + newMessage.id, "" + message.id], (err) => {
+                    sql.query(`UPDATE partners SET id=? WHERE identifier=?`, [ "" + newMessage.id, message.identifier || message.id], (err) => {
                         if (err) {
                             console.error(err)
                             return sendEmbed(partnerChannel.guild.channels.get(serverInfo.channels.editPartners), "Something went wrong", `${err}`)

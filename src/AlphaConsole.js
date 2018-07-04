@@ -368,6 +368,9 @@ async function messageProcess(message) {
           case "update":
             require('./cmds/update').run(data);
             break;
+
+          case "usercount":
+            if (message.member.isCH) sendEmbed(message.channel, `AlphaConsole currently has ${message.guild.memberCount} members`)
         
           default:
             break;
