@@ -385,35 +385,39 @@ function isValidTitle(message, blackListedWords, userTitle, serverInfo, sql, ste
 						if (userTitle.toLowerCase() === "pax champion" && data.titles.includes('PaxChampion')) return resolve(validTitle);
 						if (userTitle.toLowerCase() === "x games champion" && data.titles.includes('X_Games_Champion')) return resolve(validTitle);
 						if (userTitle.toLowerCase() === "eleague cup champion" && data.titles.includes('Eleague_Cup_Champion')) return resolve(validTitle);
-
-
 					}
 
-					if (!message.member.isAdmin) {
-						if (message.member.isModerator) {
-							var exemptWords = ["alphaconsole", "mod", "moderator", "staff"];
-							validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
-				
-						} else if (message.member.isSupport) {
-							var exemptWords = ["alphaconsole", "support", "staff"];
-							validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
-				
-						} else if (message.member.isCH) {
-							var exemptWords = ["alphaconsole", "community helper"];
-							validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
-				
-						} else if (message.member.roles.has(serverInfo.roles.legacy)) {
-							var exemptWords = ["alphaconsole", "legacy"];
-							validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
-				
-						} else {
-							var exemptWords = [];
-							validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
-				
-						}
-					}
-					resolve(validTitle)
+					con();
 				})
+			} else {
+				con();
+			}
+
+			function con() {
+				if (!message.member.isAdmin) {
+					if (message.member.isModerator) {
+						var exemptWords = ["alphaconsole", "mod", "moderator", "staff"];
+						validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
+			
+					} else if (message.member.isSupport) {
+						var exemptWords = ["alphaconsole", "support", "staff"];
+						validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
+			
+					} else if (message.member.isCH) {
+						var exemptWords = ["alphaconsole", "community helper"];
+						validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
+			
+					} else if (message.member.roles.has(serverInfo.roles.legacy)) {
+						var exemptWords = ["alphaconsole", "legacy"];
+						validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
+			
+					} else {
+						var exemptWords = [];
+						validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
+			
+					}
+				}
+				resolve(validTitle)
 			}
 		
 		})
