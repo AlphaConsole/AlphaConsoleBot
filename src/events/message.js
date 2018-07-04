@@ -59,7 +59,7 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
     }
 
     //* Auto responds
-    if (!message.member.isStaff && !AutoResponseChannel(message.channel.id, serverInfo.channels)) {
+    if (!message.member.isCH && !AutoResponseChannel(message.channel.id, serverInfo.channels)) {
         for (const word in config.autoResponds) {
             if (config.autoResponds.hasOwnProperty(word)) {
                 let words = word.split(/[ ]+/);
