@@ -357,7 +357,6 @@ function isValidTitle(message, blackListedWords, userTitle, serverInfo, sql, ste
 				}}, (req, res, body) => {
 					let data = JSON.parse(body);
 
-					console.log(data.titles)
 					if (data && data.titles) {
 						for (let i = 0; i < 15; i++) {
 							// Grand Champion titles
