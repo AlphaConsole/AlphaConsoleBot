@@ -120,16 +120,26 @@ module.exports = {
 					return sendEmbed(message.author, "AlphaConsole does not support more than 5 rotations in your custom title. Please try again.")
 
 				if (userTitle.includes("\n"))
-					return sendEmbed(message.author, "Your title cannot be multiple lines. It must be in 1 line.")
+					return sendEmbed(message.author, "Your title cannot be multiple lines. It must be in 1 line.");
 
-				let valid = await isValidTitle(message, blacklist, userTitle, serverInfo, sql);
-				if (valid)
-					setUsersTitle(message.author.id, userTitle);
-				else {
-					sendEmbed(message.author, "Error whilst setting title", "Your custom title was not set because it contained a blacklisted phrase. \n" +
-						"AlphaConsole does not allow faking of real titles. If you continue to try and bypass the blacklist system, it could result in loss of access to our custom titles.")
-					saveTitleToLog(message.author.id, userTitle, true);
-				}
+				let url = config.keys.CheckdbURL
+						+ "?DiscordID=" + message.author.id;
+				request({ method: "GET", url: url }, async function (err, response, body) {
+					let steamid = "";
+
+					if (body && (!body.toLowerCase().includes("not signed up for db") && !body.toLowerCase().includes("no title set")))
+						steamid = body.split(" ")[ body.split(" ").length - 2 ];
+
+					let valid = await isValidTitle(message, blacklist, userTitle, serverInfo, sql, steamid, config.keys.RL_API_Token);
+					if (valid)
+						setUsersTitle(message.author.id, userTitle);
+					else {
+						sendEmbed(message.author, "Error whilst setting title", "Your custom title was not set because it contained a blacklisted phrase. \n" +
+							"AlphaConsole does not allow faking of real titles. If you continue to try and bypass the blacklist system, it could result in loss of access to our custom titles.")
+						saveTitleToLog(message.author.id, userTitle, true);
+					}
+
+				});
 			}
 
 			function overrideTitle() {
@@ -327,7 +337,7 @@ function createTitle(args, indexStart) {
 }
 
 
-function isValidTitle(message, blackListedWords, userTitle, serverInfo, sql) {
+function isValidTitle(message, blackListedWords, userTitle, serverInfo, sql, steamid, apiToken) {
 	return new Promise((resolve, reject) => {
 		sql.query("Select * from TitleReports where DiscordID = ? AND Title = ? AND Permitted = 1", [ message.author.id, userTitle ], (err, res) => {
 			if (err) {
@@ -338,32 +348,75 @@ function isValidTitle(message, blackListedWords, userTitle, serverInfo, sql) {
 			var validTitle = true;
 
 			if (res[0])
-				resolve(validTitle)
-		
-			if (!message.member.isAdmin) {
-				if (message.member.isModerator) {
-					var exemptWords = ["alphaconsole", "mod", "moderator", "staff"];
-					validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
-		
-				} else if (message.member.isSupport) {
-					var exemptWords = ["alphaconsole", "support", "staff"];
-					validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
-		
-				} else if (message.member.isCH) {
-					var exemptWords = ["alphaconsole", "community helper"];
-					validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
-		
-				} else if (message.member.roles.has(serverInfo.roles.legacy)) {
-					var exemptWords = ["alphaconsole", "legacy"];
-					validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
-		
-				} else {
-					var exemptWords = [];
-					validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
-		
-				}
+				return resolve(validTitle)
+
+			if (steamid) {
+				request(`https://api.rocketleague.com/api/v1/steam/playertitles/${steamid}?format=json`,
+				{ headers: {
+					Authorization: `Token ${apiToken}`
+				}}, (req, res, body) => {
+					let data = JSON.parse(body);
+
+					console.log(data.titles)
+					if (data && data.titles) {
+						for (let i = 0; i < 15; i++) {
+							// Grand Champion titles
+							if (userTitle.toLowerCase() === `season ${i} grand champion` && data.titles.includes(`Season${i}GrandChampion`)) return resolve(validTitle);
+
+							let di = i.toString().length === 1 ? `0${i}` : i;
+
+							// RLCS Titles
+							if (userTitle.toLowerCase() === `rlcs season ${i} contender` && data.titles.includes(`RLCS_${di}_Contender`)) return resolve(validTitle);
+							if (userTitle.toLowerCase() === `rlcs season ${i} elite` && data.titles.includes(`RLCS_${di}_Elite`)) return resolve(validTitle);
+							if (userTitle.toLowerCase() === `rlcs season ${i} grand finalist` && data.titles.includes(`RLCS_${di}_Grand_Finalist`)) return resolve(validTitle);
+							if (userTitle.toLowerCase() === `rlcs season ${i} world champion` && data.titles.includes(`RLCS_${di}_World_Champion`)) return resolve(validTitle);
+
+							// RLRS Titles
+							if (userTitle.toLowerCase() === `rlrs season ${i} challenger` && data.titles.includes(`RLRS_${di}_Challenger`)) return resolve(validTitle);
+						}
+
+						// ESL Titles
+						if (userTitle.toLowerCase() === "esl monthly elite" && data.titles.includes('ESLMonthlyElite')) return resolve(validTitle);
+						if (userTitle.toLowerCase() === "esl monthly champion" && data.titles.includes('ESLMonthlyChampion')) return resolve(validTitle);
+
+						//Other titles
+						if (userTitle.toLowerCase() === "dreamhack champion" && data.titles.includes('DreamHack_Champion')) return resolve(validTitle);
+						if (userTitle.toLowerCase() === "mlg season 1 champion" && data.titles.includes('MLGSeason1Champion')) return resolve(validTitle);
+						if (userTitle.toLowerCase() === "mlg season 1 elite" && data.titles.includes('MLGSeason1Elite')) return resolve(validTitle);
+						if (userTitle.toLowerCase() === "pax champion" && data.titles.includes('PaxChampion')) return resolve(validTitle);
+						if (userTitle.toLowerCase() === "x games champion" && data.titles.includes('X_Games_Champion')) return resolve(validTitle);
+						if (userTitle.toLowerCase() === "eleague cup champion" && data.titles.includes('Eleague_Cup_Champion')) return resolve(validTitle);
+
+
+					}
+
+					if (!message.member.isAdmin) {
+						if (message.member.isModerator) {
+							var exemptWords = ["alphaconsole", "mod", "moderator", "staff"];
+							validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
+				
+						} else if (message.member.isSupport) {
+							var exemptWords = ["alphaconsole", "support", "staff"];
+							validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
+				
+						} else if (message.member.isCH) {
+							var exemptWords = ["alphaconsole", "community helper"];
+							validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
+				
+						} else if (message.member.roles.has(serverInfo.roles.legacy)) {
+							var exemptWords = ["alphaconsole", "legacy"];
+							validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
+				
+						} else {
+							var exemptWords = [];
+							validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
+				
+						}
+					}
+					resolve(validTitle)
+				})
 			}
-			resolve(validTitle)
+		
 		})
 	})
 }
