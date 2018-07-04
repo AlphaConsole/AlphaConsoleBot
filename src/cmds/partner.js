@@ -573,7 +573,7 @@ async function updatePartnersChannel(client, sql, serverInfo, message) {
                 rowsType.forEach(rowType => {
                     var typeData = JSON.parse(rowType.json_data);
                     // Get all partners in this type
-                    sql.query(`SELECT * FROM partners WHERE type=? AND enabled=1`, [rowType.type], (error, rows) => {
+                    sql.query(`SELECT * FROM partners WHERE type=? AND enabled=1 order by partner_name`, [rowType.type], (error, rows) => {
                         if (error) return sendEmbed(message.channel, "Something went wrong!", `${error}`);
 
                         // For each partner
