@@ -14,6 +14,6 @@ module.exports.run = (client, serverInfo, config, message) => {
     let channel = message.channel.type === "text" ? `<#${message.channel.id}>` : '**DM**';
     client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.serverlog).send(
         `:pencil: \`[${new Date().toTimeString().split(" ")[0]}]\` ` + 
-        `**Channel: ${channel} ${message.author.tag}**'s message was deleted. Content: ${ResponseText}`
+        `**Channel: ${channel} ${message.author.tag}**'s (${message.author.id}) message was deleted. Content: ${ResponseText}`
     );
 }
