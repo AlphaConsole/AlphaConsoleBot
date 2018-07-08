@@ -323,6 +323,10 @@ async function messageProcess(message) {
             require('./cmds/ban').run(data);
             break;
 
+          case "unban":
+            require('./cmds/unban').run(data);
+            break;
+
           case "warn":
             require('./cmds/warn').run(data);
             break;
