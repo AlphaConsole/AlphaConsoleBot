@@ -112,7 +112,11 @@ module.exports = {
 
 
 			async function setTitle() {
-				if (message.channel.id !== serverInfo.channels.setTitle || args.length < 3) return;
+				if (message.channel.id !== serverInfo.channels.setTitle) {
+					sendEmbed(message.author, "Use the !set title command in #set-title!")
+					return message.delete().catch(e => { });
+				};
+				if (args.length < 3) return;
 				let userTitle = createTitle(args, 2);
 				let titles = userTitle.split(/[::]+/);
 
@@ -200,7 +204,10 @@ module.exports = {
 			}
 
 			function setColour() {
-				if (message.channel.id !== serverInfo.channels.setTitle || args.length < 3) return;
+				if (message.channel.id !== serverInfo.channels.setTitle) {
+					sendEmbed(message.author, "Use the !set color command in #set-title!")
+					return message.delete().catch(e => { });
+				};
 				let colours = args[2].split("::");
 
 				let valid = isValidColor(message, colours, serverInfo);

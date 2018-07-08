@@ -134,7 +134,7 @@ module.exports = {
     }
 };
 
-async function getSubList(clientid, token) {
+function getSubList(clientid, token) {
     return new Promise(async (resolve, reject) => {
         let link = `https://api.twitch.tv/kraken/channels/alphaconsole/subscriptions?direction=asc&limit=100&offset=`;
         let more = true;
