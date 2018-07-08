@@ -58,14 +58,16 @@ module.exports.run = (client, serverInfo, config, oldMember, newMember) => {
                 );
         
                 const embedlog = new Discord.MessageEmbed()
-                .setColor([255, 255, 0])
-                .setAuthor("New Twitch Subscriber!", serverInfo.logo)
-                .setDescription("<@" + newMember.id + "> subscribed to AlphaConsole!")
-                .setTimestamp();
-                client.guilds
-                .get(serverInfo.guildId)
-                .channels.get(serverInfo.channels.aclog)
-                .send(embedlog);
+                    .setColor([255, 255, 0])
+                    .setAuthor("New Twitch Subscriber!", serverInfo.logo)
+                    .setDescription("<@" + newMember.id + "> subscribed to AlphaConsole!")
+                    .setTimestamp();
+                    client.guilds
+                    .get(serverInfo.guildId)
+                    .channels.get(serverInfo.channels.aclog)
+                    .send(embedlog);
+
+                newMember.roles.remove(serverInfo.roles.tempRole);
             }
 
             //* User just lost Twitch Sub role
