@@ -53,6 +53,7 @@ let config = {
 client.on("ready", () => {
   require('./events/ready').run(client, serverInfo, config, checkStatus);
   require('./helpers/scheduled').run(client, serverInfo, config, checkStatus);
+  require('./helpers/api_calls').run(client, serverInfo, config, checkStatus);
 });
 
 //New member joins
