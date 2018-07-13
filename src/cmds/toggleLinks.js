@@ -29,7 +29,7 @@ module.exports = {
             const embedlog = new Discord.MessageEmbed()
               .setColor([255, 255, 0])
               .setAuthor("Togglelinks", client.user.displayAvatarURL())
-              .addField("Link protection disabled at",`**${message.channel.name}** (${message.channel})`)
+              .addField("Link protection enabled at",`**${message.channel.name}** (${message.channel})`)
               .addField("by",`**${message.member.user.tag}** (${message.member})`)
               .setThumbnail(message.author.displayAvatarURL())
               .setTimestamp();
@@ -43,7 +43,7 @@ module.exports = {
             const embedlog = new Discord.MessageEmbed()
               .setColor([255, 255, 0])
               .setAuthor("Togglelinks", client.user.displayAvatarURL())
-              .addField("Link protection enabled at",`**${message.channel.name}** (${message.channel})`)
+              .addField("Link protection disabled at",`**${message.channel.name}** (${message.channel})`)
               .addField("by",`**${message.member.user.tag}** (${message.member})`)
               .setThumbnail(message.author.displayAvatarURL())
               .setTimestamp();
