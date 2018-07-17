@@ -24,6 +24,7 @@ module.exports.run = (client, serverInfo, { sql, keys }, checkStatus) => {
                 if (r.tempBeta < new Date().getTime()) {
                     client.guilds.get(serverInfo.guildId).members.fetch(r.DiscordID).then(m => {
                         m.roles.remove(serverInfo.roles.beta);
+                        m.roles.remove(serverInfo.roles.tempRole);
                         sql.query('Update Members set tempBeta = null where ID = ?', [ r.ID ]);
                     }).catch(e => { })
                 }
