@@ -478,6 +478,7 @@ function isValidColor(message, colours, serverInfo) {
 
 function validUser(message, serverInfo) {
 	if (message.member.roles.has(serverInfo.roles.sub)) return true;
+	if (message.member.roles.has(serverInfo.roles.tempRole)) return true;
 	if (message.member.roles.has(serverInfo.roles.legacy)) return true;
 	if (message.member.roles.has(serverInfo.roles.orgPartner)) return true;
 	if (message.member.roles.has(serverInfo.roles.partnerP)) return true;
