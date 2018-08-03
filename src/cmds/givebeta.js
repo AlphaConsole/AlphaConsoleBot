@@ -1,5 +1,5 @@
 /**
- * ! Kick command
+ * ! givebeta command
  * 
  * ? Kinda obvious, too lazy to write anything smart anyway
  * ? We also have command description for a reason. So I actually don't know why I added this here. Welp...
@@ -7,12 +7,12 @@
 const Discord = require('discord.js');
 
 module.exports = {
-     title: "Kick",
+     title: "givebeta",
      details: [
         {
             perms      : "Moderator",
-            command    : "!Kick <@tag> <?Reason>",
-            description: "Kicks the person with the given reason"
+            command    : "!givebeta <@tag>",
+            description: "Give the beta role to @tag for 1 day"
         }
     ],
 
