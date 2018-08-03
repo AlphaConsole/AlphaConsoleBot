@@ -355,9 +355,11 @@ function isValidTitle(message, blackListedWords, userTitle, serverInfo, sql, ste
 			var validTitle = true;
 
 			if (res[0])
-				return resolve(validTitle)
+				return resolve(validTitle);
 
-			if (steamid) {
+			con();
+
+			/* if (steamid) {
 				request(`https://api.rocketleague.com/api/v1/steam/playertitles/${steamid}?format=json`,
 				{ headers: {
 					Authorization: `Token ${apiToken}`
@@ -398,7 +400,7 @@ function isValidTitle(message, blackListedWords, userTitle, serverInfo, sql, ste
 				})
 			} else {
 				con();
-			}
+			} */
 
 			function con() {
 				if (!message.member.isAdmin) {
