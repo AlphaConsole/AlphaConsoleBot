@@ -36,6 +36,16 @@ module.exports = {
                     }
                 }
 
+                if (args[1].toLowerCase() === "minecraft" || args[1].toLowerCase() === "mc") {
+                    if (message.member.roles.has(serverInfo.roles.mc)) {
+                        message.member.roles.remove(serverInfo.roles.mc);
+                        sendEmbed(message.channel, "Role removed from your profile.")
+                    } else {
+                        message.member.roles.add(serverInfo.roles.mc);
+                        sendEmbed(message.channel, "Role added to your profile.")
+                    }
+                }
+
             } 
         } else {
             if (message.member.isModerator && args.length > 2) {
