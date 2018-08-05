@@ -23,6 +23,7 @@ module.exports = {
     tempRole  : "466459885840629760",
 
     events    : "389384990087053312",
+    mc        : "381845840412540930", // Support ID, was just for testing
     muted     : "388505596615327774"
   },
 
