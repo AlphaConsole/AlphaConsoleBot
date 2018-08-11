@@ -98,6 +98,7 @@ function roleDisallowed(id, serverInfo) {
     if (id === serverInfo.roles.developer) return true;
     if (id === serverInfo.roles.admin) return true;
     if (id === serverInfo.roles.moderator) return true;
+    if (id === serverInfo.roles.seniorS) return true;
     if (id === serverInfo.roles.support) return true;
     if (id === serverInfo.roles.staff) return true;
     if (id === serverInfo.roles.ch) return true;
