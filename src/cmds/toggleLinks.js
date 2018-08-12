@@ -21,6 +21,7 @@ module.exports = {
         if (!message.member.isModerator) return;
 
         if (config.whitelistedLinksChannel.includes(message.channel.id)) {
+            if (message.channel.id === "307052600061198337") console.log(">>>> SELF-PROMOTION LINKS DISABLED")
             config.whitelistedLinksChannel.splice(config.whitelistedLinksChannel.indexOf(message.channel.id), 1);
             sql.query("Delete from Config where Config = 'whitelistedLinksChannel' and Value1 = ?", [ message.channel.id ]);
 
@@ -35,6 +36,7 @@ module.exports = {
               .setTimestamp();
             message.guild.channels.get(serverInfo.channels.aclog).send(embedlog);
         } else {
+            if (message.channel.id === "307052600061198337") console.log(">>>> SELF-PROMOTION LINKS ENABLED")
             config.whitelistedLinksChannel.push(message.channel.id);
             sql.query("Insert into Config (Config, Value1) Values ('whitelistedLinksChannel', ?)", [ message.channel.id ]);
 
