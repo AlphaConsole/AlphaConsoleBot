@@ -54,7 +54,8 @@ module.exports.run = (client, serverInfo, config, oldMember, newMember) => {
                     "Our beta program (Please read `#beta-info` and the pin in `#beta-signup` carefully!)\n" +
                     "The `#subs-and-legacy` text channel and priority support\n" +
                     "Various Discord server enhancements such as nickname perms\n\n" +
-                    "You will keep these benefits for as long as you are subscribed, and you will have a 3 day window to resubscribe if your subscription runs out. Thank you again for your subscription and your extra level of support for AlphaConsole!"
+                    "You will keep these benefits for as long as you are subscribed, and you will have a 3 day window to resubscribe if your subscription runs out. Thank you again for your subscription and your extra level of support for AlphaConsole!" +
+                    "\n\n**Be sure to check out `#giveaways` whilst you can, exclusive for __subs__!**"
                 );
         
                 const embedlog = new Discord.MessageEmbed()
