@@ -14,8 +14,13 @@ module.exports = {
         },
         {
             perms      : "Everyone",
-            command    : "!set Color <Color Number>",
+            command    : "!set Color <Hex code>",
             description: "Use this to set your in game title color"
+        },
+        {
+            perms      : "Everyone",
+            command    : "!set glow <Hex code>",
+            description: "Use this to set your in game title glow color"
         }
     ],
 
@@ -90,7 +95,7 @@ module.exports = {
 					if (body) {
 						if (args[0].toLowerCase() == "!set") {
 							if (body.toLowerCase().includes("done")) 
-							 	if (!ignoreMsg) sendEmbed(message.author, "Your colour has been updated to: `" + colour + "`")
+							 	if (!ignoreMsg) sendEmbed(message.author, "Your colour has been updated to: #" + colour)
 							else if (body.toLowerCase().includes("the user does not exist"))
 								if (!ignoreMsg) sendEmbed(message.author, "Hi, in order to use our custom title service you must authorize your discord account. \n" +
 								"Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.")
@@ -99,6 +104,39 @@ module.exports = {
 						} else {
 							if (body.toLowerCase().includes("done")) 
 								sendEmbed(message.author, `User Colour update`, `Updated colour of <@${id}> to \`${colour}\``)
+							else
+								sendEmbed(message.author, "There appears to have been an error.", "```" + body + "```")
+						}
+					} else {
+						sendEmbed(message.author, "There was an error. Please try again. If this problem continues please contact an admin.");
+					}
+				})
+			}
+
+			function setUsersGlow(id, colour, ignoreMsg) {
+				let url = keys.SetTitleURL + 
+					"?DiscordID=" + id +
+					"&key=" + keys.Password +
+					"&glow=" + escape(colour);
+				request({ method: "GET", url: url }, (err, res, body) => {
+					if (err) {
+						let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+						console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+						return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+					}
+
+					if (body) {
+						if (args[0].toLowerCase() == "!set") {
+							if (body.toLowerCase().includes("done")) 
+							 	if (!ignoreMsg) sendEmbed(message.author, "Your glow has been updated to: #" + colour)
+							else if (body.toLowerCase().includes("the user does not exist"))
+								if (!ignoreMsg) sendEmbed(message.author, "Hi, in order to use our custom title service you must authorize your discord account. \n" +
+								"Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.")
+							else
+								console.log("Somebody didn't receive a response from the bot due to unknown body response:", body);
+						} else {
+							if (body.toLowerCase().includes("done")) 
+								sendEmbed(message.author, `User glow update`, `Updated glow of <@${id}> to \`${colour}\``)
 							else
 								sendEmbed(message.author, "There appears to have been an error.", "```" + body + "```")
 						}
@@ -208,14 +246,51 @@ module.exports = {
 					sendEmbed(message.author, "Use the !set color command in #set-title!")
 					return message.delete().catch(e => { });
 				};
+
+				let c = args[2];
+				if (c.trim() === "1") {
+					setUsersColour(message.author.id, "FFFFFF");
+					setUsersGlow(message.author.id, "000000", true);
+					return;
+				}
+				if (c.trim() === "2") {
+					setUsersColour(message.author.id, "00FFAA");
+					setUsersGlow(message.author.id, "00FFFF", true);
+					return;
+				}
+				if (c.trim() === "3") {
+					setUsersColour(message.author.id, "00FFAA");
+					setUsersGlow(message.author.id, "000000", true);
+					return;
+				}
+				if (c.trim() === "4") {
+					setUsersColour(message.author.id, "FFEB5C");
+					setUsersGlow(message.author.id, "000000", true);
+					return;
+				}
+				if (c.trim() === "5") {
+					setUsersColour(message.author.id, "FFEB5C");
+					setUsersGlow(message.author.id, "FFA300", true);
+					return;
+				}
+				if (c.trim() === "6") {
+					setUsersColour(message.author.id, "DBD2FF");
+					setUsersGlow(message.author.id, "8C50FF", true);
+					return;
+				}
+				if (c.trim() === "7") {
+					setUsersColour(message.author.id, "AEF7FF");
+					setUsersGlow(message.author.id, "43AFFF", true);
+					return;
+				}
+				
+
 				let colours = args[2].split("::");
 
-				let valid = isValidColor(message, colours, serverInfo);
-				if (valid)
-					setUsersColour(message.author.id, args[2]);
-				else
-					sendEmbed(message.author, "Error whilst setting colour", "Hi, you have either chosen an invalid colour or a colour you do not have access to." +
-					"\nSubscribe to our twitch for access to more colours! \nhttps://www.twitch.tv/alphaconsole")
+				let colour = isValidColor(message, colours, serverInfo, sendEmbed);
+				if (colour)
+					setUsersColour(message.author.id, colour);
+					
 			}
 
 			function overrideColour() {
@@ -272,6 +347,75 @@ module.exports = {
 				});
 			}
 
+			function setGlow() {
+				if (message.channel.id !== serverInfo.channels.setTitle) {
+					sendEmbed(message.author, "Use the !set glow command in #set-title!")
+					return message.delete().catch(e => { });
+				};
+				let colours = args[2].split("::");
+
+				let colour = isValidColor(message, colours, serverInfo, sendEmbed);
+				if (colour)
+					setUsersGlow(message.author.id, colour);
+					
+			}
+
+			function overrideGlow() {
+				if (!(message.member && message.member.isModerator) && !(member && member.isModerator)) return;
+				message.delete().catch(e => { })
+
+				if (message.mentions.users.first()) 
+					id = message.mentions.users.first().id;
+				else 
+					id = args[2];
+
+				let url = config.keys.CheckdbURL
+
+				if (id.length === 17)
+					url += "?SteamID=" + id;
+				else
+					url += "?DiscordID=" + id;
+				request({ method: "GET", url: url }, function (err, response, body) {
+					if (err) {
+						let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+						console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
+						return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+					}
+						
+					let colour = "";
+
+					if (body) {
+						if (body.toLowerCase().includes("not signed up for db")) {
+							colour = ":x: Not signed up in database"
+							
+						} else if (body.toLowerCase().includes("no title set")) {
+							colour = ":x: No title set yet"
+								
+						} else {
+							var info = body.split(" ");
+							id = info[info.length - 1];
+							colour = info[info.length - 3];
+						}
+					} else {
+						colour = ":x: Couldn't fetch his title from the server"
+					}
+
+					let val = isValidColor(message, colours, serverInfo, sendEmbed);
+					if (!val) return sendEmbed(message.author, "Color is invalid.")
+					setUsersGlow(id, val);
+
+					const embedlog = new Discord.MessageEmbed()
+						.setColor([255, 255, 0])
+						.setAuthor("Custom title override", client.user.displayAvatarURL())
+						.addField("Old Glow", colour)
+						.addField("New Glow", args[3])
+						.addField("Title of", `**<@${id}>** (${id})`)
+						.addField("Edited by", message.author.tag)
+						.setTimestamp();
+					client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.aclog).send(embedlog);
+				});
+			}
+
 			function setSpecialTitle() {
 				if (message.channel.id !== serverInfo.channels.setSpecialTitle || args.length < 3) return;
 
@@ -319,6 +463,11 @@ module.exports = {
 					args[0].toLowerCase() == "!set"
 						? setColour()
 						: overrideColour();
+					break;
+				case "glow":
+					args[0].toLowerCase() == "!set"
+						? setGlow()
+						: overrideGlow();
 					break;
 				case "special":
 					setSpecialTitle();
@@ -449,12 +598,31 @@ function inBlacklist(message, blackListedWords, userTitle, exemptWords) {
 
 
 
-function isValidColor(message, colours, serverInfo) {
-	let validColour = true;
+function isValidColor(message, colours, serverInfo, sendEmbed) {
+
+	//TODO: Remove once multiple colors are enabled again.
+	if (colours.length > 1) {
+		sendEmbed(message.author, "Error whilst setting colour", "Multiple colours are currently not allowed.");
+		return false;
+	}
+
+	const hex = /\b[0-9A-F]{6}\b/gi;
+	let str = "";
 
 	for (let i = 0; i < colours.length; i++) {
+		if (i !== 0) str += "::";
+
+		const regex = colours[i].match(hex);
 		
-		switch (colours[i]) {
+		if (!(regex && regex.length === 1)) {
+			sendEmbed(message.author, "Error whilst setting colour", "You need to fill in a hex value (Ex. \`#FFFFFF\`)");
+			return false;
+		}
+
+		const c = regex[0].toUpperCase();
+		str += c;
+		
+		/* switch (colours[i]) {
 			case "0":
 			case "1":
 			case "3":
@@ -471,11 +639,11 @@ function isValidColor(message, colours, serverInfo) {
 				if (!message.member.isAdmin) 
 					validColour = false;
 				break;
-		}
+		} */
 		
 	}
 
-	return validColour;
+	return str;
 }
 
 function validUser(message, serverInfo) {

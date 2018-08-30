@@ -23,7 +23,6 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
     }
 
     //* Links filter
-    console.log(`${new Date().toString()} -> ${config.whitelistedLinksChannel.includes("307052600061198337")}`)
     if (!message.member.isCH && !message.member.roles.has(serverInfo.roles.linksFiles)) {
         if (!(config.permits[message.author.id] && config.permits[message.author.id].channel === message.channel.id && config.permits[message.author.id].until > new Date().getTime())) {
             if (!config.whitelistedLinksChannel.includes(message.channel.id)) {
