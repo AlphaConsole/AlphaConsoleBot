@@ -1,7 +1,6 @@
 /**
  * ! Get title command
  */
-const request = require('request');
 
 module.exports = {
     title: "GetTitle",
@@ -18,7 +17,19 @@ module.exports = {
         if (message.channel.id !== serverInfo.channels.setTitle) return;
         if (args.length < 2 || !(args[1] && args[1].toLowerCase() === "title")) return;
 
-        try {
+        sql.query("Select * from Players where DiscordID = ?", [ message.author.id ], (err, rows) => {
+            const user = rows[0];
+            
+            if (!user)
+                return sendEmbed(message.author, "An error occured", `It appears you have not signed up for our title service. Please click this link and makes sure you are logging in with the correct account.\n\nhttp://www.alphaconsole.net/auth/index.php`)
+
+            if (user.Title === "X" || user.Color === "X")
+                return sendEmbed(message.author, "Your title information", `Discord: <@${user.DiscordID}>\nSteam: [${user.SteamID}](https://steamcommunity.com/profiles/${user.SteamID})\n\nInformation: You have your title disabled. Set a new title & color to enable your title again.`);
+
+            sendEmbed(message.author, "Your title information", `Discord: <@${user.DiscordID}>\nSteam: [${user.SteamID}](https://steamcommunity.com/profiles/${user.SteamID})\n\nTitle: ${user.Title}\nColor: #${user.Color}\nGlow: #${user.GlowColor}`);            
+        })
+
+        /* try {
             var url = config.keys.CheckdbURL + "?DiscordID=" + message.author.id;
             var user = message.author;
             request({ method: "GET", url: url }, function (err, response, body) {
@@ -55,7 +66,7 @@ module.exports = {
             });
         } catch (error) {
             console.log(error)
-        }
+        } */
 
     }
 };
