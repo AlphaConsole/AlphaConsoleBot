@@ -288,6 +288,10 @@ async function messageProcess(message) {
             require("./cmds/role").run(data);
             break;
 
+          case "resetbeta":
+            require("./cmds/resetbeta").run(data);
+            break;
+
           case "serverinfo":
             require('./cmds/serverinfo').run(data);
             break;
