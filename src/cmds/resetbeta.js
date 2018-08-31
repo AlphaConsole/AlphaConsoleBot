@@ -3,7 +3,7 @@
  */
 
 module.exports = {
-  title: "GetTitle",
+  title: "resetbeta",
   details: [
       {
           perms      : "Moderator",
@@ -22,37 +22,3 @@ module.exports = {
 
   }
 };
-
-function returnColour(colourID) {
-  switch (colourID) {
-      case "0":
-          return "No title";
-          break;
-      case "1":
-          return "Gray";
-          break;
-      case "2":
-          return "Glowing Green (Twitch Subs & Legacy)";
-          break;
-      case "3":
-          return "Non-glowing Green";
-          break;
-      case "4":
-          return "Non-glowing Yellow";
-          break;
-      case "5":
-          return "Glowing Yellow";
-          break;
-      case "6":
-          return "Purple (Twitch Subs & Legacy)";
-          break;
-      case "7":
-          return "RLCS Blue";
-          break;
-      case "X":
-          return "Disabled (X)";
-          break;
-      default:
-          return "Cycling Colours";
-  }
-}
