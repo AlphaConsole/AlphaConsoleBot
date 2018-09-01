@@ -26,7 +26,7 @@ module.exports = {
             if (user.Title === "X" || user.Color === "X")
                 return sendEmbed(message.author, "Your title information", `Discord: <@${user.DiscordID}>\nSteam: [${user.SteamID}](https://steamcommunity.com/profiles/${user.SteamID})\n\nInformation: You have your title disabled. Set a new title & color to enable your title again.`);
 
-            sendEmbed(message.author, "Your title information", `Discord: <@${user.DiscordID}>\nSteam: [${user.SteamID}](https://steamcommunity.com/profiles/${user.SteamID})\n\nTitle: ${user.Title}\nColor: #${user.Color}\nGlow: #${user.GlowColor}`);            
+            sendEmbed(message.author, "Your title information", `Discord: <@${user.DiscordID}>\nSteam: [${user.SteamID}](https://steamcommunity.com/profiles/${user.SteamID})\n\nTitle: ${user.Title}\nColor: ${user.Color}\nGlow: ${user.GlowColor}`);            
         })
 
         /* try {
