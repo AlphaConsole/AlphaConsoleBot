@@ -227,7 +227,7 @@ async function messageProcess(message) {
 
           case "set":
           case "override":
-            require('./cmds/titles').run(data);
+            require('./cmds/settitle').run(data);
             break;
 
           case "get":
