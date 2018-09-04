@@ -128,7 +128,7 @@ module.exports = {
 
       let userColor = createTitle(args, 2).replace(/ /g,'').toUpperCase();
       setUsersColor(message.author.id, userColor, false)
-      .then(title => sendEmbed(message.author, "Title color updated", `Your title has been set to **\`${title}\`**!`))
+      .then(title => sendEmbed(message.author, "Title color updated", `Your title color has been set to **\`${title}\`**!`))
       .catch(e => sendEmbed(message.author, "An error occurred", e));
     }
     function overrideColor() {
@@ -151,7 +151,7 @@ module.exports = {
 
       let userColor = createTitle(args, 2).replace(/ /g,'').toUpperCase();
       setUsersColor(message.author.id, userColor, true)
-      .then(title => sendEmbed(message.author, "Title glow updated", `Your title has been set to **\`${title}\`**!`))
+      .then(title => sendEmbed(message.author, "Title glow updated", `Your glow color has been set to **\`${title}\`**!`))
       .catch(e => sendEmbed(message.author, "An error occurred", e));
     }
     function overrideGlow() {
@@ -231,6 +231,9 @@ module.exports = {
         if (title.includes("\n"))
           return reject("Your title cannot be multiple lines. It must be in 1 line.");
 
+        if (title.includes(";"))
+          return reject("Your title may not include a \";\". Please try again without it.");
+
         //Blacklist checker, only if not being overrided
         if (!overridingUser && !message.member.isAdmin) {
           sql.query("Select * from TitleReports where DiscordID = ? AND Title = ? AND Permitted = 1", [ id.trim(), title ], (err, res) => {
@@ -246,17 +249,21 @@ module.exports = {
               exemptWords = ["alphaconsole", "community helper"];
             else if (message.member.roles.has(serverInfo.roles.legacy)) 
               exemptWords = ["alphaconsole", "legacy"];
+
+            sql.query("Select * from Config where Config = 'blacklistedWords'", [], (err, rows) => {
+              if (err) return console.log(err);
+              const thisBlacklist = rows.filter(r => !exemptWords.includes(r.Value1.toLowerCase()))
+        
+              let blacklistedTitles = titles.filter(t => thisBlacklist.find(b => t.toLowerCase().includes(b.toLowerCase())));
+              if (blacklistedTitles.length > 0) {
+                saveTitleToLog(id, title, true, sql);
+                return reject("Your custom title was not set because it contained a blacklisted phrase. \n" +
+                "AlphaConsole does not allow faking of real titles. If you continue to try and bypass the blacklist system, it could result in loss of access to our custom titles.")
+              }
+              
+              finish();
+            })
             
-            const thisBlacklist = blacklist.filter(w => !exemptWords.includes(w.toLowerCase()))
-      
-            let blacklistedTitles = titles.filter(t => thisBlacklist.find(b => t.toLowerCase().includes(b.toLowerCase())));
-            if (blacklistedTitles.length > 0) {
-              saveTitleToLog(id, title, true, sql);
-              return reject("Your custom title was not set because it contained a blacklisted phrase. \n" +
-              "AlphaConsole does not allow faking of real titles. If you continue to try and bypass the blacklist system, it could result in loss of access to our custom titles.")
-            }
-            
-            finish();
           })
         }
         else finish();
@@ -338,8 +345,8 @@ module.exports = {
 
         //Check if color(s) are all valid.
         const hex = /\b[0-9A-F]{6}\b/gi;
-        color = colors.filter(c => c.match(hex) && c.match(hex).length === 1).map(c => c.match(hex)[0]).join("::");
-        if (color.length < 5)
+        safeColor = colors.filter(c => c.match(hex) && c.match(hex).length === 1).map(c => c.match(hex)[0]).join("::");
+        if (safeColor.length < 5)
           return reject("One of your colors is not in a hex format.\nYou need to fill in a hex value (Ex. \`FFFFFF\` or \`FFFFFF::AAAAAA\`)\nYou can find these values here: https://htmlcolorcodes.com/");
 
         sql.query(`Select * from Players where DiscordID = ? OR SteamID = ?`, [ id.trim(), id.trim() ], (err, res) => {
@@ -349,21 +356,21 @@ module.exports = {
           if (!user) return reject("Hi, in order to use our custom title service you must authorize your discord account. \n" +
           "Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.");
     
-          sql.query(`Update Players set ${glow ? "GlowColor" : "Color"} = ? where DiscordID = ? OR SteamID = ?`, [ color.trim(), id.trim(), id.trim() ], (err) => {
+          sql.query(`Update Players set ${glow ? "GlowColor" : "Color"} = ? where DiscordID = ? OR SteamID = ?`, [ safeColor.trim(), id.trim(), id.trim() ], (err) => {
             if (err) return reject(err.message);
             if (overridingUser) {
               const embedlog = new Discord.MessageEmbed()
                 .setColor([255, 255, 0])
                 .setAuthor("Custom title override", client.user.displayAvatarURL())
                 .addField("Old Color", user.Title)
-                .addField("New Color", title.trim())
+                .addField("New Color", safeColor.trim())
                 .addField("Title of", `**<@${user.DiscordID}>** (${user.DiscordID})`)
                 .addField("Edited by", `<@${overridingUser}>`)
                 .setTimestamp();
               client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.aclog).send(embedlog);
-              return resolve(`Updated title color of <@${user.DiscordID}> to \`${color.trim()}\`!`)
+              return resolve(`Updated title color of <@${user.DiscordID}> to \`${safeColor.trim()}\`!`)
             }
-            resolve(color.trim());
+            resolve(safeColor.trim());
           })
         })
       })
