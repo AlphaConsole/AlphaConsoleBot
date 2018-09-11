@@ -254,7 +254,7 @@ module.exports = {
               if (err) return console.log(err);
               const thisBlacklist = rows.filter(r => !exemptWords.includes(r.Value1.toLowerCase()))
         
-              let blacklistedTitles = titles.filter(t => thisBlacklist.find(b => t.toLowerCase().includes(b.toLowerCase())));
+              let blacklistedTitles = titles.filter(t => thisBlacklist.find(b => b && t.toLowerCase().includes(b.toLowerCase())));
               if (blacklistedTitles.length > 0) {
                 saveTitleToLog(id, title, true, sql);
                 return reject("Your custom title was not set because it contained a blacklisted phrase. \n" +
