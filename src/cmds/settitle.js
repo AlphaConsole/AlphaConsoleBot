@@ -231,8 +231,10 @@ module.exports = {
         if (title.includes("\n"))
           return reject("Your title cannot be multiple lines. It must be in 1 line.");
 
-        if (title.includes(";"))
-          return reject("Your title may not include a \";\". Please try again without it.");
+        title = title.replace(/[^0-9a-z\!\-\?\.\,\'\"\#\@\/]/gi, '');
+        if (title.length === 0)
+          return reject("After filtering out non-valid characters your title is not valid anymore.")
+        
 
         //Blacklist checker, only if not being overrided
         if (!overridingUser && !message.member.isAdmin) {
