@@ -336,7 +336,7 @@ module.exports.botMessage = (client, serverInfo, sql, message, sendEmbed) => {
 
             message.guild.channels.get(serverInfo.channels.ingameReports).send(
                 `**================================**\n` +
-                `Reports by <@${data.Issuer.DiscordID}>\n` +
+                `Reports by <@${data.Issuer.DiscordID}> (${data.Issuer.SteamID})\n` +
                 `\`👍 ${data.Issuer.GoodReports}\`\n` +
                 `\`👎 ${data.Issuer.BadReports}\`\n`
             ).then(async m => {
@@ -359,7 +359,8 @@ function reportTitle(client, serverInfo, sql, message, titleInfo, Reporter, send
 	let steamID = titleDetails[titleDetails.length - 2];
 	let color = titleDetails[titleDetails.length - 3];
 	let title = titleDetails.splice(0, titleDetails.length - 3);
-	title = title.join(" ");
+    title = title.join(" ");
+    if (title.trim() == "X") return;
 
 	sql.query(`select * from TitleReports where SteamID = ? order by ID desc`, [ steamID ], (err, res) => {
         let fixed = res.filter(t => t.Fixed === 0)[0];
