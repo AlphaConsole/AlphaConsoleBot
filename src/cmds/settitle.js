@@ -63,12 +63,11 @@ module.exports = {
 
   run: ({ client, serverInfo, message, args, sql, config, sendEmbed, member }) => {
 
-    if (message.channel.id !== serverInfo.channels.setTitle && message.channel.id !== serverInfo.channels.setSpecialTitle) {
-      sendEmbed(message.author, "Use the `!set` command in the <#328236864534216704> channel.")
+    if (args[0].toLowerCase() === "!set" && message.channel.id !== serverInfo.channels.setTitle && message.channel.id !== serverInfo.channels.setSpecialTitle) {
+      sendEmbed(message.author, "Use the `!set` command in the #set-title channel.")
       return message.delete().catch(e => { });
     }
 
-    const blacklist = config.blacklistedWords;
     switch (args[1].toLowerCase()) {
       case "title":
         args[0].toLowerCase() == "!set"
@@ -109,6 +108,7 @@ module.exports = {
     }
     function overrideTitle() {
       if (!(message.member && message.member.isModerator) && !(member && member.isModerator)) return;
+      if (args.length < 4) return sendEmbed(message.author, "You must have forgotten the the user or the title");
       message.delete().catch(e => { })
 
       let id = message.mentions.users.first() ? message.mentions.users.first().id : args[2];
@@ -133,6 +133,7 @@ module.exports = {
     }
     function overrideColor() {
       if (!(message.member && message.member.isModerator) && !(member && member.isModerator)) return;
+      if (args.length < 4) return sendEmbed(message.author, "You must have forgotten the the user or the color");
       message.delete().catch(e => { })
 
       let id = message.mentions.users.first() ? message.mentions.users.first().id : args[2];
