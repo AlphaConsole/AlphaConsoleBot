@@ -114,6 +114,16 @@ module.exports = {
       let id = message.mentions.users.first() ? message.mentions.users.first().id : args[2];
       let title = createTitle(args, 3);
 
+      sql.query("SELECT * FROM TitleReports WHERE (DiscordID = ? OR SteamID = ?) AND Title = ?", [ id, id, title ], (err, rows) => {
+        if (!rows[0]) {
+          sql.query("SELECT * FROM Players where DiscordID = ? OR SteamID = ?", [ id, id ], (err, res) => {
+            if (res[0])
+              sql.query("INSERT INTO TitleReports(DiscordID, SteamID, Title, Color, Fixed, Permitted, Reporter) VALUES (?, ?, ?, ?, ?, ?, ?)",
+              [ res[0].DiscordID, res[0].SteamID, title, "?", "1", "1", message.author.id ]);
+          })
+        }
+      })
+
       setUsersTitle(id, title, message.author.id)
       .then(msg => sendEmbed(message.author, "Title updated", msg))
       .catch(e => sendEmbed(message.author, "An error occurred updating title", e));
