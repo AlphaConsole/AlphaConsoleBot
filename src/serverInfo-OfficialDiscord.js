@@ -39,6 +39,7 @@ module.exports = {
     ingameReports         : "446186367303680000",
     editPartners          : "445304697755009024",
     botConfig             : "377992732418768907",
+    staffChannelsCat      : "355922959367405579",
 
     setTitle              : "328236864534216704",
     setSpecialTitle       : "363137607540015106",
@@ -50,6 +51,27 @@ module.exports = {
     partners              : "445325924771037185",
     muted                 : "448536437453881355",
   },
+
+  publicChannels: [
+    "378420714941972480", // #slaighter-house
+    "377992732418768907", // #bot-config-spam
+    "328236864534216704", // #set-title
+    "363137607540015106", // #set-special-title
+    "423943897329303552", // #beta-signup
+    "390736805533843477", // #beta-help
+    "278336241114677258", // #help
+    "297536247734206464", // #general
+    "362782211101163550", // #subs-and-legacy
+    "362785662069374976", // #partner-chat
+    "359557988643635200", // #non-english-chat
+    "358833347486810112", // #showcase
+    "352855430315376640", // #suggestions
+    "365159739329347585", // #programming
+    "475796728952520704", // #minecraft
+    "420659899744124928", // #bot-spam
+    "304539114269573123", // #looking-to-play
+    "307052600061198337", // #self-promotion
+  ],
 
   partnerEmoji: ":ACQuestion:445304272603709461",
   DynamicCat: "355924371367395329"

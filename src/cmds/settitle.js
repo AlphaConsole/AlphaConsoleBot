@@ -63,12 +63,11 @@ module.exports = {
 
   run: ({ client, serverInfo, message, args, sql, config, sendEmbed, member }) => {
 
-    if (message.channel.id !== serverInfo.channels.setTitle && message.channel.id !== serverInfo.channels.setSpecialTitle) {
-      sendEmbed(message.author, "Use the `!set` command in the <#328236864534216704> channel.")
+    if (args[0].toLowerCase() === "!set" && message.channel.id !== serverInfo.channels.setTitle && message.channel.id !== serverInfo.channels.setSpecialTitle) {
+      sendEmbed(message.author, "Use the `!set` command in the #set-title channel.")
       return message.delete().catch(e => { });
     }
 
-    const blacklist = config.blacklistedWords;
     switch (args[1].toLowerCase()) {
       case "title":
         args[0].toLowerCase() == "!set"
@@ -109,10 +108,21 @@ module.exports = {
     }
     function overrideTitle() {
       if (!(message.member && message.member.isModerator) && !(member && member.isModerator)) return;
+      if (args.length < 4) return sendEmbed(message.author, "You must have forgotten the the user or the title");
       message.delete().catch(e => { })
 
       let id = message.mentions.users.first() ? message.mentions.users.first().id : args[2];
       let title = createTitle(args, 3);
+
+      sql.query("SELECT * FROM TitleReports WHERE (DiscordID = ? OR SteamID = ?) AND Title = ?", [ id, id, title ], (err, rows) => {
+        if (!rows[0]) {
+          sql.query("SELECT * FROM Players where DiscordID = ? OR SteamID = ?", [ id, id ], (err, res) => {
+            if (res[0])
+              sql.query("INSERT INTO TitleReports(DiscordID, SteamID, Title, Color, Fixed, Permitted, Reporter) VALUES (?, ?, ?, ?, ?, ?, ?)",
+              [ res[0].DiscordID, res[0].SteamID, title, "?", "1", "1", message.author.id ]);
+          })
+        }
+      })
 
       setUsersTitle(id, title, message.author.id)
       .then(msg => sendEmbed(message.author, "Title updated", msg))
@@ -133,6 +143,7 @@ module.exports = {
     }
     function overrideColor() {
       if (!(message.member && message.member.isModerator) && !(member && member.isModerator)) return;
+      if (args.length < 4) return sendEmbed(message.author, "You must have forgotten the the user or the color");
       message.delete().catch(e => { })
 
       let id = message.mentions.users.first() ? message.mentions.users.first().id : args[2];
@@ -231,8 +242,10 @@ module.exports = {
         if (title.includes("\n"))
           return reject("Your title cannot be multiple lines. It must be in 1 line.");
 
-        if (title.includes(";"))
-          return reject("Your title may not include a \";\". Please try again without it.");
+        title = title.replace(/[^0-9a-z\!\-\?\.\,\'\"\#\@\/]/gi, '');
+        if (title.length === 0)
+          return reject("After filtering out non-valid characters your title is not valid anymore.")
+        
 
         //Blacklist checker, only if not being overrided
         if (!overridingUser && !message.member.isAdmin) {

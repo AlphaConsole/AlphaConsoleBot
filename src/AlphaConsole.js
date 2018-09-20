@@ -378,6 +378,11 @@ async function messageProcess(message) {
             require('./cmds/blacklist').run(data);
             break;
 
+          case "forcelock":
+          case "forceunlock":
+            require('./cmds/forcelock').run(data);
+            break;
+
           case "update":
             require('./cmds/update').run(data);
             break;

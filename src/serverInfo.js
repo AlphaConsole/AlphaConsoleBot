@@ -37,6 +37,7 @@ module.exports = {
     ingameReports         : "457862052237541387",
     editPartners          : "413841364032159764",
     botConfig             : "377992732418768907",
+    staffChannelsCat      : "381827097632702466",
 
     setTitle              : "349645232910106625",
     setSpecialTitle       : "396350002886344714",
@@ -48,6 +49,12 @@ module.exports = {
     partners              : "413841399306518530",
     muted                 : "445364228900257792",
   },
+
+  publicChannels: [
+    "381844964780277762",
+    "381835006936612874",
+    "381834500503764992"
+  ],
 
   partnerEmoji: ":ACQuestion:444631913949560855",
   DynamicCat: "388834196782579712"

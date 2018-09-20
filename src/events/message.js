@@ -336,7 +336,7 @@ module.exports.botMessage = (client, serverInfo, sql, message, sendEmbed) => {
 
             message.guild.channels.get(serverInfo.channels.ingameReports).send(
                 `**================================**\n` +
-                `Reports by <@${data.Issuer.DiscordID}> (${data.Issuer.SteamID})\n` +
+                `Reports by <@${data.Issuer.DiscordID === null ? "Discord not linked" : data.Issuer.DiscordID}> (${data.Issuer.SteamID})\n` +
                 `\`👍 ${data.Issuer.GoodReports}\`\n` +
                 `\`👎 ${data.Issuer.BadReports}\`\n`
             ).then(async m => {

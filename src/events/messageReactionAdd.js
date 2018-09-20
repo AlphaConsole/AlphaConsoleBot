@@ -100,22 +100,24 @@ module.exports.run = (client, serverInfo, config, reaction, user, sendEmbed) => 
             }
 
             //* Title user reporter
-            if (reaction.message.content.startsWith("**===") && reaction.message.mentions.users.first()) {
+            if (reaction.message.content.startsWith("**===")) {
 
                 if (reaction.emoji.name === "❌") {
                     reaction.message.delete();
 
-                    let urlRating = config.keys.RatingURL +
-                        "?DiscordID=" + reaction.message.mentions.users.first().id +
-                        "&key=" + config.keys.Password +
-                        "&Type=-1"
-                    request(urlRating, (err) => {
-                        if (err) {
-                            let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
-                            console.error(`Error code ${errorCode} by ${user.tag}`, err);
-                            return sendEmbed(user, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
-                        }
-                    })
+                    if (reaction.message.mentions.users.first()) {
+                        let urlRating = config.keys.RatingURL +
+                            "?DiscordID=" + reaction.message.mentions.users.first().id +
+                            "&key=" + config.keys.Password +
+                            "&Type=-1"
+                        request(urlRating, (err) => {
+                            if (err) {
+                                let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                                console.error(`Error code ${errorCode} by ${user.tag}`, err);
+                                return sendEmbed(user, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
+                            }
+                        })
+                    }
                 }
 
                 if (reaction.emoji.name === "✅") {
