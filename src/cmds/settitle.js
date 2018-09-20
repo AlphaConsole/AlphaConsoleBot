@@ -242,7 +242,7 @@ module.exports = {
         if (title.includes("\n"))
           return reject("Your title cannot be multiple lines. It must be in 1 line.");
 
-        title = title.replace(/[^0-9a-z\!\-\?\.\,\'\"\#\@\/]/gi, '');
+        title = title.replace(/[^0-9a-z\!\-\?\.\,\'\"\#\@\/ ]/gi, '');
         if (title.length === 0)
           return reject("After filtering out non-valid characters your title is not valid anymore.")
         
