@@ -75,14 +75,14 @@ module.exports = {
             for (i = 3; i < args.length; i++) reason += args[i] + " ";
             if (reason === "") reason = "No reason provided";
 
-            require('../helpers/checkUser').run(sql, m.user, (err, user) => {
+            require('../helpers/checkUser').run(sql, m.user, async (err, user) => {
                 if (err) {
                     let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
                     console.error(`Error code ${errorCode} by ${message.author.tag}`, err);
                     return sendEmbed(message.author, "🚫 An error occurred. Please contact Pollie#0001. Error code: `" + errorCode + "`");
                 }
 
-                m.roles.add(serverInfo.roles.muted);
+                await m.roles.add(serverInfo.roles.muted)
 
                 m.send(timeArg == 0 ?
                     `**<@${message.author.id}>** has **permanently** muted you.\n\n__For the following reason:__\n${reason}\n\nFor more information, please read the <#448536110537244672> channel in the server.`
