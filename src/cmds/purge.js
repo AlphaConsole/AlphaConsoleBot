@@ -12,12 +12,34 @@ module.exports = {
             perms      : "Moderator",
             command    : "!Purge <Amount of messages>",
             description: "Removes the amount of messages from the channel"
+        },
+        {
+            perms      : "Moderator",
+            command    : "!Purge <@user>",
+            description: "Removes the the user its messages from the channel"
         }
     ],
 
     run: ({ client, serverInfo, message, args, sql, config, sendEmbed }) => {
 
         if (!message.member.isModerator) return;
+
+        let user = message.mentions.users.first();
+        if (user) {
+            message.channel.messages.fetch({ limit: 99 }).then(messages => {
+                let msgs = messages.filter(m => m.author.id === user.id);
+                message.channel.bulkDelete(msgs)
+                .then(() => {
+                    sendEmbed(message.channel, `${message.author.tag} has purged ${user.tag}'s messages`, null, 5000);
+                })
+                .catch(e => {
+                    if (e.message === "You can only bulk delete messages that are under 14 days old.") 
+                        return sendEmbed(message.author, "There are messages older than 14 days that I could not remove.");
+                })
+            }).catch(console.error);
+
+            return;
+        }
 
         if (!isNumber(args[1]) || args[1].startsWith(".")) 
             return sendEmbed(message.channel, "The command has not correctly been used. Please use `!purge [amount]`")
