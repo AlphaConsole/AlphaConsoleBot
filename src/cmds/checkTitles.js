@@ -25,7 +25,8 @@ module.exports = {
                 let data = JSON.parse(body);
 
                 if (data) {
-                    if (data.titles.length === 0) message.channel.send("No titles found.")
+                    if (data.detail) message.channel.send(data.detail)
+                    else if (data.titles.length === 0) message.channel.send("No titles found.")
                     else message.channel.send(data.titles.map(t => `- ${t}`).join("\n"));
                 } else
                     message.channel.send("No data returned from API call.")
