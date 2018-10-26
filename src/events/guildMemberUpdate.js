@@ -80,7 +80,7 @@ module.exports.run = (client, serverInfo, config, oldMember, newMember) => {
                     "&color=1";
                 request({ method: "GET", url: url });
                 oldMember.send(
-                    "Hi, your Twitch Subscription to AlphaConsole has ended therefor your access to the" +
+                    "Hi, your Twitch Subscription to AlphaConsole has ended therefore your access to the" +
                     " subscriber features has been removed and your title colour has been reset. If you subscribe again you will have access to those " +
                     " features again. \n<https://www.twitch.tv/alphaconsole> \nHave a great day!"
                 );
