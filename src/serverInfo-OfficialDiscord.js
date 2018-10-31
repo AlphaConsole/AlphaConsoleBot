@@ -73,6 +73,6 @@ module.exports = {
     "307052600061198337", // #self-promotion
   ],
 
-  partnerEmoji: ":ACQuestion:445304272603709461",
+  partnerEmoji: ":ACQuestion:506579449618104320",
   DynamicCat: "355924371367395329"
 };
