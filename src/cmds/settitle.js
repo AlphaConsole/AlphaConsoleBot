@@ -234,6 +234,10 @@ module.exports = {
      */
     function setUsersTitle(id, title, overridingUser) {
       return new Promise((resolve, reject) => {
+
+        title = title.replace(/[^0-9a-z\!\-\?\.\,\'\"\#\@\/ ]/gi, '');
+        if (title.length === 0)
+          return reject("After filtering out non-valid characters your title is not valid anymore.")
         
         let titles = title.split(/[::]+/);
         if (titles.length > 5)
@@ -241,10 +245,6 @@ module.exports = {
 
         if (title.includes("\n"))
           return reject("Your title cannot be multiple lines. It must be in 1 line.");
-
-        title = title.replace(/[^0-9a-z\!\-\?\.\,\'\"\#\@\/ ]/gi, '');
-        if (title.length === 0)
-          return reject("After filtering out non-valid characters your title is not valid anymore.")
         
 
         //Blacklist checker, only if not being overrided
@@ -263,6 +263,7 @@ module.exports = {
             else if (message.member.roles.has(serverInfo.roles.legacy)) 
               exemptWords = ["alphaconsole", "legacy"];
 
+            console.log()
             sql.query("Select * from Config where Config = 'blacklistedWords'", [], (err, rows) => {
               if (err) return console.log(err);
               const thisBlacklist = rows.map(r => r.Value1).filter(r => !exemptWords.includes(r.toLowerCase()))
