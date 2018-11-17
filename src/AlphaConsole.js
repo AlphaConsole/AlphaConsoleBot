@@ -452,6 +452,8 @@ async function messageProcess(message) {
         if (args[0].toLowerCase() == "!override")
           require('./cmds/titles').run(data);
 
+        require('./cmds/requestBanner').run(data)
+
       }).catch(e => { })
 
 
