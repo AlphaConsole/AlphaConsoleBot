@@ -53,14 +53,9 @@ module.exports = {
 					// }
 					//sql.query("INSERT INTO PendingBanners(RequesterDiscordID, ImageLink) VALUES(?, ?)", [ message.author.id, url ]);
 
-					const embed = new discord.MessageEmbed()
-					.setColor([255, 255, 0])
-					.setAuthor(message, client.user.displayAvatarURL({ format: "png" }))
-					.setImage(result.url)
-					.setDescription(`User ${member} has requested a new banner!`)
-					.setTitle("New Banner Request");
-
-					return client.channels.get(serverInfo.channels.banners).send(embed).then(async m => {
+					return client.channels.get(serverInfo.channels.banners).send(`**New Banner Request**\nUser:${message.author}`, {
+						files: [result.url]
+					}).then(async m => {
 						await m.react("✅");
 						await m.react("❌");
 					});
