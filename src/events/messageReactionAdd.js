@@ -127,6 +127,37 @@ module.exports.run = (client, serverInfo, config, reaction, user, sendEmbed) => 
             }
         }
 
+        //* Banner Requests
+        if (reaction.message.channel.id == serverInfo.channels.banners) {
+            if (member.isAdmin || member.isModerator) {
+
+                if (reaction.emoji.name === "✅") {
+                    config.sql.query(`Select * from Players where DiscordID = ?`, [ reaction.message.mentions.users.first().id ], (err, res) => {
+
+                        let url = config.keys.SetBannerURL +  "?id=" + res[0].SteamID +
+                            "&key=" + config.keys.Password +
+                            "&url=" + reaction.message.attachments.first().url;
+
+                        request(url, function(err, res, body) {
+                            if (err) 
+                                return console.error(err);
+
+                            config.sql.query("Update Players set Banner = ? where DiscordID = ?", [body, reaction.message.mentions.users.first().id], (err) => {
+                                if (err)
+                                    return console.error(err);
+                                
+                                reaction.message.mentions.users.first().send("Your banner has been approved");
+                                reaction.message.delete();
+                            })
+                        })
+                    })
+                } else if (reaction.emoji.name === "❌") {
+                    reaction.message.mentions.users.first().send("Your banner has been denied.");
+                    reaction.message.delete();
+                }
+            }
+        }
+
         if (`:${reaction.emoji.name}:${reaction.emoji.id}` == serverInfo.partnerEmoji && reaction.message.channel.id === serverInfo.channels.partners) {
             
             // Reacted to message, remove reaction, send messages
