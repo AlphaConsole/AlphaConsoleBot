@@ -127,6 +127,21 @@ module.exports.run = (client, serverInfo, config, reaction, user, sendEmbed) => 
             }
         }
 
+        //* Banner Requests
+        if (reaction.message.channel.id == serverInfo.channels.banners) {
+            if (member.isAdmin || member.isModerator) {
+
+                if (reaction.emoji.name === "✅") {
+                    console.log('update db to show new banner...');
+                    reaction.message.mentions.users.first().send("approved")
+                } else if (reaction.emoji.name === "❌") {
+                    reaction.message.mentions.users.first().send("denied");
+                }
+                
+                reaction.message.delete();
+            }
+        }
+
         if (`:${reaction.emoji.name}:${reaction.emoji.id}` == serverInfo.partnerEmoji && reaction.message.channel.id === serverInfo.channels.partners) {
             
             // Reacted to message, remove reaction, send messages
