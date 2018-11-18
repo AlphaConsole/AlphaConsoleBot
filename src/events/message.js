@@ -10,6 +10,11 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
     let keys = config.keys;
     if (message.channel.id === serverInfo.channels.setTitle) message.delete().catch(e => { });
     if (message.channel.id === serverInfo.channels.setSpecialTitle) message.delete().catch(e => { });
+    if (
+        message.channel.id === serverInfo.channels.setBanner && 
+        (args[0].toLowerCase() !== "!set" || args[1].toLowerCase() !== "banner")
+    ) 
+        message.delete().catch(e => { });
 
     //! First all the filters before continueing
 
@@ -312,6 +317,7 @@ function CustomCommandsChannel(channelID, channels) {
 	if (channelID === channels.setTitle) return true;
 	if (channelID === channels.showcase) return true;
 	if (channelID === channels.suggestion) return true;
+	if (channelID === channels.setBanner) return true;
 	//Else return false
 	return false;
 }

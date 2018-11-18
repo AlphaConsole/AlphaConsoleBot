@@ -207,6 +207,20 @@ async function messageProcess(message) {
           message.member.isCH = true;
         else
           message.member.isCH = false;
+
+        if (
+          message.member.roles.has(serverInfo.roles.legacy) || 
+          message.member.roles.has(serverInfo.roles.sub) || 
+          message.member.roles.has(serverInfo.roles.orgPartner) || 
+          message.member.roles.has(serverInfo.roles.partnerP) || 
+          message.member.roles.has(serverInfo.roles.donator) || 
+          message.member.roles.has(serverInfo.roles.beta) || 
+          message.member.roles.has(serverInfo.roles.tempRole) || 
+          message.member.isSupport
+        )
+          message.member.isBeta = true;
+        else
+          message.member.isBeta = false;
         
         /**
          * ! All possible commands
@@ -444,20 +458,6 @@ async function messageProcess(message) {
         else
           m.isCH = false;
 
-        if (
-          m.roles.has(serverInfo.roles.legacy) || 
-          m.roles.has(serverInfo.roles.sub) || 
-          m.roles.has(serverInfo.roles.orgPartner) || 
-          m.roles.has(serverInfo.roles.partnerP) || 
-          m.roles.has(serverInfo.roles.donator) || 
-          m.roles.has(serverInfo.roles.beta) || 
-          m.roles.has(serverInfo.roles.tempRole) || 
-          m.isSupport
-        )
-          m.isBeta = true;
-        else
-          m.isBeta = false;
-
         data.member = m;
         data.discord = Discord;
 
@@ -466,8 +466,6 @@ async function messageProcess(message) {
 
         if (args[0].toLowerCase() == "!override")
           require('./cmds/titles').run(data);
-
-        require('./cmds/requestBanner').run(data)
 
       }).catch(e => { })
 
