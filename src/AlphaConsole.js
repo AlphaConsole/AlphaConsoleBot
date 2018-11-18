@@ -444,6 +444,20 @@ async function messageProcess(message) {
         else
           m.isCH = false;
 
+        if (
+          m.roles.has(serverInfo.roles.legacy) || 
+          m.roles.has(serverInfo.roles.sub) || 
+          m.roles.has(serverInfo.roles.orgPartner) || 
+          m.roles.has(serverInfo.roles.partnerP) || 
+          m.roles.has(serverInfo.roles.donator) || 
+          m.roles.has(serverInfo.roles.beta) || 
+          m.roles.has(serverInfo.roles.tempRole) || 
+          m.isSupport
+        )
+          m.isBeta = true;
+        else
+          m.isBeta = false;
+
         data.member = m;
 
         if (args[0].toLowerCase() == "!help" || args[0].toLowerCase() == "!h")

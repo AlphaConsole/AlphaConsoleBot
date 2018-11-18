@@ -11,50 +11,52 @@ module.exports = {
         }
     ],
 
-    run: ({ client, serverInfo, message, args, sql, config, sendEmbed }) => {
-		const keys = config.keys;
+    run: ({ client, serverInfo, message, args, sql, config, sendEmbed, member }) => {
+			if (!member.isBeta) return;
 
-		if (!cooldown[message.author.id]) cooldown[message.author.id] = 0;
-		if (cooldown[message.author.id] > new Date().getTime())
-			return;
+			let url;
+			/* if (message.attachments.first()) 
+				url = message.attachments.first().url * I KEPT THIS IN CASE WE ALLOW IMAGE POSTING THROUGH DISCORD.
+			else  */if (ValidURL(message.content)) 
+				url = message.content
+			else 
+				return;
 
-		cooldown[message.author.id] = new Date().getTime() + 10000;
+			const keys = config.keys;
 
-		sql.query(`Select * from Players where DiscordID = ?`, [ message.author.id ], (err, res) => {
-			sql.query(`Select * from PendingBanners where requesterDiscordID = ? AND StaffID IS NULL`, [ message.author.id ], (err, currentbanners) => {
+			if (!cooldown[message.author.id]) cooldown[message.author.id] = 0;
+			if (cooldown[message.author.id] > new Date().getTime())
+				return;
 
-				const user = res[0];
+			cooldown[message.author.id] = new Date().getTime() + 10000;
 
-				if (!user) 
-					return message.channel.send("Hi, in order to use our custom title service (and thereby also the banners) you must authorize your discord account. \n" +
-									"Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.");
+			sql.query(`Select * from Players where DiscordID = ?`, [ message.author.id ], (err, res) => {
+				sql.query(`Select * from PendingBanners where requesterDiscordID = ? AND StaffID IS NULL`, [ message.author.id ], (err, currentbanners) => {
 
-				let url;
-				/* if (message.attachments.first()) 
-					url = message.attachments.first().url * I KEPT THIS IN CASE WE ALLOW IMAGE POSTING THROUGH DISCORD.
-				else  */if (ValidURL(message.content)) 
-					url = message.content
-				else 
-					return;
+					const user = res[0];
 
-				probe(url, function (err, result) {
-					
-					if (result.type !== "png")
-						return message.channel.send("Currently we only accept .png files.");
+					if (!user) 
+						return message.channel.send("Hi, in order to use our custom title service (and thereby also the banners) you must authorize your discord account. \n" +
+										"Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.");
 
-					if (result.width !== 420 || result.height !== 100)
-						return message.channel.send("The dimensions of a banner is **420x100**. We thereby only accept those dimensions!");
+					probe(url, function (err, result) {
+						
+						if (result.type !== "png")
+							return message.channel.send("Currently we only accept .png files.");
 
-					if (currentbanners[0]) {
-						sql.query("DELETE FROM PendingBanners WHERE ID = ?", [ currentbanners[0].ID ]);
-						sendEmbed(message.author, "Custom banner requested. Your previous requested banner has been overwritten.")
-					} else {
-						sendEmbed(message.author, "Custom banner requested. Please wait for us to confirm.")
-					}
-					sql.query("INSERT INTO PendingBanners(RequesterDiscordID, ImageLink) VALUES(?, ?)", [ message.author.id, url ]);
+						if (result.width !== 420 || result.height !== 100)
+							return message.channel.send("The dimensions of a banner is **420x100**. We thereby only accept those dimensions!");
+
+						if (currentbanners[0]) {
+							sql.query("DELETE FROM PendingBanners WHERE ID = ?", [ currentbanners[0].ID ]);
+							sendEmbed(message.author, "Custom banner requested. Your previous requested banner has been overwritten.")
+						} else {
+							sendEmbed(message.author, "Custom banner requested. Please wait for us to confirm.")
+						}
+						sql.query("INSERT INTO PendingBanners(RequesterDiscordID, ImageLink) VALUES(?, ?)", [ message.author.id, url ]);
+					});
 				});
 			});
-		});
 
     }
 }
