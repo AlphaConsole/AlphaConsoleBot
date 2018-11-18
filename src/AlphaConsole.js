@@ -459,6 +459,7 @@ async function messageProcess(message) {
           m.isBeta = false;
 
         data.member = m;
+        data.discord = Discord;
 
         if (args[0].toLowerCase() == "!help" || args[0].toLowerCase() == "!h")
           require('./cmds/help').run(data, true);
