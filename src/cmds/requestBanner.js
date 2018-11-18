@@ -43,7 +43,7 @@ module.exports = {
 					if (result.width !== 420 || result.height !== 100)
 						return message.channel.send("The dimensions of a banner is **420x100**. We thereby only accept those dimensions!");
 
-					sendEmbed(message.channel, "Banner request send. Please be patient.")
+					sendEmbed(message.channel, "Banner request sent. Please be patient.")
 
 					return client.channels.get(serverInfo.channels.banners).send(`**New Banner Request**\nUser:${message.author}`, {
 						files: [result.url]
