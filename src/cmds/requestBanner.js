@@ -35,7 +35,7 @@ module.exports = {
 					return message.channel.send("Hi, in order to use our custom title service (and thereby also the banners) you must authorize your discord account. \n" +
 										"Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.");
 
-				probe(escape(url), function (err, result) {
+				probe(url.split(" ").join("%20"), function (err, result) {
 
 					if (result.type !== "png")
 						return message.channel.send("Currently we only accept .png files.");
