@@ -31,7 +31,8 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
         if (!mutes[message.author.id] || (mutes[message.author.id] && mutes[message.author.id] < new Date().getTime())) {
             //* User has been spamming for the first time. Warn him and add it to the warned list
             sendEmbed(message.author, "Alright buddy... Keep it calm, reduce the spam or you'll be muted.")
-            sendEmbed(message.channel, `${message.author.tag} has been warned.`)
+            if (message.channel.id !== serverInfo.channels.setTitle && message.channel.id !== serverInfo.channels.setBanner && message.channel.id !== serverInfo.channels.setSpecialTitle)
+                sendEmbed(message.channel, `${message.author.tag} has been warned.`)
             warned.push(message.author.id);
         }
 
@@ -40,7 +41,8 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
         
         if (!mutes[message.author.id] || (mutes[message.author.id] && mutes[message.author.id] < new Date().getTime())) {
             mutes[message.author.id] = new Date().getTime() + 3000;
-            sendEmbed(message.channel, `${message.author.tag} has been muted for an hour.`);
+            if (message.channel.id !== serverInfo.channels.setTitle && message.channel.id !== serverInfo.channels.setBanner && message.channel.id !== serverInfo.channels.setSpecialTitle)
+                sendEmbed(message.channel, `${message.author.tag} has been muted for an hour.`);
             warned.splice(warned.indexOf(message.author.id), 1);
 
             message.guild.members.fetch(message.author.id).then(m => {

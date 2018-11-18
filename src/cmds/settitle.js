@@ -63,8 +63,10 @@ module.exports = {
 
   run: ({ client, serverInfo, message, args, sql, config, sendEmbed, member }) => {
 
-    if (args[0].toLowerCase() === "!set" && message.channel.id !== serverInfo.channels.setTitle && message.channel.id !== serverInfo.channels.setSpecialTitle) {
-      sendEmbed(message.author, "Use the `!set` command in the #set-title channel.")
+    if (args[0].toLowerCase() === "!set" && message.channel.id !== serverInfo.channels.setTitle && message.channel.id !== serverInfo.channels.setSpecialTitle && message.channel.id !== serverInfo.channels.setBanner) {
+      if (args[1].toLowerCase() === "title" || args[1].toLowerCase() === 'color')
+        sendEmbed(message.author, "Use the `!set` command in the #set-title channel.");
+
       return message.delete().catch(e => { });
     }
 
@@ -74,20 +76,29 @@ module.exports = {
           ? setTitle()
           : overrideTitle();
         break;
+
       case "color":
       case "colour":
         args[0].toLowerCase() == "!set"
           ? setColor()
           : overrideColor();
         break;
+
       case "glow":
         args[0].toLowerCase() == "!set"
           ? setGlow()
           : overrideGlow();
         break;
+
       case "special":
           setSpecialTitle();
         break;
+
+      case "banner":
+        if (args[0].toLowerCase() == "!set")
+          require('./requestBanner').run({ client, serverInfo, message, args, sql, config, sendEmbed})
+        break;
+
       default:
         break;
     }

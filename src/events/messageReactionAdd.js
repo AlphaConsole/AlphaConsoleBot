@@ -149,13 +149,13 @@ module.exports.run = (client, serverInfo, config, reaction, user, sendEmbed) => 
                                 if (err)
                                     return console.error(err);
                                 
-                                reaction.message.mentions.users.first().send("Your banner has been approved");
+                                sendEmbed(reaction.message.mentions.users.first(), "Your banner has been approved");
                                 reaction.message.delete();
                             })
                         })
                     })
                 } else if (reaction.emoji.name === "❌") {
-                    reaction.message.mentions.users.first().send("Your banner has been denied.");
+                    sendEmbed(reaction.message.mentions.users.first(), "Your banner has been denied.");
                     reaction.message.delete();
                 }
             }
