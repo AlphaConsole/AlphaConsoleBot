@@ -136,13 +136,16 @@ module.exports.run = (client, serverInfo, config, reaction, user, sendEmbed) => 
 
                         let url = config.keys.SetBannerURL +  "?id=" + res[0].SteamID +
                             "&key=" + config.keys.Password +
-                            "&url=" + reaction.message.attachments.first().url;
+                            "&url=" + reaction.message.attachments.first().url.split(" ").join("%20");
 
                         request(url, function(err, res, body) {
                             if (err) 
                                 return console.error(err);
 
-                            config.sql.query("Update Players set Banner = ? where DiscordID = ?", [body, reaction.message.mentions.users.first().id], (err) => {
+                            if (body.toLowerCase().startsWith("fail")) 
+                                return user.send("Something went wrong: " + body);
+
+                            config.sql.query("Update Players set Banner = ? where DiscordID = ?", [body.trim(), reaction.message.mentions.users.first().id], (err) => {
                                 if (err)
                                     return console.error(err);
                                 
