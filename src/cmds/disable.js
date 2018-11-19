@@ -46,7 +46,7 @@ module.exports = {
 			break;
 		  case "banner":
 			sql.query("UPDATE Players SET Banner = '' WHERE DiscordID = ?", [ message.author.id ]);
-			sendEmbed(user, "Your banner has been disabled.");
+			sendEmbed(message.author, "Your banner has been disabled.");
 			break;
 		}
       
