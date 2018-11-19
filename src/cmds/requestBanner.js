@@ -54,7 +54,10 @@ module.exports = {
 
 
 				jimp.read(url.split(" ").join("%20"), (err, image) => {
-					if (err) throw err;
+					if (err) {
+						sendEmbed(message.author, "Invalid URL / image")
+						return message.delete().catch(e => {});
+					}
 
 					message.delete().catch(e => {}) 
 					let imgPath = "images/" + message.author.id + ".png";
