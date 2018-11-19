@@ -18,8 +18,7 @@ module.exports = {
 		  case "banner":
 			sql.query("UPDATE Players SET Banner = '' WHERE DiscordID = ?", [ message.author.id ]);
 			sendEmbed(message.author, "Your banner has been disabled.");
-			break;
-		  case "title":
+			break;		  
 		  default:
 			if (message.channel.id !== serverInfo.channels.setTitle) return;
 			const keys = config.keys;
