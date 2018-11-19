@@ -229,9 +229,14 @@ async function messageProcess(message) {
          * ? the request to the right file. So this file is not one big mess
          * ? We also check every single message, to ensure the user is allowed to chat or for custom commands
          */
+        
         let cmd = message.content.startsWith('!') ? args[0].substring(1).toLowerCase() : undefined;
-        require('./events/message').run(data, cmd);
-        require('./events/spamProtection').run(data);
+        try {
+          require('./events/message').run(data, cmd);
+          require('./events/spamProtection').run(data);
+        } catch (error) {
+          console.log(error)
+        }
 
         switch (cmd) {
           case "ping":
@@ -490,17 +495,21 @@ async function messageProcess(message) {
  * @param {String} message 
  * @param {String} desc (optional)
  */
-let sendEmbed = (channel, message, desc, timeout) => {
+let sendEmbed = (channel, message, desc, timeout, image) => {
   const embed = new Discord.MessageEmbed()
     .setColor([255, 255, 0])
     .setAuthor(message, client.user.displayAvatarURL({ format: "png" }));
     if (desc) embed.setDescription(desc)
-  channel.send(embed)
+  channel.send({
+    embed,
+    files: image ? [ image ] : []
+  })
   .then(m => {
     if (timeout)
       m.delete({ timeout: timeout })
   })
   .catch(e => {
+    console.log(e);
     if (channel.tag) 
       client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.botSpam).send(`<@${channel.id}>, I could not DM you my message because you have your DM's disabled.`)
   });
