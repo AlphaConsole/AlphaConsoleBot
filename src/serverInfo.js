@@ -48,6 +48,8 @@ module.exports = {
     suggestion            : "389870221906804737",
     partners              : "413841399306518530",
     muted                 : "445364228900257792",
+    banners               : "513588179492667394",
+    setBanner             : "513797031626801164"
   },
 
   publicChannels: [

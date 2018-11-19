@@ -127,6 +127,40 @@ module.exports.run = (client, serverInfo, config, reaction, user, sendEmbed) => 
             }
         }
 
+        //* Banner Requests
+        if (reaction.message.channel.id == serverInfo.channels.banners) {
+            if (member.isAdmin || member.isModerator) {
+
+                if (reaction.emoji.name === "✅") {
+                    config.sql.query(`Select * from Players where DiscordID = ?`, [ reaction.message.mentions.users.first().id ], (err, res) => {
+
+                        let url = config.keys.SetBannerURL +  "?id=" + res[0].SteamID +
+                            "&key=" + config.keys.Password +
+                            "&url=" + reaction.message.attachments.first().url.split(" ").join("%20");
+
+                        request(url, function(err, res, body) {
+                            if (err) 
+                                return console.error(err);
+
+                            if (body.toLowerCase().startsWith("fail")) 
+                                return user.send("Something went wrong: " + body);
+
+                            config.sql.query("Update Players set Banner = ? where DiscordID = ?", [body.trim(), reaction.message.mentions.users.first().id], (err) => {
+                                if (err)
+                                    return console.error(err);
+                                
+                                sendEmbed(reaction.message.mentions.users.first(), "Your banner has been approved", undefined, undefined, reaction.message.attachments.first().url);
+                                reaction.message.delete();
+                            })
+                        })
+                    })
+                } else if (reaction.emoji.name === "❌") {
+                    sendEmbed(reaction.message.mentions.users.first(), "Your banner has been denied.");
+                    reaction.message.delete();
+                }
+            }
+        }
+
         if (`:${reaction.emoji.name}:${reaction.emoji.id}` == serverInfo.partnerEmoji && reaction.message.channel.id === serverInfo.channels.partners) {
             
             // Reacted to message, remove reaction, send messages

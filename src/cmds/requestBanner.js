@@ -1,4 +1,5 @@
-const probe = require('probe-image-size');
+const jimp = require('jimp');
+const fs = require('fs');
 let cooldown = {};
 
 module.exports = {
@@ -11,63 +12,81 @@ module.exports = {
         }
     ],
 
-    run: ({ client, serverInfo, message, args, sql, config, sendEmbed, member }) => {
-			if (!member.isBeta) return;
+    run: ({ client, serverInfo, message, args, sql, config, sendEmbed }) => {
+		if (message.channel.id !== serverInfo.channels.setBanner)
+			return;
+		
 
+		try {
 			let url;
-			/* if (message.attachments.first()) 
-				url = message.attachments.first().url * I KEPT THIS IN CASE WE ALLOW IMAGE POSTING THROUGH DISCORD.
-			else  */if (ValidURL(message.content)) 
-				url = message.content
-			else 
-				return;
+			if (message.attachments.first()) 
+				url = message.attachments.first().url
+			else if (ValidURL(args[2])) 
+				url = args[2]
+			else {
+				sql.query("SELECT * FROM Banners WHERE Name = ? OR ID = ?", [ args[2], args[2] ], (err, res) => {
+					if (res[0]) {
+						sql.query("UPDATE Players SET Banner = ? WHERE DiscordID = ?", [ res[0].Path, message.author.id ]);
+						message.author.send("You're banner has been set to:", { files: [ config.keys.cdn_banners + res[0].Path + ".png" ] })
+					}
+				})
 
-			const keys = config.keys;
+				return message.delete().catch(e => {});
+			} 
 
 			if (!cooldown[message.author.id]) cooldown[message.author.id] = 0;
 			if (cooldown[message.author.id] > new Date().getTime())
-				return;
+				return message.delete().catch(e => {}) ;
 
 			cooldown[message.author.id] = new Date().getTime() + 10000;
 
 			sql.query(`Select * from Players where DiscordID = ?`, [ message.author.id ], (err, res) => {
-				sql.query(`Select * from PendingBanners where requesterDiscordID = ? AND StaffID IS NULL`, [ message.author.id ], (err, currentbanners) => {
+				if (err)
+					return message.delete().catch(e => {}); 
 
-					const user = res[0];
+				const user = res[0];
 
-					if (!user) 
-						return message.channel.send("Hi, in order to use our custom title service (and thereby also the banners) you must authorize your discord account. \n" +
+				if (!user) {
+					message.author.send("Hi, in order to use our custom title service (and thereby also the banners) you must authorize your discord account. \n" +
 										"Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.");
+					return message.delete().catch(e => {});
+				}
 
-					probe(url, function (err, result) {
-						
-						if (result.type !== "png")
-							return message.channel.send("Currently we only accept .png files.");
 
-						if (result.width !== 420 || result.height !== 100)
-							return message.channel.send("The dimensions of a banner is **420x100**. We thereby only accept those dimensions!");
+				jimp.read(url.split(" ").join("%20"), (err, image) => {
+					if (err) {
+						sendEmbed(message.author, "Invalid URL / image")
+						return message.delete().catch(e => {});
+					}
 
-						if (currentbanners[0]) {
-							sql.query("DELETE FROM PendingBanners WHERE ID = ?", [ currentbanners[0].ID ]);
-							sendEmbed(message.author, "Custom banner requested. Your previous requested banner has been overwritten.")
-						} else {
-							sendEmbed(message.author, "Custom banner requested. Please wait for us to confirm.")
-						}
-						sql.query("INSERT INTO PendingBanners(RequesterDiscordID, ImageLink) VALUES(?, ?)", [ message.author.id, url ]);
+					message.delete().catch(e => {}) 
+					let imgPath = "images/" + message.author.id + ".png";
+
+					image
+						.resize(420, 100) // resize
+						.write(imgPath); // save
+					return client.channels.get(serverInfo.channels.banners).send(`**New Banner Request**\nUser:${message.author}`, {
+						files: [ imgPath ]
+					}).then(async m => {
+						message.delete().catch(e => {}) 
+						await m.react("✅");
+						await m.react("❌");
+						fs.unlinkSync(imgPath)
+
+						sendEmbed(message.author, "Banner request sent. Please be patient.", undefined, undefined, m.attachments.first().url);
 					});
 				});
+
 			});
+		} catch (error) {
+			console.log("Gone wrong:", error);
+		}
 
     }
 }
 
 
-function ValidURL(str) {
-	var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-	'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // domain name
-	'((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-	'(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-	'(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-	'(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-	return pattern.test(str);
-}
+function ValidURL(s) {
+	var regexp = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
+	return regexp.test(s);
+ }
