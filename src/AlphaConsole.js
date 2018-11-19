@@ -495,11 +495,12 @@ async function messageProcess(message) {
  * @param {String} message 
  * @param {String} desc (optional)
  */
-let sendEmbed = (channel, message, desc, timeout, image) => {
+let sendEmbed = (channel, message, desc, timeout, image, embedimg) => {
   const embed = new Discord.MessageEmbed()
     .setColor([255, 255, 0])
     .setAuthor(message, client.user.displayAvatarURL({ format: "png" }));
     if (desc) embed.setDescription(desc)
+    if (embedimg) embed.setImage(embedimg);
   channel.send({
     embed,
     files: image ? [ image ] : []
