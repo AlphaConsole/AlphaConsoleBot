@@ -38,7 +38,7 @@ module.exports = {
                     "Database Check", `Discord: <@${user.DiscordID}>\nSteam: [${user.SteamID}](https://steamcommunity.com/profiles/${user.SteamID})\nLast seen: ${lastSeen}\n\nTitle: ${user.Title}\nColor: ${user.Color}\nGlow: ${user.GlowColor}${ user.Title === "X" || user.Color === "X" ? "\n__Information:__ This user has his title disabled.\n" : "\n" }${ betaUntil ? "\nBeta until: " + betaUntil : "" }\n**[All details of this user](http://staff.alphaconsole.net/details/${user.DiscordID})**`, 
                     undefined, 
                     undefined, 
-                    user.Banner ? `${config.keys.cdn_banners}${user.Banner}.png` : undefined
+                    user.Banner ? `${config.keys.cdn_banners}${user.Banner}.png?random=${random()}` : undefined
                 );            
             })
         } catch (error) {
@@ -49,36 +49,12 @@ module.exports = {
 };
 
 
-function returnColour(colourID) {
-    switch (colourID) {
-        case "0":
-            return "No title";
-            break;
-        case "1":
-            return "Gray";
-            break;
-        case "2":
-            return "Glowing Green (Twitch Subs & Legacy)";
-            break;
-        case "3":
-            return "Non-glowing Green";
-            break;
-        case "4":
-            return "Non-glowing Yellow";
-            break;
-        case "5":
-            return "Glowing Yellow";
-            break;
-        case "6":
-            return "Purple (Twitch Subs & Legacy)";
-            break;
-        case "7":
-            return "RLCS Blue";
-            break;
-        case "X":
-            return "Disabled (X)";
-            break;
-        default:
-            return "Cycling Colours";
-    }
-}
+function random() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  
+    for (var i = 0; i < 10; i++)
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+  
+    return text;
+  }
