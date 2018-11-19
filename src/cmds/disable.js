@@ -15,6 +15,10 @@ module.exports = {
 
     run: ({ client, serverInfo, message, args, sql, config, sendEmbed }) => {
 		switch (args[1].toLowerCase()) {
+		  case "banner":
+			sql.query("UPDATE Players SET Banner = '' WHERE DiscordID = ?", [ message.author.id ]);
+			sendEmbed(message.author, "Your banner has been disabled.");
+			break;
 		  case "title":
 		  default:
 			if (message.channel.id !== serverInfo.channels.setTitle) return;
@@ -43,10 +47,6 @@ module.exports = {
 				} else 
 					sendEmbed(user, "There was an error. Please try again. If this problem continues please contact an admin.");
 			})
-			break;
-		  case "banner":
-			sql.query("UPDATE Players SET Banner = '' WHERE DiscordID = ?", [ message.author.id ]);
-			sendEmbed(message.author, "Your banner has been disabled.");
 			break;
 		}
       
