@@ -149,7 +149,7 @@ module.exports.run = (client, serverInfo, config, reaction, user, sendEmbed) => 
                                 if (err)
                                     return console.error(err);
                                 
-                                sendEmbed(reaction.message.mentions.users.first(), "Your banner has been approved");
+                                sendEmbed(reaction.message.mentions.users.first(), "Your banner has been approved", undefined, undefined, reaction.message.attachments.first().url);
                                 reaction.message.delete();
                             })
                         })
