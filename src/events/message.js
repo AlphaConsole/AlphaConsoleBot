@@ -447,6 +447,8 @@ function handleNewContestEntry({ client, serverInfo, message, args, sql, config,
                 message.delete().catch(e => {}) 
             }
         })
-    } 
+    } else {
+        message.delete().catch(e => {}) //delete just plain messages
+    }
     
 }
