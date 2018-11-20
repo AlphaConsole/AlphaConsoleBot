@@ -49,7 +49,9 @@ module.exports = {
     partners              : "413841399306518530",
     muted                 : "445364228900257792",
     banners               : "513588179492667394",
-    setBanner             : "513797031626801164"
+    setBanner             : "513797031626801164",
+    submitBanners         : "513588179492667394",
+    bannersSubmissions    : "514227613779099659"
   },
 
   publicChannels: [
