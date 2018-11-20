@@ -27,7 +27,7 @@ module.exports = {
 				sql.query("SELECT * FROM Banners WHERE Name = ? OR ID = ?", [ args[2], args[2] ], (err, res) => {
 					if (res[0]) {
 						sql.query("UPDATE Players SET Banner = ? WHERE DiscordID = ?", [ res[0].Path, message.author.id ]);
-						message.author.send("You're banner has been set to:", { files: [ config.keys.cdn_banners + res[0].Path + ".png" ] })
+						message.author.send("Your banner has been set to:", { files: [ config.keys.cdn_banners + res[0].Path + ".png" ] })
 					}
 				})
 
