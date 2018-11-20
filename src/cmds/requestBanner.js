@@ -1,5 +1,6 @@
 const jimp = require('jimp');
 const fs = require('fs');
+const request = require('request');
 let cooldown = {};
 
 module.exports = {
@@ -27,7 +28,7 @@ module.exports = {
 				sql.query("SELECT * FROM Banners WHERE Name = ? OR ID = ?", [ args[2], args[2] ], (err, res) => {
 					if (res[0]) {
 						sql.query("UPDATE Players SET Banner = ? WHERE DiscordID = ?", [ res[0].Path, message.author.id ]);
-						message.author.send("You're banner has been set to:", { files: [ config.keys.cdn_banners + res[0].Path + ".png" ] })
+						message.author.send("Your banner has been set to:", { files: [ config.keys.cdn_banners + res[0].Path + ".png" ] })
 					}
 				})
 
@@ -65,16 +66,45 @@ module.exports = {
 					image
 						.resize(420, 100) // resize
 						.write(imgPath); // save
-					return client.channels.get(serverInfo.channels.banners).send(`**New Banner Request**\nUser:${message.author}`, {
-						files: [ imgPath ]
-					}).then(async m => {
-						message.delete().catch(e => {}) 
-						await m.react("✅");
-						await m.react("❌");
-						fs.unlinkSync(imgPath)
 
-						sendEmbed(message.author, "Banner request sent. Please be patient.", undefined, undefined, m.attachments.first().url);
-					});
+					//* If person is moderator+ then automatically approve the request
+					//* Otherwise put in a request
+					if (message.member.isModerator) {
+						config.sql.query(`Select * from Players where DiscordID = ?`, [ message.author.id ], (err, res) => {
+
+							let url = config.keys.SetBannerURL +  "?id=" + res[0].SteamID +
+								"&key=" + config.keys.Password +
+								"&url=" + message.attachments.first().url.split(" ").join("%20");
+	
+							request(url, function(err, res, body) {
+								if (err) 
+									return console.error(err);
+	
+								if (body.toLowerCase().startsWith("fail")) 
+									return user.send("Something went wrong: " + body);
+	
+								config.sql.query("Update Players set Banner = ? where DiscordID = ?", [body.trim(), message.author.id], (err) => {
+									if (err)
+										return console.error(err);
+									
+									sendEmbed(message.author, "Your banner has been applied", undefined, undefined, message.attachments.first().url);
+									message.delete();
+								})
+							})
+						})
+					} else {
+						return client.channels.get(serverInfo.channels.banners).send(`**New Banner Request**\nUser:${message.author}`, {
+							files: [ imgPath ]
+						}).then(async m => {
+							message.delete().catch(e => {}) 
+							await m.react("✅");
+							await m.react("❌");
+							fs.unlinkSync(imgPath)
+	
+							sendEmbed(message.author, "Banner request sent. Please be patient.", undefined, undefined, m.attachments.first().url);
+						});
+					}
+					
 				});
 
 			});

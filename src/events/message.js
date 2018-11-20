@@ -8,6 +8,12 @@ const Discord = require('discord.js');
 
 module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbed }, cmd) => {
     let keys = config.keys;
+
+    //! This if for the banner submissions contest
+    if (message.channel.id === serverInfo.channels.submitBanners) {
+        handleNewContestEntry({ client, serverInfo, message, args, sql, config, sendEmbed }, cmd);
+    }
+
     if (message.channel.id === serverInfo.channels.setTitle) message.delete().catch(e => { });
     if (message.channel.id === serverInfo.channels.setSpecialTitle) message.delete().catch(e => { });
     if (
@@ -421,4 +427,34 @@ function postPin(client, message, sql, serverInfo, something) {
             })
 		}
 	})
+}
+
+function handleNewContestEntry({ client, serverInfo, message, args, sql, config, sendEmbed }, cmd) {
+    
+    let attachments = (message.attachments).array();
+
+    if (attachments.length != 0 ) {
+        attachments.forEach(function (item) {
+            if (item.url.endsWith(".png")) {
+                if (item.width === 420 && item.height === 100) {
+                    return client.channels.get(serverInfo.channels.bannersSubmissions).send(`**New Banner Submission**\nUser:${message.author}`, {
+                        files: [ item.url ]
+                    }).then(async m => {
+                        message.delete().catch(e => {}) 
+                    });
+                } else {
+                    //invalid picture
+                    message.author.send(`Your banner ${item.url} is invalid dimensions. Please make sure it is 420x100`);
+                    message.delete().catch(e => {}) 
+                }
+            } else {
+                message.author.send(`Your banner ${item.url} is the wrong file type. Please make sure it is a png file`);
+                message.delete().catch(e => {}) 
+            }
+
+        })
+    } else {
+        message.delete().catch(e => {}) //delete just plain messages
+    }
+    
 }
