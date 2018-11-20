@@ -435,17 +435,23 @@ function handleNewContestEntry({ client, serverInfo, message, args, sql, config,
 
     if (attachments.length != 0 ) {
         attachments.forEach(function (item) {
-            if (item.width === 420 && item.height === 100) {
-                return client.channels.get(serverInfo.channels.bannersSubmissions).send(`**New Banner Submission**\nUser:${message.author}`, {
-                    files: [ item.url ]
-                }).then(async m => {
+            if (item.url.endsWith(".png")) {
+                if (item.width === 420 && item.height === 100) {
+                    return client.channels.get(serverInfo.channels.bannersSubmissions).send(`**New Banner Submission**\nUser:${message.author}`, {
+                        files: [ item.url ]
+                    }).then(async m => {
+                        message.delete().catch(e => {}) 
+                    });
+                } else {
+                    //invalid picture
+                    message.author.send(`Your banner ${item.url} is invalid dimensions. Please make sure it is 420x100`);
                     message.delete().catch(e => {}) 
-                });
+                }
             } else {
-                //invalid picture
-                message.author.send(`Your banner ${item.url} is invalid dimensions. Please make sure it is 420x100`);
+                message.author.send(`Your banner ${item.url} is the wrong file type. Please make sure it is a png file`);
                 message.delete().catch(e => {}) 
             }
+
         })
     } else {
         message.delete().catch(e => {}) //delete just plain messages
