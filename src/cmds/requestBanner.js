@@ -28,7 +28,7 @@ module.exports = {
 					sql.query("SELECT * FROM Banners WHERE Name = ? OR ID = ?", [ args[2], args[2] ], (err, res) => {
 						if (res[0]) {
 							sql.query("UPDATE Players SET Banner = ? WHERE DiscordID = ?", [ res[0].Path, message.author.id ]);
-							message.author.send("Your banner has been set to:", { files: [ config.keys.cdn_banners + "thumbnail/" + res[0].Path + ".png" ] })
+							message.author.send("Your banner has been set to:", { files: [ config.keys.cdn_banners + "thumbnail/" + res[0].Path.split(" ").join("%20") + ".png" ] })
 						}
 					})
 
@@ -130,7 +130,7 @@ module.exports = {
 			sql.query("SELECT * FROM Banners WHERE Name = ? OR ID = ?", [ args[3], args[3] ], (err, res) => {
 				if (res[0]) {
 					sql.query("UPDATE Players SET Banner = ? WHERE DiscordID = ?", [ res[0].Path, id ]);
-					message.author.send(`<@${id}>'s banner has been updated to:`, { files: [ config.keys.cdn_banners + "thumbnail/" + res[0].Path + ".png" ] })
+					message.author.send(`<@${id}>'s banner has been updated to:`, { files: [ config.keys.cdn_banners.split(" ").join("%20") + "thumbnail/" + res[0].Path + ".png" ] })
 				}
 			})
  			return message.delete().catch(e => {});

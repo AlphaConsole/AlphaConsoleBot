@@ -33,12 +33,13 @@ module.exports = {
         
                 let lastSeen = user.LastSeen ? new Date(user.LastSeen*1000).toUTCString() : "never";
                 let betaUntil = user.BetaUntil ? new Date(user.BetaUntil*1000).toUTCString() : undefined;
+                console.log(`${config.keys.cdn_banners}${user.Banner}.png?random=${random()}`.split(" ").join("%20"))
                 sendEmbed(
                     message.channel, 
                     "Database Check", `Discord: <@${user.DiscordID}>\nSteam: [${user.SteamID}](https://steamcommunity.com/profiles/${user.SteamID})\nLast seen: ${lastSeen}\n\nTitle: ${user.Title}\nColor: ${user.Color}\nGlow: ${user.GlowColor}${ user.Title === "X" || user.Color === "X" ? "\n__Information:__ This user has his title disabled.\n" : "\n" }${ betaUntil ? "\nBeta until: " + betaUntil : "" }\n**[All details of this user](http://staff.alphaconsole.net/details/${user.DiscordID})**`, 
                     undefined, 
                     undefined, 
-                    user.Banner ? `${config.keys.cdn_banners}${user.Banner}.png?random=${random()}` : undefined
+                    user.Banner ? `${config.keys.cdn_banners}${user.Banner}.png?random=${random()}`.split(" ").join("%20") : undefined
                 );            
             })
         } catch (error) {
