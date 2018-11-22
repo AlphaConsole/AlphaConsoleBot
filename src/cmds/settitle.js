@@ -95,8 +95,9 @@ module.exports = {
         break;
 
       case "banner":
-        if (args[0].toLowerCase() == "!set")
-          require('./requestBanner').run({ client, serverInfo, message, args, sql, config, sendEmbed})
+          args[0].toLowerCase() == "!set"
+            ? require('./requestBanner').run({ client, serverInfo, message, args, sql, config, sendEmbed})
+            : require('./requestBanner').run({ client, serverInfo, message, args, sql, config, sendEmbed}, true)
         break;
 
       default:
