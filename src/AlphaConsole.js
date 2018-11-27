@@ -521,7 +521,6 @@ function processModMail(message, args, data) {
      */
     
     let cmd = message.content.startsWith('!') ? args[0].substring(1).toLowerCase() : undefined;
-    console.log(message.member.isDeveloper, message.member.isModerator);
 
     switch (cmd) {
       case "ping":
