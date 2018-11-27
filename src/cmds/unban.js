@@ -22,7 +22,7 @@ module.exports = {
         if (args.length < 2) return sendEmbed(message.channel, "You must have forgotten the user", "`!Unban <@tag | user Id> <?Reason>`")
                 
         let id = args[1];
-        message.guild.unban(id);
+        client.guilds.get(serverInfo.guildId).unban(id);
         sql.query("Update Members set Banned = null where DiscordID = ?", [ id ]);
 
         sendEmbed(message.channel, "The user has been unbanned!")

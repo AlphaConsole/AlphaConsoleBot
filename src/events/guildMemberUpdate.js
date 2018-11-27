@@ -2,6 +2,7 @@ const Discord = require("discord.js");
 const request = require("request");
 
 module.exports.run = (client, serverInfo, config, oldMember, newMember) => {
+    if (oldMember.guild.id !== serverInfo.guildId) return;
 
     try {
 

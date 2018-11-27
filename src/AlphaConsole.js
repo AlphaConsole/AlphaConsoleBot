@@ -159,6 +159,8 @@ async function messageProcess(message) {
 
 
     if (message.channel.type === "text") {
+      if (message.guild.id === serverInfo.mm.guildId)
+        return processModMail(message, args, data);
       if (message.guild.id !== serverInfo.guildId) return;
 
       /**
@@ -477,6 +479,151 @@ async function messageProcess(message) {
 
     }
 }
+
+
+
+
+function processModMail(message, args, data) {
+  client.guilds.get(serverInfo.mm.guildId).members.fetch(message.author.id).then(m => {
+    message.member = m;
+
+    /**
+     * ! Assigning all positions to the member to easily detect if he is allowed to do certain commands
+     * 
+     * ? We are saving these varibales in the message.member object. This way at any point of time
+     * ? we can request the information and detect if he is allowed to execute the command.
+     */
+    if (message.member.roles.has(serverInfo.mm.roles.developer)) 
+      message.member.isDeveloper = true;
+    else
+      message.member.isDeveloper = false;
+    
+    if (message.member.roles.has(serverInfo.mm.roles.admin) || message.member.isDeveloper)
+      message.member.isAdmin = true;
+    else
+      message.member.isAdmin = false;
+
+    if (message.member.roles.has(serverInfo.mm.roles.moderator) || message.member.isAdmin)
+      message.member.isModerator = true;
+    else
+      message.member.isModerator = false;
+
+    message.member.isSupport = true;
+    message.member.isStaff = true;
+    message.member.isCH = true;
+    
+    /**
+     * ! All possible commands
+     * 
+     * ? We assign the command to a variable. Based on that variable we'll redirect
+     * ? the request to the right file. So this file is not one big mess
+     * ? We also check every single message, to ensure the user is allowed to chat or for custom commands
+     */
+    
+    let cmd = message.content.startsWith('!') ? args[0].substring(1).toLowerCase() : undefined;
+    console.log(message.member.isDeveloper, message.member.isModerator);
+
+    switch (cmd) {
+      case "ping":
+        if (!denyCommands(message.channel.id, serverInfo.channels))
+          require('./cmds/ping').run(data);
+        break;
+
+      case "override":
+        require('./cmds/settitle').run(data);
+        break;
+
+      case "checkdb":
+        require('./cmds/checkdb').run(data);
+        break;
+
+      case "checkwhitelist":
+      case "checkw":
+        require('./cmds/checkwhitelist').run(data);
+        break;
+
+      case "resetbeta":
+        require("./cmds/resetbeta").run(data);
+        break;
+
+      case "checktitles":
+        require('./cmds/checkTitles').run(data);
+        break;
+
+      case "mute":
+        require('./cmds/mute').run(data);
+        break;
+
+      case "unmute":
+        require('./cmds/unmute').run(data);
+        break;
+
+      case "kick":
+        require('./cmds/kick').run(data);
+        break;
+
+      case "ban":
+        require('./cmds/ban').run(data);
+        break;
+
+      case "unban":
+        require('./cmds/unban').run(data);
+        break;
+
+      case "warn":
+        require('./cmds/warn').run(data);
+        break;
+
+      case "check":
+      case "cases":
+        require('./cmds/check').run(data);
+        break;
+
+      case "lastseen":
+        require('./cmds/lastseen').run(data);
+        break;
+
+      case "checksub":
+      case "subcount":
+        require('./cmds/checksub').run(data);
+        break;
+
+      case "case":
+        require('./cmds/case').run(data);
+        break;
+
+      case "givebeta":
+        require('./cmds/givebeta').run(data);
+        break;
+
+      case "blacklist":
+        require('./cmds/blacklist').run(data);
+        break;
+
+      case "update":
+        require('./cmds/update').run(data);
+        break;
+
+      case "usercount":
+        if (message.member.isCH) 
+          sendEmbed(message.channel, `AlphaConsole currently has ${message.guild.memberCount} members`)
+    
+      default:
+        break;
+    }
+
+  }).catch(e => { console.log(e) }) 
+}
+
+
+
+
+
+
+
+
+
+
 
 
 
