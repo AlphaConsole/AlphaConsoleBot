@@ -22,7 +22,7 @@ module.exports = {
         if (args.length < 2) return sendEmbed(message.channel, "You must have forgotten the user", "`!givebeta <@tag | user Id>`")
 
         let user = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
-        message.guild.members.fetch(user).then(m => {
+        client.guilds.get(serverInfo.guildId).members.fetch(user).then(m => {
             require('../helpers/checkUser').run(sql, m.user, (err, user) => {
                 if (err) {
                     let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
@@ -43,7 +43,7 @@ module.exports = {
                     .addField("By", `**${message.author.tag}** (${message.member})`)
                     .setThumbnail(message.author.displayAvatarURL())
                     .setTimestamp();
-                message.guild.channels.get(serverInfo.channels.aclog).send(embedlog);
+                client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.aclog).send(embedlog);
 
             });
         }).catch(e => {

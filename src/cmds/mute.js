@@ -22,7 +22,7 @@ module.exports = {
         if (args.length < 3) return sendEmbed(message.channel, "You must have forgotten the user or the time", "`!Mute <@tag> <Length[TimeUnit(d,h,m,s) - default: h]> <?Reason>`")
 
         let user = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
-        message.guild.members.fetch(user).then(m => {
+        client.guilds.get(serverInfo.guildId).members.fetch(user).then(m => {
             
             let timeArg = args[2].toLowerCase();
             let originalTime = args[2].toLowerCase();
@@ -121,7 +121,7 @@ module.exports = {
                         )
                         .setTimestamp()
                         .addField("Reason", reason);
-                    message.guild.channels
+                        client.guilds.get(serverInfo.guildId).channels
                         .get(serverInfo.channels.modlog)
                         .send(embedlog).then(msg => {
                             sql.query(`update \`Logs\` set MessageID = ? where ID = ?`, [ msg.id, caseId ]);
@@ -129,7 +129,7 @@ module.exports = {
 
                     //* Wait 2 seconds to confirm he has the role yet. Then send the same message in muted-reasons
                     setTimeout(() => {
-                        message.guild.channels
+                        client.guilds.get(serverInfo.guildId).channels
                             .get(serverInfo.channels.muted)
                             .send(embedlog)
                     }, 2000);
