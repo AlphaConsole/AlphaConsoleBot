@@ -35,8 +35,9 @@ module.exports = {
 					return message.delete().catch(e => {});
 				} 
 
-				if (!message.member.isBeta) 
-					return message.delete().catch(e => {});
+				/* BANNERS CURRENTLY OPEN TO EVERYONE */
+				/* if (!message.member.isBeta)
+					return message.delete().catch(e => {}); */
 
 				if (!cooldown[message.author.id]) cooldown[message.author.id] = 0;
 				if (cooldown[message.author.id] > new Date().getTime())
@@ -135,7 +136,7 @@ module.exports = {
 			})
  			return message.delete().catch(e => {});
 		} 
- 		console.log()
+
  		sql.query(`Select * from Players where DiscordID = ?`, [ id ], (err, res) => {
  			let call_url = config.keys.SetBannerURL +  "?id=" + res[0].SteamID +
 				"&key=" + config.keys.Password +
