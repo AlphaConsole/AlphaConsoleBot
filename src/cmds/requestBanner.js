@@ -64,7 +64,6 @@ module.exports = {
 							return message.delete().catch(e => {});
 						}
 
-						message.delete().catch(e => {}) 
 						let imgPath = "images/" + message.author.id + ".png";
 
 						image
@@ -76,22 +75,22 @@ module.exports = {
 						if (message.member.isModerator) {
 							config.sql.query(`Select * from Players where DiscordID = ?`, [ message.author.id ], (err, res) => {
 
-								let url = config.keys.SetBannerURL +  "?id=" + res[0].SteamID +
+								let urlCall = config.keys.SetBannerURL +  "?id=" + res[0].SteamID +
 									"&key=" + config.keys.Password +
-									"&url=" + message.attachments.first().url.split(" ").join("%20");
-		
-								request(url, function(err, res, body) {
+									"&url=" + url.split(" ").join("%20");
+								console.log(urlCall);
+								request(urlCall, function(err, res, body) {
 									if (err) 
 										return console.error(err);
 		
 									if (body.toLowerCase().startsWith("fail")) 
-										return user.send("Something went wrong: " + body);
+										return message.author.send("Something went wrong: " + body);
 		
 									config.sql.query("Update Players set Banner = ? where DiscordID = ?", [body.trim(), message.author.id], (err) => {
 										if (err)
 											return console.error(err);
 										
-										sendEmbed(message.author, "Your banner has been applied", undefined, undefined, message.attachments.first().url);
+										sendEmbed(message.author, "Your banner has been applied", undefined, undefined, url);
 										message.delete();
 									})
 								})
@@ -145,7 +144,7 @@ module.exports = {
 				if (err) 
 					return console.error(err);
  				if (body.toLowerCase().startsWith("fail")) 
-					return user.send("Something went wrong: " + body);
+					return message.author.send("Something went wrong: " + body);
  				sql.query("Update Players set Banner = ? where DiscordID = ?", [body.trim(), id], (err) => {
 					if (err)
 						return console.error(err);
