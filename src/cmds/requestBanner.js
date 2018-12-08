@@ -78,7 +78,7 @@ module.exports = {
 								let urlCall = config.keys.SetBannerURL +  "?id=" + res[0].SteamID +
 									"&key=" + config.keys.Password +
 									"&url=" + url.split(" ").join("%20");
-								console.log(urlCall);
+	
 								request(urlCall, function(err, res, body) {
 									if (err) 
 										return console.error(err);
