@@ -142,7 +142,7 @@ module.exports.run = (client, serverInfo, config, reaction, user, sendEmbed) => 
                             if (err) 
                                 return console.error(err);
 
-                            if (body.toLowerCase().startsWith("fail")) 
+                            if (body.toLowerCase().startsWith("fail") || body.startsWith("<!DOCTYPE")) 
                                 return user.send("Something went wrong: " + body);
 
                             config.sql.query("Update Players set Banner = ? where DiscordID = ?", [body.trim(), reaction.message.mentions.users.first().id], (err) => {

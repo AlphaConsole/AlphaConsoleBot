@@ -83,7 +83,7 @@ module.exports = {
 									if (err) 
 										return console.error(err);
 		
-									if (body.toLowerCase().startsWith("fail")) 
+									if (body.toLowerCase().startsWith("fail") || body.startsWith("<!DOCTYPE")) 
 										return message.author.send("Something went wrong: " + body);
 		
 									config.sql.query("Update Players set Banner = ? where DiscordID = ?", [body.trim(), message.author.id], (err) => {
@@ -143,7 +143,7 @@ module.exports = {
  			request(call_url, function(err, res, body) {
 				if (err) 
 					return console.error(err);
- 				if (body.toLowerCase().startsWith("fail")) 
+ 				if (body.toLowerCase().startsWith("fail") || body.startsWith("<!DOCTYPE")) 
 					return message.author.send("Something went wrong: " + body);
  				sql.query("Update Players set Banner = ? where DiscordID = ?", [body.trim(), id], (err) => {
 					if (err)
