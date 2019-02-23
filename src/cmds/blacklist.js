@@ -10,17 +10,17 @@ module.exports = {
      title: "Blacklist",
      details: [
         {
-            perms      : "Admin",
+            perms      : "Support",
             command    : "!blacklist check <word>",
             description: "Checks if word provided is in blacklist"
         },
         {
-            perms      : "Admin",
+            perms      : "Moderator",
             command    : "!blacklist add <Words to add>",
             description: "Adds a word to the blacklist"
         },
         {
-            perms      : "Admin",
+            perms      : "Moderator",
             command    : "!blacklist remove <word>",
             description: "Remove a word from the blacklist"
         }
@@ -41,7 +41,7 @@ module.exports = {
                 sendEmbed(message.channel, `${badWord} -> was not found in the blacklist`)
             
         } else if (args[1].toLowerCase() == "add") {
-            if (!message.member.isAdmin) return;
+            if (!message.member.isModerator) return;
 
             var badWord = makeWord(args);
             var index = blackListedWords.indexOf(badWord);
@@ -54,7 +54,7 @@ module.exports = {
                 sendEmbed(message.channel, `${badWord} -> is already in the blacklist`)
 
         } else if (args[1].toLowerCase() == "remove") {
-            if (!message.member.isAdmin) return;
+            if (!message.member.isModerator) return;
             
             var badWord = makeWord(args);
 
