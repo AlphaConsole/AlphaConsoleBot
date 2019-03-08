@@ -38,7 +38,7 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
         if (!message.member.isCH && !message.member.roles.has(serverInfo.roles.linksFiles)) {
             if (!(config.permits[message.author.id] && config.permits[message.author.id].channel === message.channel.id && config.permits[message.author.id].until > new Date().getTime())) {
                 if (!config.whitelistedLinksChannel.includes(message.channel.id)) {
-                    let matches = message.content.match(new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/ig));
+                    let matches = message.content.match(new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,12}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/ig));
                     let filtered = matches ? matches.filter(m => {
                         if (m.endsWith("discord.gg/alphaconsole")  ||
                             m.includes("imgur.com") ||
