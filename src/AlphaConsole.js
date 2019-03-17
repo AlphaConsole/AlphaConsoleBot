@@ -76,7 +76,7 @@ client.on("guildMemberUpdate", (oldMember, newMember) => {
 //Personal Info changed
 client.on("userUpdate", (oldMember, newMember) => {
   if (oldMember.tag !== newMember.tag)
-    client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.serverlog).send(`:person_with_pouting_face: \`[${new Date().toTimeString().split(" ")[0]}]\` **\`${oldMember.tag}\`** changed their Discord name to **\`${newMember.tag}\`**`)
+  client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.serverlog).send(`:person_with_pouting_face: \`[${new Date().toTimeString().split(" ")[0]}]\` **\`${oldMember.tag}\`** (${oldMember.id}) changed their Discord name to **\`${newMember.tag}\`** (${newMember.id})`)
   require('./events/userUpdate').run(client, serverInfo, config, newMember);
 });
 

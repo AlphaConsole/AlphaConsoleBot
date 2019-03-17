@@ -38,10 +38,10 @@ module.exports = {
                 .setAuthor("Cases check", client.user.displayAvatarURL({ format: "png" }))
                 .setColor([255, 255, 0])
                 .setThumbnail("http://www.pngmart.com/files/5/Snow-PNG-Transparent-Image.png")
-                .addField(`Mutes (${mutes.size})`, mutes.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n") === "" ? "Nothing found" : mutes.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n").substring(0, 245), true)
-                .addField(`Warnings (${warns.size})`, warns.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n") === "" ? "Nothing found" : warns.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n").substring(0, 245), true)
-                .addField(`Kicks (${kicks.size})`, kicks.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n") === "" ? "Nothing found" : kicks.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n").substring(0, 245), true)
-                .addField(`Bans (${bans.size})`, bans.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n") === "" ? "Nothing found" : bans.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n").substring(0, 245), true)
+                .addField(`Mutes (${mutes.length})`, mutes.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n") === "" ? "Nothing found" : mutes.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n").substring(0, 245), true)
+                .addField(`Warnings (${warns.length})`, warns.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n") === "" ? "Nothing found" : warns.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n").substring(0, 245), true)
+                .addField(`Kicks (${kicks.length})`, kicks.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n") === "" ? "Nothing found" : kicks.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n").substring(0, 245), true)
+                .addField(`Bans (${bans.length})`, bans.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n") === "" ? "Nothing found" : bans.map(c => `\`${c.ID}.\` ${c.Reason}`).join("\n").substring(0, 245), true)
             message.channel.send(embed);
         })
 
