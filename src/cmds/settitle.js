@@ -128,10 +128,13 @@ module.exports = {
 
       sql.query("SELECT * FROM TitleReports WHERE (DiscordID = ? OR SteamID = ?) AND Title = ?", [ id, id, title ], (err, rows) => {
         if (!rows[0]) {
-          sql.query("SELECT * FROM Players where DiscordID = ? OR SteamID = ?", [ id, id ], (err, res) => {
-            if (res[0])
-              sql.query("INSERT INTO TitleReports(DiscordID, SteamID, Title, Color, Fixed, Permitted, Reporter) VALUES (?, ?, ?, ?, ?, ?, ?)",
-              [ res[0].DiscordID, res[0].SteamID, title, "?", "1", "1", message.author.id ]);
+          sql.query("SELECT * FROM Titles where DiscordID = ?", [ id ], (err, res) => {
+            if (!res[0]) {
+              sql.query("INSERT INTO Titles(DiscordID) VALUES(?, ?)", [ id ]);
+            }
+
+            sql.query("INSERT INTO TitleReports(DiscordID, Title, Color, Fixed, Permitted, Reporter) VALUES (?, ?, ?, ?, ?, ?)",
+            [ id, title, "?", "1", "1", message.author.id ]);
           })
         }
       })
@@ -203,27 +206,27 @@ module.exports = {
         }
 
         if (res.length === 0) return sendEmbed(message.author, "Error setting special title", "No special title found with provided id.");
-        
+
         let preset = res[0];
         let roles = JSON.parse(preset.PermittedRoles);
 
         if (userInOneOfRoles(message.member, roles)) {
-          sql.query(`Select * from Players where DiscordID = ? OR SteamID = ?`, [ message.author.id, message.author.id ], (err, res) => {
+          sql.query(`Select * from Title where DiscordID = ?`, [ message.author.id ], async (err, res) => {
             if (err) return sendEmbed(message.author, "An error occurred updating title", err.message);
-      
-            const user = res[0];
-            if (!user) return sendEmbed(message.author, "Hi, in order to use our custom title service you must authorize your discord account. \n" +
-            "Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.");
-      
-            sql.query("Update Players set Title = ? where DiscordID = ? OR SteamID = ?", [ preset.Title, message.author.id, message.author.id ], (err) => {
+
+            if (!res[0]) {
+              await sql.query("INSERT INTO Titles(DiscordID) VALUES(?)", [ id ]);
+            }
+
+            sql.query("Update Titles set Title = ? where DiscordID = ?", [ preset.Title, message.author.id ], (err) => {
               if (err) return sendEmbed(message.author, err.message);
 
-              setUsersColor(user.DiscordID, preset.Color, false)
+              setUsersColor(message.author.id, preset.Color, false)
               .then(() => sendEmbed(message.author, "Your special title has been set!", `Title: ${preset.Title}\nColor: ${preset.Color}`))
               .catch(e => sendEmbed(message.author, "An error occurred updating title", e));
             })
           })
-        } else 
+        } else
           sendEmbed(message.author, "Error setting special title", "You are not allowed to use this preset.")
       })
     }
@@ -250,14 +253,14 @@ module.exports = {
         title = title.replace(/[^0-9a-z\!\-\?\.\,\'\"\#\@\/ ]/gi, '');
         if (title.length === 0)
           return reject("After filtering out non-valid characters your title is not valid anymore.")
-        
+
         let titles = title.split(/[::]+/);
         if (titles.length > 5)
           return reject("AlphaConsole does not support more than 5 rotations in your custom title. Please try again.");
 
         if (title.includes("\n"))
           return reject("Your title cannot be multiple lines. It must be in 1 line.");
-        
+
 
         //Blacklist checker, only if not being overrided
         if (!overridingUser && !message.member.isAdmin) {
@@ -272,51 +275,58 @@ module.exports = {
               exemptWords = ["alphaconsole", "support", "staff"];
             else if (message.member.isCH)
               exemptWords = ["alphaconsole", "community helper"];
-            else if (message.member.roles.has(serverInfo.roles.legacy)) 
+            else if (message.member.roles.has(serverInfo.roles.legacy))
               exemptWords = ["alphaconsole", "legacy"];
 
             console.log()
             sql.query("Select * from Config where Config = 'blacklistedWords'", [], (err, rows) => {
               if (err) return console.log(err);
               const thisBlacklist = rows.map(r => r.Value1).filter(r => !exemptWords.includes(r.toLowerCase()))
-        
+
               let blacklistedTitles = titles.filter(t => thisBlacklist.find(b => t.toLowerCase().includes(b.toLowerCase())));
               if (blacklistedTitles.length > 0) {
                 saveTitleToLog(id, title, true, sql);
                 return reject("Your custom title was not set because it contained a blacklisted phrase. \n" +
                 "AlphaConsole does not allow faking of real titles. If you continue to try and bypass the blacklist system, it could result in loss of access to our custom titles.")
               }
-              
+
               finish();
             })
-            
+
           })
         }
         else finish();
 
         function finish() {
-          sql.query(`Select * from Players where DiscordID = ? OR SteamID = ?`, [ id.trim(), id.trim() ], (err, res) => {
+          sql.query(`Select * from Titles where DiscordID = ?`, [ id.trim() ], async (err, res) => {
             if (err) return reject(err.message);
-      
+
             const user = res[0];
-            if (!user) return reject("Hi, in order to use our custom title service you must authorize your discord account. \n" +
-            "Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.");
-      
-            sql.query("Update Players set Title = ? where DiscordID = ? OR SteamID = ?", [ title.trim(), id.trim(), id.trim() ], (err) => {
+            if (!user) {
+              await sql.query("INSERT INTO Titles(DiscordID) VALUES(?)", [ id ]);
+            }
+            return console.log(user);
+            sql.query("Update Titles set Title = ? where DiscordID = ?", [ title.trim(), id.trim() ], (err) => {
               if (err) return reject(err.message);
-              if (!overridingUser) saveTitleToLog(user.DiscordID, title.trim(), false, sql)
+              if (!overridingUser) saveTitleToLog(id.trim(), title.trim(), false, sql)
               else {
                 const embedlog = new Discord.MessageEmbed()
                   .setColor([255, 255, 0])
                   .setAuthor("Custom title override", client.user.displayAvatarURL())
-                  .addField("Old Title", user.Title)
+                  .addField("Old Title", user ? user.Title : "None..")
                   .addField("New Title", title.trim())
-                  .addField("Title of", `**<@${user.DiscordID}>** (${user.DiscordID})`)
+                  .addField("Title of", `**<@${id.trim()}>** (${id.trim()})`)
                   .addField("Edited by", `<@${overridingUser}>`)
                   .setTimestamp();
                 client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.aclog).send(embedlog);
-                return resolve(`Updated title of <@${user.DiscordID}> to \`${title.trim()}\`!`)
+                return resolve(`Updated title of <@${id.trim()}> to \`${title.trim()}\`!`)
               }
+
+              sql.query("SELECT * FROM Players WHERE DiscordID = ?", [ id.trim() ], (err, rows) => {
+                if (!err && rows.length === 0)
+                  sendEmbed(id.trim(), "No steam account linked yet", `Be sure to link your steam at <http://www.alphaconsole.net/auth/index.php> other you won't see it ingame!`)
+              })
+
               resolve(title.trim());
             })
           })
@@ -334,7 +344,7 @@ module.exports = {
      */
     function setUsersColor(id, color, glow, overridingUser) {
       return new Promise((resolve, reject) => {
-        
+
         let colors = color.split(/[::]+/);
         if (colors.length > 5)
           return reject("AlphaConsole does not support more than 5 rotations in your custom title color. Please try again.");
@@ -343,26 +353,26 @@ module.exports = {
           return reject("Your color value cannot be multiple lines. It must be in 1 line.");
 
         if (presets[color.trim()]) {
-          return sql.query(`Select * from Players where DiscordID = ? OR SteamID = ?`, [ id.trim(), id.trim() ], (err, res) => {
+          return sql.query(`Select * from Titles where DiscordID = ? OR SteamID = ?`, [ id.trim(), id.trim() ], async (err, res) => {
             if (err) return reject(err.message);
-      
-            const user = res[0];
-            if (!user) return reject("Hi, in order to use our custom title service you must authorize your discord account. \n" +
-            "Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.");
-      
-            sql.query(`Update Players set Color = ?, GlowColor = ? where DiscordID = ? OR SteamID = ?`, [ presets[color.trim()].color, presets[color.trim()].glow, id.trim(), id.trim() ], (err) => {
+
+            if (!res[0]) {
+              await sql.query("INSERT INTO Titles(DiscordID) VALUES(?)", [ id ]);
+            }
+
+            sql.query(`Update Titles set Color = ?, GlowColor = ? where DiscordID = ?`, [ presets[color.trim()].color, presets[color.trim()].glow, id.trim() ], (err) => {
               if (err) return reject(err.message);
               if (overridingUser) {
                 const embedlog = new Discord.MessageEmbed()
                   .setColor([255, 255, 0])
                   .setAuthor("Custom title override", client.user.displayAvatarURL())
-                  .addField("Old Color", user.Title)
+                  .addField("Old Color", user ? user.Title : "None..")
                   .addField("New Color", title.trim())
-                  .addField("Title of", `**<@${user.DiscordID}>** (${user.DiscordID})`)
+                  .addField("Title of", `**<@${id.trim()}>** (${id.trim()})`)
                   .addField("Edited by", `<@${overridingUser}>`)
                   .setTimestamp();
                 client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.aclog).send(embedlog);
-                return resolve(`Updated title color of <@${user.DiscordID}> to \`${color.trim()}\`!`)
+                return resolve(`Updated title color of <@${id.trim()}> to \`${color.trim()}\`!`)
               }
               resolve(presets[color.trim()].name);
             })
@@ -375,26 +385,26 @@ module.exports = {
         if (safeColor.length < 5)
           return reject("One of your colors is not in a hex format.\nYou need to fill in a hex value (Ex. \`FFFFFF\` or \`FFFFFF::AAAAAA\`)\nYou can find these values here: https://htmlcolorcodes.com/");
 
-        sql.query(`Select * from Players where DiscordID = ? OR SteamID = ?`, [ id.trim(), id.trim() ], (err, res) => {
+        sql.query(`Select * from Titles where DiscordID = ? OR SteamID = ?`, [ id.trim(), id.trim() ], async (err, res) => {
           if (err) return reject(err.message);
-    
-          const user = res[0];
-          if (!user) return reject("Hi, in order to use our custom title service you must authorize your discord account. \n" +
-          "Please click this link: http://alphaconsole.net/auth/index.php and login with your discord account.");
-    
-          sql.query(`Update Players set ${glow ? "GlowColor" : "Color"} = ? where DiscordID = ? OR SteamID = ?`, [ safeColor.trim(), id.trim(), id.trim() ], (err) => {
+
+          if (!res[0]) {
+            await sql.query("INSERT INTO Titles(DiscordID) VALUES(?)", [ id ]);
+          }
+
+          sql.query(`Update Titles set ${glow ? "GlowColor" : "Color"} = ? where DiscordID = ? OR SteamID = ?`, [ safeColor.trim(), id.trim() ], (err) => {
             if (err) return reject(err.message);
             if (overridingUser) {
               const embedlog = new Discord.MessageEmbed()
                 .setColor([255, 255, 0])
                 .setAuthor("Custom title override", client.user.displayAvatarURL())
-                .addField("Old Color", user.Title)
+                .addField("Old Color", user ? user.Title : "None..")
                 .addField("New Color", safeColor.trim())
-                .addField("Title of", `**<@${user.DiscordID}>** (${user.DiscordID})`)
+                .addField("Title of", `**<@${id.trim()}>** (${id.trim()})`)
                 .addField("Edited by", `<@${overridingUser}>`)
                 .setTimestamp();
               client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.aclog).send(embedlog);
-              return resolve(`Updated title color of <@${user.DiscordID}> to \`${safeColor.trim()}\`!`)
+              return resolve(`Updated title color of <@${id.trim()}> to \`${safeColor.trim()}\`!`)
             }
             resolve(safeColor.trim());
           })
@@ -411,7 +421,7 @@ module.exports = {
  */
 function createTitle(args, ind) {
 	let title = "";
-	for (let i = ind; i < args.length; i++) 
+	for (let i = ind; i < args.length; i++)
       title += args[i] + " ";
 
 	return title.trim();
