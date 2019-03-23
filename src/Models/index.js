@@ -15,7 +15,8 @@ const sequelize = new Sequelize(
     dialect: "mysql",
     define: {
       timestamps: false
-    }
+    },
+    logging: false
   }
 );
 
@@ -38,6 +39,14 @@ async function loadModels() {
         client.logError(`Unable to load model ${f}: ${e}`);
       }
     });
+
+    // Table relations
+    modelList.titles.hasMany(modelList.players, {
+      foreignKey: "DiscordID",
+      targetKey: "DiscordID",
+      as: "steams"
+    });
+
     resolve(modelList);
   });
 }
