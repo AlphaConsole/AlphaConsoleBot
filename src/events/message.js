@@ -1,7 +1,7 @@
 module.exports = (client, message) => {
   const args = message.content.split(" ");
 
-  message.member.checkRoles();
+  if (message.member) message.member.checkRoles();
 
   if (message.author.bot) return;
 
