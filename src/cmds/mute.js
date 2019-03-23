@@ -91,8 +91,6 @@ module.exports = {
         for (i = 3; i < args.length; i++) reason += args[i] + " ";
         if (reason === "") reason = "No reason provided";
 
-        console.log(m.user);
-
         require("../helpers/checkUser").run(sql, m.user, async (err, user) => {
           if (err) {
             let errorCode =

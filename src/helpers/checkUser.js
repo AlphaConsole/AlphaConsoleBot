@@ -13,14 +13,12 @@ module.exports.run = (sql, user, callback) => {
       if (err) return callback(err, null);
 
       if (res.length === 0) {
-        console.log(user);
 
         sql.query(
           `Insert Into Members(DiscordID, Username, JoinedDate) VALUES(?, ?, ?)`,
-          [user.id, user.username, new Date().getTime()],
+            [user.id, user.username.replace(/[^0-9a-z\!\-\?\.\,\'\"\#\@\/ ]/gi, "");, new Date().getTime()],
           error => {
             if (error) {
-              console.log(error);
               if (error.code === "ER_DUP_ENTRY")
                 return callback(`Error: ${error}`, null);
               else return callback(`Error: ${error.code}`, null);
