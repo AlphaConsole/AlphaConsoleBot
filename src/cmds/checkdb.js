@@ -55,9 +55,7 @@ module.exports = {
               sendEmbed(
                 message.channel,
                 "Database Check",
-                `Discord: <@${
-                  user.DiscordID
-                }>\nLast seen: ${lastSeen}\n\nSteam accounts:\n${steams.map(
+                `Discord: <@${user.DiscordID}>\n\nSteam accounts:\n${steams.map(
                   s =>
                     `[${s.SteamID}](https://steamcommunity.com/profiles/${
                       s.SteamID

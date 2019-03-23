@@ -168,8 +168,8 @@ module.exports = {
       let title = createTitle(args, 3);
 
       sql.query(
-        "SELECT * FROM TitleReports WHERE (DiscordID = ? OR SteamID = ?) AND Title = ?",
-        [id, id, title],
+        "SELECT * FROM TitleReports WHERE (DiscordID = ?) AND Title = ?",
+        [id, title],
         (err, rows) => {
           if (!rows[0]) {
             sql.query(
@@ -546,8 +546,8 @@ module.exports = {
 
         if (presets[color.trim()]) {
           return sql.query(
-            `Select * from Titles where DiscordID = ? OR SteamID = ?`,
-            [id.trim(), id.trim()],
+            `Select * from Titles where DiscordID = ?`,
+            [id.trim()],
             async (err, res) => {
               if (err) return reject(err.message);
 
@@ -608,8 +608,8 @@ module.exports = {
           );
 
         sql.query(
-          `Select * from Titles where DiscordID = ? OR SteamID = ?`,
-          [id.trim(), id.trim()],
+          `Select * from Titles where DiscordID = ?`,
+          [id.trim()],
           async (err, res) => {
             if (err) return reject(err.message);
 
@@ -620,7 +620,7 @@ module.exports = {
             sql.query(
               `Update Titles set ${
                 glow ? "GlowColor" : "Color"
-              } = ? where DiscordID = ? OR SteamID = ?`,
+              } = ? where DiscordID = ?`,
               [safeColor.trim(), id.trim()],
               err => {
                 if (err) return reject(err.message);
