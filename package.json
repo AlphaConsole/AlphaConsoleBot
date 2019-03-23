@@ -1,24 +1,27 @@
 {
-  "name": "alphaconsolebot",
+  "name": "githubmanager",
   "version": "1.0.0",
-  "description": "Bot for AlphaConsole discord",
-  "main": "alphaconsole.js",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "test": "nodemon src/alphaconsole.js -serverfile=../src/serverInfo.js",
-    "prod": "node src/AlphaConsole.js -serverfile=../src/serverInfo-OfficialDiscord.js"
+    "start": "nodemon src/index.js",
+    "production": "node src/index.js",
+    "importdb": "node scripts/sequalize-auto.js"
   },
-  "author": "Hayden Meloche",
+  "keywords": [],
+  "author": "",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.18.3",
+    "chalk": "^2.4.2",
     "discord.js": "github:discordjs/discord.js",
-    "express": "^4.16.3",
-    "jimp": "^0.5.6",
-    "mysql": "^2.15.0",
-    "node-schedule": "^1.3.0",
-    "nodemon": "^1.17.5",
-    "request": "^2.87.0",
-    "sentiment": "^4.2.0",
-    "shelljs": "^0.7.8"
+    "fs": "0.0.1-security",
+    "mysql2": "^1.6.5",
+    "sequelize": "^5.1.0",
+    "util": "^0.11.1"
+  },
+  "devDependencies": {
+    "mysql": "^2.16.0",
+    "nodemon": "^1.18.10",
+    "sequelize-auto": "^0.4.29"
   }
 }
