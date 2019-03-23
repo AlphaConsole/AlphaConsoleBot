@@ -20,6 +20,7 @@ module.exports.run = (sql, user, callback) => {
           [user.id, user.username, new Date().getTime()],
           error => {
             if (error) {
+              console.log(error);
               if (error.code === "ER_DUP_ENTRY")
                 return callback(`Error: ${error}`, null);
               else return callback(`Error: ${error.code}`, null);
