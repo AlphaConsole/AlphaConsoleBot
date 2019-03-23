@@ -471,7 +471,6 @@ module.exports = {
                   id
                 ]);
               }
-              return console.log(user);
               sql.query(
                 "Update Titles set Title = ? where DiscordID = ?",
                 [title.trim(), id.trim()],
