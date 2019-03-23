@@ -13,10 +13,13 @@ module.exports.run = (sql, user, callback) => {
       if (err) return callback(err, null);
 
       if (res.length === 0) {
-
         sql.query(
           `Insert Into Members(DiscordID, Username, JoinedDate) VALUES(?, ?, ?)`,
-            [user.id, user.username.replace(/[^0-9a-z\!\-\?\.\,\'\"\#\@\/ ]/gi, "");, new Date().getTime()],
+          [
+            user.id,
+            user.username.replace(/[^0-9a-z\!\-\?\.\,\'\"\#\@\/ ]/gi, ""),
+            new Date().getTime()
+          ],
           error => {
             if (error) {
               if (error.code === "ER_DUP_ENTRY")
