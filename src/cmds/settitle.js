@@ -550,6 +550,7 @@ module.exports = {
             [id.trim()],
             async (err, res) => {
               if (err) return reject(err.message);
+              const user = res[0];
 
               if (!res[0]) {
                 await sql.query("INSERT INTO Titles(DiscordID) VALUES(?)", [
@@ -612,6 +613,7 @@ module.exports = {
           [id.trim()],
           async (err, res) => {
             if (err) return reject(err.message);
+            const user = res[0];
 
             if (!res[0]) {
               await sql.query("INSERT INTO Titles(DiscordID) VALUES(?)", [id]);
