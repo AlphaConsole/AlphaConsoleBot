@@ -71,7 +71,7 @@ module.exports = {
                             })`
                         )
                         .join("\n")
-                    : "No steam accounts linked:\n```It appears you have not signed up for our title service. Please click this link and makes sure you are logging in with the correct account.\n\nhttp://www.alphaconsole.net/auth/index.php```"
+                    : "No steam accounts linked, click here to link your steam accounts:\nhttp://www.alphaconsole.net/auth/index.php"
                 }\n\nTitle: ${user.Title}\nColor: ${user.Color}\nGlow: ${
                   user.GlowColor
                 }${
