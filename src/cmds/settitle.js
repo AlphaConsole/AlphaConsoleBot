@@ -508,9 +508,9 @@ module.exports = {
                     (err, rows) => {
                       if (!err && rows.length === 0)
                         sendEmbed(
-                          id.trim(),
+                          message.author,
                           "No steam account linked yet",
-                          `Be sure to link your steam at <http://www.alphaconsole.net/auth/index.php> other you won't see it ingame!`
+                          `Be sure to link your steam at <http://www.alphaconsole.net/auth/index.php> otherwise you won't see it ingame!`
                         );
                     }
                   );
