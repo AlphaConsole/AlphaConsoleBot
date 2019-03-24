@@ -21,7 +21,9 @@ if (!config.roles)
     '"config.roles" is not defined. GuildMember.is won\'t work.'
   );
 
-if (!config.database)
-  client.logWarning(
-    '"config.database" is not defined. Database calls & Models won\'t work.'
+if (!config.database) {
+  client.logError(
+    '"config.database" is not defined. Database connection is required for the bot to work.'
   );
+  process.exit();
+}
