@@ -72,6 +72,11 @@ async function loadModels() {
       sourceKey: "DiscordID",
       as: "titleInfo"
     });
+    modelList.Members.hasMany(modelList.TitlesLog, {
+      foreignKey: "DiscordID",
+      sourceKey: "DiscordID",
+      as: "titlesLog"
+    });
 
     resolve(modelList);
   });

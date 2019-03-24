@@ -28,7 +28,8 @@ module.exports = GuildMember => {
         include: [
           { model: client.models.Logs, as: "cases" },
           { model: client.models.Players, as: "steams" },
-          { model: client.models.Titles, as: "titleInfo" }
+          { model: client.models.Titles, as: "titleInfo" },
+          { model: client.models.TitlesLog, as: "titlesLog" }
         ]
       }));
     }
