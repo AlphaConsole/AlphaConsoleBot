@@ -40,11 +40,37 @@ async function loadModels() {
       }
     });
 
-    // Table relations
-    modelList.titles.hasMany(modelList.players, {
-      foreignKey: "DiscordID",
+    /**
+     * ? Table relations
+     */
+
+    //* Logs table
+    modelList.Logs.belongsTo(modelList.Members, {
+      foreignKey: "Member",
       targetKey: "DiscordID",
+      as: "user"
+    });
+    modelList.Logs.belongsTo(modelList.Members, {
+      foreignKey: "Moderator",
+      targetKey: "DiscordID",
+      as: "staff"
+    });
+
+    //* Members table
+    modelList.Members.hasMany(modelList.Logs, {
+      foreignKey: "Member",
+      sourceKey: "DiscordID",
+      as: "cases"
+    });
+    modelList.Members.hasMany(modelList.Players, {
+      foreignKey: "DiscordID",
+      sourceKey: "DiscordID",
       as: "steams"
+    });
+    modelList.Members.hasOne(modelList.Titles, {
+      foreignKey: "DiscordID",
+      sourceKey: "DiscordID",
+      as: "titleInfo"
     });
 
     resolve(modelList);

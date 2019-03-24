@@ -1,7 +1,7 @@
 /* jshint indent: 1 */
 
 module.exports = function(sequelize, DataTypes) {
-	return sequelize.define('specialtitles', {
+	return sequelize.define('SpecialTitles', {
 		Title: {
 			type: DataTypes.TEXT,
 			allowNull: false
@@ -19,7 +19,7 @@ module.exports = function(sequelize, DataTypes) {
 			allowNull: false
 		}
 	}, {
-		tableName: 'specialtitles',
+		tableName: 'SpecialTitles',
 		timestamps: false
 	});
 };

@@ -1,7 +1,7 @@
 /* jshint indent: 1 */
 
 module.exports = function(sequelize, DataTypes) {
-	return sequelize.define('titles', {
+	return sequelize.define('Titles', {
 		DiscordID: {
 			type: DataTypes.STRING(25),
 			allowNull: false,
@@ -29,7 +29,7 @@ module.exports = function(sequelize, DataTypes) {
 			defaultValue: '0'
 		}
 	}, {
-		tableName: 'titles',
+		tableName: 'Titles',
 		timestamps: false
 	});
 };
