@@ -1,8 +1,11 @@
-module.exports = (client, message) => {
+module.exports = async (client, message) => {
   const args = message.content.split(" ");
 
   if (message.author.bot) return;
-  if (message.member) message.member.checkRoles();
+  if (message.member) {
+    await message.guild.members.fetch(message.author.id);
+    message.member.checkRoles();
+  }
 
   let commandHandlerCheck = client.config.prefixSeperated
     ? args[0].toLowerCase() !== client.config.prefix.toLowerCase()
