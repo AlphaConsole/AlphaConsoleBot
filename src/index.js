@@ -14,6 +14,7 @@ async function start() {
       this.loadEvents();
       this.loadCommands();
       this.loadModels();
+      this.loadEmbeds();
       this.login(this.config.botToken);
     }
 
@@ -104,6 +105,18 @@ async function start() {
               msg.substring(0, 1950) +
               "```"
           );
+      };
+    }
+
+    loadEmbeds() {
+      this.embed = (title, description) => {
+        console.log(this.config.logo);
+        const embedlog = new Discord.MessageEmbed()
+          .setColor([255, 255, 0])
+          .setAuthor(title, this.config.logo)
+          .setTimestamp();
+        if (description) embedlog.setDescription(description);
+        return embedlog;
       };
     }
   }
