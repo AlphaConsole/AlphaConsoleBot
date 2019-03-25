@@ -1,9 +1,8 @@
 module.exports = (client, message) => {
   const args = message.content.split(" ");
 
-  if (message.member) message.member.checkRoles();
-
   if (message.author.bot) return;
+  if (message.member) message.member.checkRoles();
 
   let commandHandlerCheck = client.config.prefixSeperated
     ? args[0].toLowerCase() !== client.config.prefix.toLowerCase()
