@@ -100,7 +100,6 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
         if (m.roles.has(serverInfo.roles.support)) return true;
         if (m.roles.has(serverInfo.roles.moderator)) return true;
         if (m.roles.has(serverInfo.roles.admin)) return true;
-        if (m.roles.has(serverInfo.roles.developer)) return true;
 
         if (c === serverInfo.channels.slaughter) return true;
         if (c === serverInfo.channels.staff) return true;

@@ -192,13 +192,8 @@ module.exports.run = (client, serverInfo, config, reaction, user, sendEmbed) => 
  * @param {Function} callback 
  */
 function getRoles(user, serverInfo, client, callback) {
-    client.guilds.get(serverInfo.guildId).members.fetch(user.id).then(m => {
-        if (m.roles.has(serverInfo.roles.developer)) 
-         m.isDeveloper = true;
-        else
-         m.isDeveloper = false;
-        
-        if (m.roles.has(serverInfo.roles.admin) || m.isDeveloper)
+    client.guilds.get(serverInfo.guildId).members.fetch(user.id).then(m => {        
+        if (m.roles.has(serverInfo.roles.admin))
          m.isAdmin = true;
         else
          m.isAdmin = false;

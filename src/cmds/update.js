@@ -11,7 +11,7 @@ module.exports = {
      title: "Update",
      details: [
         {
-            perms      : "Developer",
+            perms      : "Admin",
             command    : "!Update",
             description: "Updates the bot"
         }
