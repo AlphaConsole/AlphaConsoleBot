@@ -484,12 +484,8 @@ function processModMail(message, args, data) {
      * ? We are saving these varibales in the message.member object. This way at any point of time
      * ? we can request the information and detect if he is allowed to execute the command.
      */
-    if (message.member.roles.has(serverInfo.mm.roles.developer)) 
-      message.member.isDeveloper = true;
-    else
-      message.member.isDeveloper = false;
     
-    if (message.member.roles.has(serverInfo.mm.roles.admin) || message.member.isDeveloper)
+    if (message.member.roles.has(serverInfo.mm.roles.admin))
       message.member.isAdmin = true;
     else
       message.member.isAdmin = false;

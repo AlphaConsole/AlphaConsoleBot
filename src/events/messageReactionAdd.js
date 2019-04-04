@@ -339,10 +339,8 @@ function getRoles(user, serverInfo, client, callback) {
     .get(serverInfo.guildId)
     .members.fetch(user.id)
     .then(m => {
-      if (m.roles.has(serverInfo.roles.developer)) m.isDeveloper = true;
-      else m.isDeveloper = false;
 
-      if (m.roles.has(serverInfo.roles.admin) || m.isDeveloper)
+      if (m.roles.has(serverInfo.roles.admin))
         m.isAdmin = true;
       else m.isAdmin = false;
 

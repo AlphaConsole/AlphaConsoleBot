@@ -155,6 +155,5 @@ function canKeepTitle(m, serverInfo) {
   if (m.roles.has(serverInfo.roles.support)) return true;
   if (m.roles.has(serverInfo.roles.moderator)) return true;
   if (m.roles.has(serverInfo.roles.admin)) return true;
-  if (m.roles.has(serverInfo.roles.developer)) return true;
   return false;
 }
