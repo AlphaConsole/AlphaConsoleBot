@@ -58,13 +58,13 @@ client.on("ready", () => {
 
 //New member joins
 client.on("guildMemberAdd", member => {
-  client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.serverlog).send(`✅ \`[${new Date().toTimeString().split(" ")[0]}]\` **${member.user.tag}** joined the guild. Total members: ${numberWithSpaces(client.guilds.get(serverInfo.guildId).memberCount)}`);
+  client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.serverlog).send(`✅ \`[${new Date().toTimeString().split(" ")[0]}]\` **${member.user.tag}** (${member.id}) joined the guild. Total members: ${numberWithSpaces(client.guilds.get(serverInfo.guildId).memberCount)}`);
   require('./events/guildMemberAdd').run(client, serverInfo, config, member);
 });
 
 //User Left / kicked
 client.on("guildMemberRemove", member => {
-  client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.serverlog).send(`❌ \`[${new Date().toTimeString().split(" ")[0]}]\` **${member.user.tag}** left the guild. Total members: ${numberWithSpaces(client.guilds.get(serverInfo.guildId).memberCount)}`);
+  client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.serverlog).send(`❌ \`[${new Date().toTimeString().split(" ")[0]}]\` **${member.user.tag}** (${member.id}) left the guild. Total members: ${numberWithSpaces(client.guilds.get(serverInfo.guildId).memberCount)}`);
   require('./events/guildMemberRemove').run(client, serverInfo, config, member);
 });
 
@@ -76,7 +76,7 @@ client.on("guildMemberUpdate", (oldMember, newMember) => {
 //Personal Info changed
 client.on("userUpdate", (oldMember, newMember) => {
   if (oldMember.tag !== newMember.tag)
-    client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.serverlog).send(`:person_with_pouting_face: \`[${new Date().toTimeString().split(" ")[0]}]\` **\`${oldMember.tag}\`** changed their Discord name to **\`${newMember.tag}\`**`)
+  client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.serverlog).send(`:person_with_pouting_face: \`[${new Date().toTimeString().split(" ")[0]}]\` **\`${oldMember.tag}\`** (${oldMember.id}) changed their Discord name to **\`${newMember.tag}\`** (${newMember.id})`)
   require('./events/userUpdate').run(client, serverInfo, config, newMember);
 });
 
@@ -92,7 +92,7 @@ client.on("messageReactionAdd", (reaction, user) => {
 
 //On a new ban
 client.on("guildBanAdd", (guild, user) => {
-  client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.serverlog).send(`🔨 \`[${new Date().toTimeString().split(" ")[0]}]\` **${user.tag}** has been banned from the guild.`)
+  client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.serverlog).send(`🔨 \`[${new Date().toTimeString().split(" ")[0]}]\` **${user.tag}** (${user.id}) has been banned from the guild.`)
 });
 
 //Voice users update
@@ -159,6 +159,8 @@ async function messageProcess(message) {
 
 
     if (message.channel.type === "text") {
+      if (message.guild.id === serverInfo.mm.guildId)
+        return processModMail(message, args, data);
       if (message.guild.id !== serverInfo.guildId) return;
 
       /**
@@ -225,9 +227,14 @@ async function messageProcess(message) {
          * ? the request to the right file. So this file is not one big mess
          * ? We also check every single message, to ensure the user is allowed to chat or for custom commands
          */
+        
         let cmd = message.content.startsWith('!') ? args[0].substring(1).toLowerCase() : undefined;
-        require('./events/message').run(data, cmd);
-        require('./events/spamProtection').run(data);
+        try {
+          require('./events/message').run(data, cmd);
+          require('./events/spamProtection').run(data);
+        } catch (error) {
+          console.log(error)
+        }
 
         switch (cmd) {
           case "ping":
@@ -466,6 +473,150 @@ async function messageProcess(message) {
 
 
 
+
+function processModMail(message, args, data) {
+  client.guilds.get(serverInfo.mm.guildId).members.fetch(message.author.id).then(m => {
+    message.member = m;
+
+    /**
+     * ! Assigning all positions to the member to easily detect if he is allowed to do certain commands
+     * 
+     * ? We are saving these varibales in the message.member object. This way at any point of time
+     * ? we can request the information and detect if he is allowed to execute the command.
+     */
+    if (message.member.roles.has(serverInfo.mm.roles.developer)) 
+      message.member.isDeveloper = true;
+    else
+      message.member.isDeveloper = false;
+    
+    if (message.member.roles.has(serverInfo.mm.roles.admin) || message.member.isDeveloper)
+      message.member.isAdmin = true;
+    else
+      message.member.isAdmin = false;
+
+    if (message.member.roles.has(serverInfo.mm.roles.moderator) || message.member.isAdmin)
+      message.member.isModerator = true;
+    else
+      message.member.isModerator = false;
+
+    message.member.isSupport = true;
+    message.member.isStaff = true;
+    message.member.isCH = true;
+    
+    /**
+     * ! All possible commands
+     * 
+     * ? We assign the command to a variable. Based on that variable we'll redirect
+     * ? the request to the right file. So this file is not one big mess
+     * ? We also check every single message, to ensure the user is allowed to chat or for custom commands
+     */
+    
+    let cmd = message.content.startsWith('!') ? args[0].substring(1).toLowerCase() : undefined;
+
+    switch (cmd) {
+      case "ping":
+        if (!denyCommands(message.channel.id, serverInfo.channels))
+          require('./cmds/ping').run(data);
+        break;
+
+      case "override":
+        require('./cmds/settitle').run(data);
+        break;
+
+      case "checkdb":
+        require('./cmds/checkdb').run(data);
+        break;
+
+      case "checkwhitelist":
+      case "checkw":
+        require('./cmds/checkwhitelist').run(data);
+        break;
+
+      case "resetbeta":
+        require("./cmds/resetbeta").run(data);
+        break;
+
+      case "checktitles":
+        require('./cmds/checkTitles').run(data);
+        break;
+
+      case "mute":
+        require('./cmds/mute').run(data);
+        break;
+
+      case "unmute":
+        require('./cmds/unmute').run(data);
+        break;
+
+      case "kick":
+        require('./cmds/kick').run(data);
+        break;
+
+      case "ban":
+        require('./cmds/ban').run(data);
+        break;
+
+      case "unban":
+        require('./cmds/unban').run(data);
+        break;
+
+      case "warn":
+        require('./cmds/warn').run(data);
+        break;
+
+      case "check":
+      case "cases":
+        require('./cmds/check').run(data);
+        break;
+
+      case "lastseen":
+        require('./cmds/lastseen').run(data);
+        break;
+
+      case "checksub":
+      case "subcount":
+        require('./cmds/checksub').run(data);
+        break;
+
+      case "case":
+        require('./cmds/case').run(data);
+        break;
+
+      case "givebeta":
+        require('./cmds/givebeta').run(data);
+        break;
+
+      case "blacklist":
+        require('./cmds/blacklist').run(data);
+        break;
+
+      case "update":
+        require('./cmds/update').run(data);
+        break;
+
+      case "usercount":
+        if (message.member.isCH) 
+          sendEmbed(message.channel, `AlphaConsole currently has ${message.guild.memberCount} members`)
+    
+      default:
+        break;
+    }
+
+  }).catch(e => { console.log(e) }) 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
   * ! Send information in embed form to the channel
   * 
@@ -481,17 +632,22 @@ async function messageProcess(message) {
  * @param {String} message 
  * @param {String} desc (optional)
  */
-let sendEmbed = (channel, message, desc, timeout) => {
+let sendEmbed = (channel, message, desc, timeout, image, embedimg) => {
   const embed = new Discord.MessageEmbed()
     .setColor([255, 255, 0])
     .setAuthor(message, client.user.displayAvatarURL({ format: "png" }));
     if (desc) embed.setDescription(desc)
-  channel.send(embed)
+    if (embedimg) embed.setImage(embedimg);
+  channel.send({
+    embed,
+    files: image ? [ image ] : []
+  })
   .then(m => {
     if (timeout)
       m.delete({ timeout: timeout })
   })
   .catch(e => {
+    console.log(e);
     if (channel.tag) 
       client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.botSpam).send(`<@${channel.id}>, I could not DM you my message because you have your DM's disabled.`)
   });

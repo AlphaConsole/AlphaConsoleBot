@@ -51,7 +51,9 @@ module.exports = {
     partners              : "445325924771037185",
     muted                 : "448536437453881355",
     banners               : "513653275275296777",
-    setBanner             : "513790692229906433"
+    setBanner             : "513790692229906433",
+    submitBanners         : "514189565435707393",
+    bannersSubmissions    : "514235430581829633"
   },
 
   publicChannels: [
@@ -76,5 +78,15 @@ module.exports = {
   ],
 
   partnerEmoji: ":ACQuestion:506579449618104320",
-  DynamicCat: "355924371367395329"
+  DynamicCat: "355924371367395329",
+
+  mm: {
+    guildId: "420394999440474132",
+    roles: {
+      developer : "420404967585873921",
+      admin     : "420404934912245770",
+      moderator : "420404988171386920",
+      support   : "420421785876430858",
+    }
+  }
 };

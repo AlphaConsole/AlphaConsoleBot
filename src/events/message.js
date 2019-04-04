@@ -8,6 +8,12 @@ const Discord = require('discord.js');
 
 module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbed }, cmd) => {
     let keys = config.keys;
+
+    //! This if for the banner submissions contest
+    if (message.channel.id === serverInfo.channels.submitBanners) {
+        handleNewContestEntry({ client, serverInfo, message, args, sql, config, sendEmbed }, cmd);
+    }
+
     if (message.channel.id === serverInfo.channels.setTitle) message.delete().catch(e => { });
     if (message.channel.id === serverInfo.channels.setSpecialTitle) message.delete().catch(e => { });
     if (
@@ -28,24 +34,26 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
     }
 
     //* Links filter
-    if (!message.member.isCH && !message.member.roles.has(serverInfo.roles.linksFiles)) {
-        if (!(config.permits[message.author.id] && config.permits[message.author.id].channel === message.channel.id && config.permits[message.author.id].until > new Date().getTime())) {
-            if (!config.whitelistedLinksChannel.includes(message.channel.id)) {
-                let matches = message.content.match(new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/ig));
-                let filtered = matches ? matches.filter(m => {
-                    if (m.endsWith("discord.gg/alphaconsole")  ||
-                        m.includes("imgur.com") ||
-                        m.includes("reddit.com") ||
-                        m.includes("gyazo.com") ||
-                        m.includes("prntscr.com"))
-                        return false
-                    else
-                        return true
-                }) : null;
-
-                if (filtered && filtered[0]) {
-                    message.delete().catch(e => { });
-                    sendEmbed(message.author, "Links are not allowed in this channel.")
+    if (message.channel.id !== serverInfo.channels.setBanner) {
+        if (!message.member.isCH && !message.member.roles.has(serverInfo.roles.linksFiles)) {
+            if (!(config.permits[message.author.id] && config.permits[message.author.id].channel === message.channel.id && config.permits[message.author.id].until > new Date().getTime())) {
+                if (!config.whitelistedLinksChannel.includes(message.channel.id)) {
+                    let matches = message.content.match(new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,12}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/ig));
+                    let filtered = matches ? matches.filter(m => {
+                        if (m.endsWith("discord.gg/alphaconsole")  ||
+                            m.includes("imgur.com") ||
+                            m.includes("reddit.com") ||
+                            m.includes("gyazo.com") ||
+                            m.includes("prntscr.com"))
+                            return false
+                        else
+                            return true
+                    }) : null;
+    
+                    if (filtered && filtered[0]) {
+                        message.delete().catch(e => { });
+                        sendEmbed(message.author, "Links are not allowed in this channel.")
+                    }
                 }
             }
         }
@@ -299,6 +307,7 @@ function AutoResponseChannel(channelID, channels) {
 	if (channelID === channels.serverlog) return true;
 	if (channelID === channels.setSpecialTitle) return true;
 	if (channelID === channels.setTitle) return true;
+	if (channelID === channels.setBanner) return true;
 	if (channelID === channels.showcase) return true;
 	if (channelID === channels.suggestion) return true;
 	if (channelID === channels.staff) return true;
@@ -418,4 +427,34 @@ function postPin(client, message, sql, serverInfo, something) {
             })
 		}
 	})
+}
+
+function handleNewContestEntry({ client, serverInfo, message, args, sql, config, sendEmbed }, cmd) {
+    
+    let attachments = (message.attachments).array();
+
+    if (attachments.length != 0 ) {
+        attachments.forEach(function (item) {
+            if (item.url.endsWith(".png")) {
+                if (item.width === 420 && item.height === 100) {
+                    return client.channels.get(serverInfo.channels.bannersSubmissions).send(`**New Banner Submission**\nUser:${message.author}`, {
+                        files: [ item.url ]
+                    }).then(async m => {
+                        message.delete().catch(e => {}) 
+                    });
+                } else {
+                    //invalid picture
+                    message.author.send(`Your banner ${item.url} is invalid dimensions. Please make sure it is 420x100`);
+                    message.delete().catch(e => {}) 
+                }
+            } else {
+                message.author.send(`Your banner ${item.url} is the wrong file type. Please make sure it is a png file`);
+                message.delete().catch(e => {}) 
+            }
+
+        })
+    } else {
+        message.delete().catch(e => {}) //delete just plain messages
+    }
+    
 }

@@ -13,10 +13,10 @@
     "body-parser": "^1.18.3",
     "discord.js": "github:discordjs/discord.js",
     "express": "^4.16.3",
+    "jimp": "^0.5.6",
     "mysql": "^2.15.0",
     "node-schedule": "^1.3.0",
     "nodemon": "^1.17.5",
-    "probe-image-size": "^4.0.0",
     "request": "^2.87.0",
     "sentiment": "^4.2.0",
     "shelljs": "^0.7.8"

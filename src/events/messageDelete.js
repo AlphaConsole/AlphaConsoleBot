@@ -1,4 +1,5 @@
 module.exports.run = (client, serverInfo, config, message) => {
+    if (message.guild.id !== serverInfo.guildId) return;
 
     let args = message.content.split(/[ ]+/);
 
