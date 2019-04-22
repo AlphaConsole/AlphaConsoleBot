@@ -3,33 +3,53 @@
  */
 
 module.exports = {
-    title: "GetTitle",
-    details: [
-        {
-            perms      : "Everyone",
-            command    : "!get title",
-            description: "Returns your current title"
-        }
-    ],
+  title: "GetTitle",
+  details: [
+    {
+      perms: "Everyone",
+      command: "!get title",
+      description: "Returns your current title"
+    }
+  ],
 
-    run: ({ client, serverInfo, message, args, sql, config, sendEmbed }) => {
+  run: ({ client, serverInfo, message, args, sql, config, sendEmbed }) => {
+    if (message.channel.id !== serverInfo.channels.setTitle) return;
+    if (args.length < 2 || !(args[1] && args[1].toLowerCase() === "title"))
+      return;
 
-        if (message.channel.id !== serverInfo.channels.setTitle) return;
-        if (args.length < 2 || !(args[1] && args[1].toLowerCase() === "title")) return;
+    sql.query(
+      "Select * from Titles where DiscordID = ?",
+      [message.author.id],
+      (err, rows) => {
+        const user = rows[0];
 
-        sql.query("Select * from Players where DiscordID = ?", [ message.author.id ], (err, rows) => {
-            const user = rows[0];
-            
-            if (!user)
-                return sendEmbed(message.author, "An error occured", `It appears you have not signed up for our title service. Please click this link and makes sure you are logging in with the correct account.\n\nhttp://www.alphaconsole.net/auth/index.php`)
+        if (!user)
+          return sendEmbed(
+            message.author,
+            "An error occured",
+            `It appears you have not signed up for our title service. Please click this link and makes sure you are logging in with the correct account.\n\nhttp://www.alphaconsole.net/auth/index.php`
+          );
 
-            if (user.Title === "X" || user.Color === "X")
-                return sendEmbed(message.author, "Your title information", `Discord: <@${user.DiscordID}>\nSteam: [${user.SteamID}](https://steamcommunity.com/profiles/${user.SteamID})\n\nInformation: You have your title disabled. Set a new title & color to enable your title again.`);
+        if (user.Title === "X" || user.Color === "X")
+          return sendEmbed(
+            message.author,
+            "Your title information",
+            `Discord: <@${
+              user.DiscordID
+            }>\n\nInformation: You have your title disabled. Set a new title & color to enable your title again.`
+          );
 
-            sendEmbed(message.author, "Your title information", `Discord: <@${user.DiscordID}>\nSteam: [${user.SteamID}](https://steamcommunity.com/profiles/${user.SteamID})\n\nTitle: ${user.Title}\nColor: ${user.Color}\nGlow: ${user.GlowColor}`);            
-        })
+        sendEmbed(
+          message.author,
+          "Your title information",
+          `Discord: <@${user.DiscordID}>\n\nTitle: ${user.Title}\nColor: ${
+            user.Color
+          }\nGlow: ${user.GlowColor}`
+        );
+      }
+    );
 
-        /* try {
+    /* try {
             var url = config.keys.CheckdbURL + "?DiscordID=" + message.author.id;
             var user = message.author;
             request({ method: "GET", url: url }, function (err, response, body) {
@@ -67,40 +87,39 @@ module.exports = {
         } catch (error) {
             console.log(error)
         } */
-
-    }
+  }
 };
 
 function returnColour(colourID) {
-    switch (colourID) {
-        case "0":
-            return "No title";
-            break;
-        case "1":
-            return "Gray";
-            break;
-        case "2":
-            return "Glowing Green (Twitch Subs & Legacy)";
-            break;
-        case "3":
-            return "Non-glowing Green";
-            break;
-        case "4":
-            return "Non-glowing Yellow";
-            break;
-        case "5":
-            return "Glowing Yellow";
-            break;
-        case "6":
-            return "Purple (Twitch Subs & Legacy)";
-            break;
-        case "7":
-            return "RLCS Blue";
-            break;
-        case "X":
-            return "Disabled (X)";
-            break;
-        default:
-            return "Cycling Colours";
-    }
+  switch (colourID) {
+    case "0":
+      return "No title";
+      break;
+    case "1":
+      return "Gray";
+      break;
+    case "2":
+      return "Glowing Green (Twitch Subs & Legacy)";
+      break;
+    case "3":
+      return "Non-glowing Green";
+      break;
+    case "4":
+      return "Non-glowing Yellow";
+      break;
+    case "5":
+      return "Glowing Yellow";
+      break;
+    case "6":
+      return "Purple (Twitch Subs & Legacy)";
+      break;
+    case "7":
+      return "RLCS Blue";
+      break;
+    case "X":
+      return "Disabled (X)";
+      break;
+    default:
+      return "Cycling Colours";
+  }
 }

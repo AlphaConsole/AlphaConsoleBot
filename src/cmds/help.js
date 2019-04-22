@@ -25,7 +25,6 @@ module.exports = {
                 support  : [],
                 moderator: [],
                 admin    : [],
-                developer: []
             }
 
             for (let i = 0; i < a.length; i++) {
@@ -44,7 +43,6 @@ module.exports = {
                 if (member.isSupport && help.support.length !== 0) emb.addField("Support commands", help.support.join("\n"))
                 if (member.isModerator && help.moderator.length !== 0) emb.addField("Moderator commands", help.moderator.join("\n"))
                 if (member.isAdmin && help.admin.length !== 0) emb.addField("Admin commands", help.admin.join("\n"))
-                if (member.isDeveloper && help.developer.length !== 0) emb.addField("Developer commands", help.developer.join("\n"))
                 message.channel.send(emb);
 
 

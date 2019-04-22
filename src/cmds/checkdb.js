@@ -55,20 +55,26 @@ module.exports = {
               sendEmbed(
                 message.channel,
                 "Database Check",
-                `Discord: <@${user.DiscordID}>\n\nSteam accounts:\n${steams
-                  .map(
-                    s =>
-                      `[${s.SteamID}](https://steamcommunity.com/profiles/${
-                        s.SteamID
-                      }) (${
-                        s.LastSeen
-                          ? new Date(s.LastSeen * 1000).toUTCString()
-                          : "never"
-                      })`
-                  )
-                  .join("\n")}\n\nTitle: ${user.Title}\nColor: ${
-                  user.Color
-                }\nGlow: ${user.GlowColor}${
+                `Discord: <@${user.DiscordID}>\n\nSteam accounts:\n${
+                  steams.length > 0
+                    ? steams
+                        .map(
+                          s =>
+                            `[${
+                              s.SteamID
+                            }](https://steamcommunity.com/profiles/${
+                              s.SteamID
+                            }) (${
+                              s.LastSeen
+                                ? new Date(s.LastSeen * 1000).toUTCString()
+                                : "never"
+                            })`
+                        )
+                        .join("\n")
+                    : "No steam accounts linked, click here to link your steam accounts:\nhttp://www.alphaconsole.net/auth/index.php"
+                }\n\nTitle: ${user.Title}\nColor: ${user.Color}\nGlow: ${
+                  user.GlowColor
+                }${
                   user.Title === "X" || user.Color === "X"
                     ? "\n__Information:__ This user has his title disabled.\n"
                     : "\n"

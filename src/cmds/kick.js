@@ -78,6 +78,5 @@ function isStaff(m, serverInfo) {
     if (m.roles.has(serverInfo.roles.seniorS)) return true;
     if (m.roles.has(serverInfo.roles.moderator)) return true;
     if (m.roles.has(serverInfo.roles.admin)) return true;
-    if (m.roles.has(serverInfo.roles.developer)) return true;
     return false;
 }

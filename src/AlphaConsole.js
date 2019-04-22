@@ -180,12 +180,8 @@ async function messageProcess(message) {
          * ? We are saving these varibales in the message.member object. This way at any point of time
          * ? we can request the information and detect if he is allowed to execute the command.
          */
-        if (message.member.roles.has(serverInfo.roles.developer)) 
-          message.member.isDeveloper = true;
-        else
-          message.member.isDeveloper = false;
         
-        if (message.member.roles.has(serverInfo.roles.admin) || message.member.isDeveloper)
+        if (message.member.roles.has(serverInfo.roles.admin))
           message.member.isAdmin = true;
         else
           message.member.isAdmin = false;
@@ -435,12 +431,7 @@ async function messageProcess(message) {
          * ? We are saving these varibales in the message.member object. This way at any point of time
          * ? we can request the information and detect if he is allowed to execute the command.
          */
-        if (m.roles.has(serverInfo.roles.developer)) 
-          m.isDeveloper = true;
-        else
-          m.isDeveloper = false;
-        
-        if (m.roles.has(serverInfo.roles.admin) || m.isDeveloper)
+        if (m.roles.has(serverInfo.roles.admin))
           m.isAdmin = true;
         else
           m.isAdmin = false;
@@ -493,12 +484,8 @@ function processModMail(message, args, data) {
      * ? We are saving these varibales in the message.member object. This way at any point of time
      * ? we can request the information and detect if he is allowed to execute the command.
      */
-    if (message.member.roles.has(serverInfo.mm.roles.developer)) 
-      message.member.isDeveloper = true;
-    else
-      message.member.isDeveloper = false;
     
-    if (message.member.roles.has(serverInfo.mm.roles.admin) || message.member.isDeveloper)
+    if (message.member.roles.has(serverInfo.mm.roles.admin))
       message.member.isAdmin = true;
     else
       message.member.isAdmin = false;

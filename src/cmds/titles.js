@@ -657,7 +657,6 @@ function validUser(message, serverInfo) {
     if (message.member.roles.has(serverInfo.roles.support)) return true;
     if (message.member.roles.has(serverInfo.roles.moderator)) return true;
     if (message.member.roles.has(serverInfo.roles.admin)) return true;
-    if (message.member.roles.has(serverInfo.roles.developer)) return true;
     return false;
 }
 

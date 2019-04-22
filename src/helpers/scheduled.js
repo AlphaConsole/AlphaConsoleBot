@@ -99,8 +99,7 @@ module.exports.run = (client, serverInfo, { sql, keys }, checkStatus) => {
                     message.author.id !== client.user.id &&
                     message.author.id !== "345769053538746368" &&
                     message.author.id !== "181076473757696000" &&
-                    !message.member.roles.has(serverInfo.roles.admin) &&
-                    !message.member.roles.has(serverInfo.roles.developer)
+                    !message.member.roles.has(serverInfo.roles.admin)
                 ) {
                     message.delete();
                 }
