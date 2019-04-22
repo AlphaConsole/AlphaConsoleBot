@@ -6,7 +6,7 @@
  */
 const Discord = require('discord.js');
 
-module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbed }, cmd) => {
+module.exports.run = async ({ client, serverInfo, message, args, sql, config, sendEmbed }, cmd) => {
     let keys = config.keys;
 
     //! This if for the banner submissions contest
@@ -136,6 +136,12 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
                 sendEmbed(message.author, "Your showcase has been removed since you can only send in once every 5 minutes!")
             }
         })
+    }
+
+    if (message.channel.id === serverInfo.channels.staffBox) {
+        await message.react("👍");
+        await message.react("👎");
+        await message.react("🤷");
     }
 
     if (message.channel.id === serverInfo.channels.suggestion) {

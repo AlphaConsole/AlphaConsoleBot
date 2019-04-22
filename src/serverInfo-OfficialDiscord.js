@@ -40,6 +40,7 @@ module.exports = {
     editPartners          : "445304697755009024",
     botConfig             : "377992732418768907",
     staffChannelsCat      : "355922959367405579",
+    staffBox              : "569407319482302494",
 
     setTitle              : "328236864534216704",
     setSpecialTitle       : "363137607540015106",
