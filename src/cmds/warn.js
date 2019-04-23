@@ -48,9 +48,9 @@ module.exports = {
                     sendEmbed(message.channel, `${m.user.tag} has been warned. Case ID: ${caseId}`)
 
                     //* Warning user in DM
-                    let warningMsg = "You have received another warning for `\`\`${reason}\`\`\`! You'll now be muted, and the staff will look into your behaviour for further actions."
+                    let warningMsg = `You have received another warning for `\`\`${reason}\`\`\`! You'll now be muted, and the staff will look into your behaviour for further actions.`
                     if (newWarnings === 1) warningMsg = `You have received a warning for \`\`\`${reason}\`\`\`. Your next warning will result in a temporary mute!`;
-                    if (newWarnings === 2) warningMsg = "You have received a second warning for \`\`\`${reason}\`\`\`! You'll now be muted for 15 minutes, you are warned!";
+                    if (newWarnings === 2) warningMsg = `You have received a second warning for \`\`\`${reason}\`\`\`! You'll now be muted for 15 minutes, you are warned!`;
                     sendEmbed(m.user, "Warning received.", warningMsg);
 
                     //* Logging
