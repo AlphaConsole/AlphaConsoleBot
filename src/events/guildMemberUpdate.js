@@ -96,19 +96,25 @@ module.exports.run = (client, serverInfo, config, oldMember, newMember) => {
         config.sql.query("UPDATE Titles set Color = 1 WHERE DiscordID = ?", [
           user.id
         ]);
+        config.sql.query("UPDATE Titles set Banner = NULL WHERE DiscordID = ?", [
+          user.id
+        ]);
+        config.sql.query("UPDATE Titles set BannerAccepted = 0 WHERE DiscordID = ?", [
+          user.id
+        ]);
         oldMember.send(
           "Hi, your Twitch Subscription to AlphaConsole has ended therefore your access to the" +
-            " subscriber features has been removed and your title colour has been reset. If you subscribe again you will have access to those " +
+            " subscriber features has been removed and your title colour along with your banner have been reset. If you subscribe again you will have access to those " +
             " features again. \n<https://www.twitch.tv/alphaconsole> \nHave a great day!"
         );
 
         const embedlog = new Discord.MessageEmbed()
           .setColor([255, 255, 0])
-          .setAuthor("Title Colour Auto Reset", serverInfo.logo)
+          .setAuthor("Title Colour And Banner Auto Reset", serverInfo.logo)
           .setDescription(
             "<@" +
               user.id +
-              ">'s colour has been reset because Twitch Subscription ended."
+              ">'s colour and banner have been reset because Twitch Subscription ended."
           )
           .setTimestamp();
         client.guilds
