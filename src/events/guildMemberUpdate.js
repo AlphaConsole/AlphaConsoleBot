@@ -103,9 +103,7 @@ module.exports.run = (client, serverInfo, config, oldMember, newMember) => {
           user.id
         ]);
         oldMember.send(
-          "Hi, your Twitch Subscription to AlphaConsole has ended therefore your access to the" +
-            " subscriber features has been removed and your title colour along with your banner have been reset. If you subscribe again you will have access to those " +
-            " features again. \n<https://www.twitch.tv/alphaconsole> \nHave a great day!"
+          "Hi, your Twitch Subscription to AlphaConsole has ended, therefore your access to the subscriber features has been removed and your title colour along with your banner have been reset. If you subscribe again, you will have access to those features again. \n<https://www.twitch.tv/alphaconsole> \nHave a great day!"
         );
 
         const embedlog = new Discord.MessageEmbed()
