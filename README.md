@@ -3,7 +3,7 @@ AlphaConsole Discord Bot
 
 
 This is the official Discord bot for the [AlphaConsole Discord Server](https://discordapp.com/invite/alphaconsole). 
-This bot serves the over 200k members we currently have in our Discord (2nd largest  worldwide).
+This bot serves the over 200k members we currently have in our Discord.
 
 ----------
 
@@ -60,10 +60,9 @@ You can copy the create statements from `tokens.example.js` if you would like to
 
 ### Questions?
 
-Feel free to message us on Discord, our Discord tag is
+Feel free to message our ModMail on discord, our tag is: 
 
-<img src="https://i.imgur.com/A2C1rjt.png" width="30%">
-<img src="https://i.imgur.com/63WuRal.png" width="30%">
+<img src="https://i.imgur.com/3weY69M.png">
 
 ----------
 
