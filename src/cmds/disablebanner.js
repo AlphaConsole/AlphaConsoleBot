@@ -15,18 +15,17 @@ module.exports = {
         }
     ],
 
-    run: async ({ client, serverInfo, message, args, sql, config, sendEmbed, checkStatus }) => {
+    run: async ({ client, message, args, sql, config, sendEmbed}) => {
 
         if (!message.member.isModerator) return;
 
-        if(args.length < 1) return sendEmbed("An error occured", "Please supply a user who's banner you want to remove!")
-
+        if(args.length < 2) return sendEmbed("An error occured", "Please supply a user who's banner you want to reset!")
         sql.query(
             "Select * from Titles where DiscordID = ?",
-            [args[0]],
+            [args[1]],
             (err, rows) => {
               const user = rows[0];
-      
+              //console.log(rows)
               if (!user)
                 return sendEmbed(
                   message.channel,
@@ -34,7 +33,7 @@ module.exports = {
                   "This user has not signed up for our title service!"
                 );
       
-              if (user.Banner === NULL) {
+              if (user.Banner === null) {
                 return sendEmbed(
                   message.channel,
                   "An error occured",
@@ -42,11 +41,11 @@ module.exports = {
                 );
               }
               else {
-                config.sql.query("UPDATE Titles set Banner = NULL WHERE DiscordID = ?", [
-                    user.id
+                config.sql.query(`UPDATE Titles set Banner = NULL WHERE DiscordID = ?`, [
+                  args[1]
                 ]);
                 config.sql.query("UPDATE Titles set BannerAccepted = 0 WHERE DiscordID = ?", [
-                    user.id
+                  args[1]
                 ]);
                 return sendEmbed(
                     message.channel,
