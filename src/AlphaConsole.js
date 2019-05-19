@@ -300,6 +300,10 @@ async function messageProcess(message) {
           case "help":
             require("./cmds/help").run(data, false);
             break;
+	  
+	  case "disablebanner":
+            require('./cmds/status').run(data);
+            break;
 
           case "role":
             require("./cmds/role").run(data);
