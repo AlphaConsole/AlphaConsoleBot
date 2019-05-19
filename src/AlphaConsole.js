@@ -302,7 +302,7 @@ async function messageProcess(message) {
             break;
 	  
 	  case "disablebanner":
-            require('./cmds/status').run(data);
+            require('./cmds/disablebanner').run(data);
             break;
 
           case "role":
