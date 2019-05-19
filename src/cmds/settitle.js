@@ -333,7 +333,7 @@ module.exports = {
 
           if (userInOneOfRoles(message.member, roles)) {
             sql.query(
-              `Select * from Title where DiscordID = ?`,
+              `Select * from Titles where DiscordID = ?`,
               [message.author.id],
               async (err, res) => {
                 if (err)
