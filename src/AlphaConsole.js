@@ -241,7 +241,9 @@ async function messageProcess(message) {
             if (!denyCommands(message.channel.id, serverInfo.channels))
               require('./cmds/ping').run(data);
             break;
-
+	  case "getinfo":
+            require("./cmds/getinfo").run(data);
+            break;
           case "set":
           case "override":
             require('./cmds/settitle').run(data);
