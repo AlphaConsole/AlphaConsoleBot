@@ -49,6 +49,7 @@ module.exports = {
 
                     let caseId = res.insertId;
                     sendEmbed(message.channel, `${m.user.tag} has been banned from the server. Case number: ${caseId}`);
+                    message.delete()
 
                     const embedlog = new Discord.MessageEmbed()
                         .setColor([255, 255, 0])
