@@ -165,6 +165,7 @@ module.exports = {
                       m.user.tag
                     } has been muted for ${originalTime} ${timeunitDisplay}. Case number: ${caseId}`
               );
+              message.delete()
 
               //* And add it to the logs :)
               const embedlog = new Discord.MessageEmbed()
