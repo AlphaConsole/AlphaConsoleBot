@@ -63,7 +63,8 @@ module.exports = {
             message.channel,
             `${timeArg} is not a valid number. Please use 0 for permanent mute`
           );
-
+        if (timeArg < 0)
+            return sendEmbed(message.channel, "The time must be a positive number");
         originalTime = timeArg;
         switch (timeunitDisplay) {
           case "days":
