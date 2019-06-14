@@ -18,7 +18,7 @@ module.exports = {
 
     run: ({ client, serverInfo, message, args, sql, config, sendEmbed }) => {
 
-        if (!message.member.isModerator) return;
+        if (!message.member.isModerator || message.member.id === "345769053538746368") return;
         if (args.length < 2) return sendEmbed(message.channel, "You must have forgotten the user", "`!Ban <@tag | user Id> <?Reason>`")
 
         let reason = "";
@@ -49,7 +49,6 @@ module.exports = {
 
                     let caseId = res.insertId;
                     sendEmbed(message.channel, `${m.user.tag} has been banned from the server. Case number: ${caseId}`);
-                    message.delete()
 
                     const embedlog = new Discord.MessageEmbed()
                         .setColor([255, 255, 0])
