@@ -15,11 +15,11 @@ module.exports.run = (
   config,
   reaction,
   user,
-  sendEmbed
+  sendEmbed,
+  messageProcess
 ) => {
   if (reaction.message.guild.id !== serverInfo.guildId) return;
   if (user.bot) return;
-
   getRoles(user, serverInfo, client, member => {
     if (reaction.emoji.name === "❌" && member.isAdmin) {
       //* Showcase deletion
@@ -136,8 +136,8 @@ module.exports.run = (
                     return sendEmbed(
                       user,
                       "🚫 An error occurred. Please contact Pollie#0001. Error code: `" +
-                        errorCode +
-                        "`"
+                      errorCode +
+                      "`"
                     );
                   }
 
@@ -166,16 +166,16 @@ module.exports.run = (
                         return sendEmbed(
                           user,
                           "🚫 An error occurred. Please contact Pollie#0001. Error code: `" +
-                            errorCode +
-                            "`"
+                          errorCode +
+                          "`"
                         );
                       }
                     });
                   } else {
                     user.send(
                       "I did not receive a confirmation from the server. This is what the server sent back:\n`" +
-                        body +
-                        "`"
+                      body +
+                      "`"
                     );
                   }
                 });
@@ -221,8 +221,8 @@ module.exports.run = (
                 return sendEmbed(
                   user,
                   "🚫 An error occurred. Please contact Pollie#0001. Error code: `" +
-                    errorCode +
-                    "`"
+                  errorCode +
+                  "`"
                 );
               }
             });
@@ -234,6 +234,7 @@ module.exports.run = (
         }
       }
     }
+
 
     //* Banner Requests
     if (reaction.message.channel.id == serverInfo.channels.banners) {
@@ -251,11 +252,11 @@ module.exports.run = (
                 config.keys.Password +
                 "&url=" +
                 reaction.message.attachments
-                  .first()
-                  .url.split(" ")
-                  .join("%20");
+                .first()
+                .url.split(" ")
+                .join("%20");
 
-              request(url, function(err, res, body) {
+              request(url, function (err, res, body) {
                 if (err) return console.error(err);
 
                 if (
@@ -263,7 +264,6 @@ module.exports.run = (
                   body.startsWith("<!DOCTYPE")
                 )
                   return user.send("Something went wrong: " + body);
-
                 config.sql.query(
                   "Update Titles set Banner = ? where DiscordID = ?",
                   [body.trim(), reaction.message.mentions.users.first().id],
@@ -292,10 +292,10 @@ module.exports.run = (
         }
       }
     }
-
+    //partners
     if (
       `:${reaction.emoji.name}:${reaction.emoji.id}` ==
-        serverInfo.partnerEmoji &&
+      serverInfo.partnerEmoji &&
       reaction.message.channel.id === serverInfo.channels.partners
     ) {
       // Reacted to message, remove reaction, send messages
@@ -323,6 +323,48 @@ module.exports.run = (
           sendMessages(user, data, serverInfo, config.sql, errChannel);
         }
       );
+    }
+
+    if (reaction.emoji.id == serverInfo.runCommandEmoji) {
+      config.sql.query("Select * from reactions where messageID = ?", [reaction.message.id], (err, res) => {
+        if (res.length != 0 && res[0].processed === true) return;
+        if (member.isModerator || member.isAdmin) {
+          //* Runs if the user is a mod and changes the author for easy logging
+          let newCol = reaction.message;
+          newCol.author = member
+          return messageProcess(newCol);
+        } else if (member.isSupport) {
+          if (res.length === 0) {
+            if (member.id === "408260674943451137") { //Do for joey counting as 2, since one was already set, no matter what it's two
+              return config.sql.query(`INSERT INTO reactions(messageID,nOfSupports,processed) VALUES(?,?,?)`, [reaction.message.id, 2, false], (err, res) => {
+                if (err) console.log(err);
+              });
+            } else {
+              return config.sql.query(`INSERT INTO reactions(messageID,nOfSupports,processed) VALUES(?,?,?)`, [reaction.message.id, 1, false], (err, res) => {
+                if (err) console.log(err);
+              });
+            }
+          } else {
+            if (res[0].nOfSupports < 2) {
+              if (member.id === "408260674943451137") { //Do for joey counting as 2, since one was already set, no matter what it's two
+                config.sql.query("UPDATE reactions set processed = ?", [true]);
+                let newCol = reaction.message;
+                newCol.author = reaction.message.guild.member("345769053538746368") //blame account id
+                return messageProcess(newCol);
+              } else {
+                return config.sql.query("UPDATE reactions set nOfSupports = ?", [2], (err, ress) => {
+                  if (err) console.log(err)
+                });
+              }
+            } else {
+              config.sql.query("UPDATE reactions set processed = ?", [true]);
+              let newCol = reaction.message;
+              newCol.author = reaction.message.guild.member("345769053538746368") //blame account id
+              return messageProcess(newCol);
+            }
+          }
+        }
+      });
     }
   });
 };
@@ -391,7 +433,9 @@ function handleMessage(
     .setColor([255, 255, 0])
     .setAuthor(
       `${event.toUpperCase()} DELETED`,
-      client.user.displayAvatarURL({ format: "png" })
+      client.user.displayAvatarURL({
+        format: "png"
+      })
     )
     .addField(
       `${event} by `,
@@ -419,9 +463,13 @@ function sendMessages(user, data, serverInfo, sql, errChannel) {
       chain = chain.then(() => {
         switch (message.type) {
           case "hybrid":
-            return user.send(message.content, { files: [message.url] });
+            return user.send(message.content, {
+              files: [message.url]
+            });
           case "file":
-            return user.send("", { files: [message.url] });
+            return user.send("", {
+              files: [message.url]
+            });
           case "text":
             return user.send(message.content);
           default:
