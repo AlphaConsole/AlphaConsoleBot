@@ -80,6 +80,7 @@ module.exports = {
 
   partnerEmoji: ":ACQuestion:506579449618104320",
   DynamicCat: "355924371367395329",
+  runCommandEmoji: "588153018676019230",
 
   mm: {
     guildId: "420394999440474132",
