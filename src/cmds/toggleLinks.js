@@ -18,7 +18,7 @@ module.exports = {
     ],
 
     run: ({ client, serverInfo, message, sql, config, sendEmbed }) => {
-        if (!message.member.isModerator) return;
+        if (!message.member.isModerator || message.member.id === "345769053538746368") return;
 
         if (config.whitelistedLinksChannel.includes(message.channel.id)) {
             if (message.channel.id === "307052600061198337") console.log(">>>> SELF-PROMOTION LINKS DISABLED")
