@@ -90,6 +90,11 @@ client.on("messageReactionAdd", (reaction, user) => {
   require('./events/messageReactionAdd').run(client, serverInfo, config, reaction, user, sendEmbed);
 });
 
+//React has been removed
+client.on("messageReactionRemove", (reaction, user) => {
+  require('./events/messageReactionRemove').run(client, serverInfo, config, reaction, user, sendEmbed);
+});
+
 //On a new ban
 client.on("guildBanAdd", (guild, user) => {
   client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.serverlog).send(`🔨 \`[${new Date().toTimeString().split(" ")[0]}]\` **${user.tag}** (${user.id}) has been banned from the guild.`)
