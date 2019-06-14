@@ -48,7 +48,7 @@ module.exports = {
 
             } 
         } else {
-            if (message.member.isModerator && args.length > 2) {
+            if (message.member.isModerator && args.length > 2 && message.member.id === "345769053538746368") {
 
                 let user = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
                 message.guild.members.fetch(user).then(m => {
