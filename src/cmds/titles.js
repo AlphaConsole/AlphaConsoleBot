@@ -570,7 +570,11 @@ function isValidTitle(message, blackListedWords, userTitle, serverInfo, sql, ste
 						var exemptWords = ["alphaconsole", "legacy"];
 						validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
 			
-					} else {
+					} else if (message.member.roles.has(serverInfo.roles.developer)) {
+						var exemptWords = ["alphaconsole", "developer", staff];
+						validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
+					}
+					 else {
 						var exemptWords = [];
 						validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
 			
