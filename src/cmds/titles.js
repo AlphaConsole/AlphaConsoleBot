@@ -554,7 +554,10 @@ function isValidTitle(message, blackListedWords, userTitle, serverInfo, sql, ste
 */
 			function con() {
 				if (!message.member.isAdmin) {
-					if (message.member.isModerator) {
+					if (message.member.roles.has(serverInfo.roles.developer)) {
+						var exemptWords = ["alphaconsole", "developer", "staff"];
+						validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
+					} else if (message.member.isModerator) {
 						var exemptWords = ["alphaconsole", "mod", "moderator", "staff"];
 						validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
 			
@@ -570,11 +573,7 @@ function isValidTitle(message, blackListedWords, userTitle, serverInfo, sql, ste
 						var exemptWords = ["alphaconsole", "legacy"];
 						validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
 			
-					} else if (message.member.roles.has(serverInfo.roles.developer)) {
-						var exemptWords = ["alphaconsole", "developer", "staff"];
-						validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
-					}
-					 else {
+					} else {
 						var exemptWords = [];
 						validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
 			
