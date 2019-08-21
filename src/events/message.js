@@ -6,7 +6,7 @@
  */
 const Discord = require('discord.js');
 
-module.exports.run = async ({ client, serverInfo, message, args, sql, config, sendEmbed }, cmd) => {
+module.exports.run = async ({ client, serverInfo, message, args, sql, config, sendEmbed, checkStatus, sug}, cmd) => {
     let keys = config.keys;
 
     //! This if for the banner submissions contest
@@ -145,6 +145,7 @@ module.exports.run = async ({ client, serverInfo, message, args, sql, config, se
     }
 
     if (message.channel.id === serverInfo.channels.suggestion) {
+	
         require('../helpers/checkUser').run(sql, message.author, async (err, user) => {
             if (err) {
                 let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
@@ -160,6 +161,7 @@ module.exports.run = async ({ client, serverInfo, message, args, sql, config, se
 
                 sql.query("Update Members set Suggestion = ? where DiscordID = ?", [ new Date().getTime() + 300000, message.author.id ]);
             } else {
+		if(sug === true) return;
                 message.delete().catch(e => { });
                 sendEmbed(message.author, "Your suggestion has been removed since you can only send in once every 5 minutes!")
             }
