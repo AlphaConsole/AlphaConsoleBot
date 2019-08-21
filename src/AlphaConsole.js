@@ -127,16 +127,20 @@ process.on("unhandledRejection", (reason, p) => {
 //* New message
 client.on("message", async message => {
   require('./events/message').botMessage(client, serverInfo, config.sql, message)
-  messageProcess(message);
+  messageProcess(message, false);
 });
 
 //* Message Updated
 client.on("messageUpdate", async (originalMessage, newMessage) => {
-  messageProcess(newMessage);
+  if(newMessage.channel.id === serverInfo.channels.suggestion) {
+    messageProcess(newMessage, true);
+  } else {
+    messageProcess(newMessage, false);
+  }
 });
 
 
-async function messageProcess(message) {
+async function messageProcess(message, obj) {
   if (message.author.bot) return;
   var args = message.content.split(/[ ]+/);
 
@@ -159,7 +163,8 @@ async function messageProcess(message) {
       sql        : sql,
       config     : config,
       sendEmbed  : sendEmbed,
-      checkStatus: checkStatus
+      checkStatus: checkStatus,
+      sug: obj
     }
 
 
