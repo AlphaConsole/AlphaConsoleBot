@@ -43,10 +43,9 @@ const presets = {
 
 module.exports = {
   title: "Titles",
-  details: [
-    {
+  details: [{
       perms: "Everyone",
-      command: "!set Title <Title Name>",
+      command: "!set Title <Title Text>",
       description: "Use this to set your in game title"
     },
     {
@@ -58,6 +57,11 @@ module.exports = {
       perms: "Everyone",
       command: "!set glow <Hex code>",
       description: "Use this to set your in game title glow color"
+    },
+    {
+      perms: "Everyone",
+      command: "!set alltitle <Color Hex> <Glow Hex> <Title Text>",
+      description: "Use this to set all of your title options at once"
     }
   ],
 
@@ -79,7 +83,11 @@ module.exports = {
     ) {
       if (
         args[1].toLowerCase() === "title" ||
-        args[1].toLowerCase() === "color"
+        args[1].toLowerCase() === "color" ||
+        args[1].toLowerCase() === "colour" ||
+        args[1].toLowerCase() === "glow" ||
+        args[1].toLowerCase() === "alltitle" ||
+        args[1].toLowerCase() === "banner"
       )
         sendEmbed(
           message.author,
@@ -103,13 +111,26 @@ module.exports = {
         args[0].toLowerCase() == "!set" ? setGlow() : overrideGlow();
         break;
 
+      case "alltitle":
+        setAllTitle();
+        break;
+
       case "special":
         setSpecialTitle();
         break;
 
       case "banner":
-        args[0].toLowerCase() == "!set"
-          ? require("./requestBanner").run({
+        args[0].toLowerCase() == "!set" ?
+          require("./requestBanner").run({
+            client,
+            serverInfo,
+            message,
+            args,
+            sql,
+            config,
+            sendEmbed
+          }) :
+          require("./requestBanner").run({
               client,
               serverInfo,
               message,
@@ -117,15 +138,41 @@ module.exports = {
               sql,
               config,
               sendEmbed
-            })
-          : require("./requestBanner").run(
-              { client, serverInfo, message, args, sql, config, sendEmbed },
-              true
-            );
+            },
+            true
+          );
         break;
 
       default:
         break;
+    }
+
+    /**
+     * ! Set alltitle
+     */
+    function setAllTitle() {
+      if (args.length < 5) {
+        return sendEmbed(
+          message.author,
+          "Usage: !set alltitle <Color Hex> <Glow Hex> <Title Text>"
+        );
+      }
+
+      // command, subcommand, color hex, glow hex, ...title
+      let [, , color, glow] = args;
+      let userTitle = createTitle(args, 4);
+      console.info(`TITLE: ${userTitle} | COLOR: ${color} | GLOW: ${glow}`);
+      setUsersTitle(message.author.id, userTitle).then(title =>
+        setUsersColor(message.author.id, color.replace(/ /g, "").toUpperCase()).then(color =>
+          setUsersColor(message.author.id, glow.replace(/ /g, "").toUpperCase()).then(glow =>
+            sendEmbed(
+              message.author,
+              "Title updated",
+              `Your title has been set to **\`${title}\`**, color **\`${color}\`**, glow **\`${glow}\`**!`
+            )
+          ).catch(e => sendEmbed(message.author, "An error occurred", e))
+        ).catch(e => sendEmbed(message.author, "An error occurred", e))
+      ).catch(e => sendEmbed(message.author, "An error occurred", e));
     }
 
     /**
@@ -149,6 +196,7 @@ module.exports = {
         )
         .catch(e => sendEmbed(message.author, "An error occurred", e));
     }
+
     function overrideTitle() {
       if (
         !(message.member && message.member.isModerator) &&
@@ -162,9 +210,9 @@ module.exports = {
         );
       message.delete().catch(e => {});
 
-      let id = message.mentions.users.first()
-        ? message.mentions.users.first().id
-        : args[2];
+      let id = message.mentions.users.first() ?
+        message.mentions.users.first().id :
+        args[2];
       let title = createTitle(args, 3);
 
       sql.query(
@@ -220,6 +268,7 @@ module.exports = {
         )
         .catch(e => sendEmbed(message.author, "An error occurred", e));
     }
+
     function overrideColor() {
       if (
         !(message.member && message.member.isModerator) &&
@@ -233,9 +282,9 @@ module.exports = {
         );
       message.delete().catch(e => {});
 
-      let id = message.mentions.users.first()
-        ? message.mentions.users.first().id
-        : args[2];
+      let id = message.mentions.users.first() ?
+        message.mentions.users.first().id :
+        args[2];
       let color = createTitle(args, 3)
         .replace(/ /g, "")
         .toUpperCase();
@@ -270,6 +319,7 @@ module.exports = {
         )
         .catch(e => sendEmbed(message.author, "An error occurred", e));
     }
+
     function overrideGlow() {
       if (
         !(message.member && message.member.isModerator) &&
@@ -278,9 +328,9 @@ module.exports = {
         return;
       message.delete().catch(e => {});
 
-      let id = message.mentions.users.first()
-        ? message.mentions.users.first().id
-        : args[2];
+      let id = message.mentions.users.first() ?
+        message.mentions.users.first().id :
+        args[2];
       let color = createTitle(args, 3)
         .replace(/ /g, "")
         .toUpperCase();
@@ -316,8 +366,8 @@ module.exports = {
             return sendEmbed(
               message.author,
               "🚫 An error occurred. Please contact Pollie#0001. Error code: `" +
-                errorCode +
-                "`"
+              errorCode +
+              "`"
             );
           }
 
@@ -447,7 +497,7 @@ module.exports = {
                     saveTitleToLog(id, title, true, sql);
                     return reject(
                       "Your custom title was not set because it contained a blacklisted phrase. \n" +
-                        "AlphaConsole does not allow faking of real titles. If you continue to try and bypass the blacklist system, it could result in loss of access to our custom titles."
+                      "AlphaConsole does not allow faking of real titles. If you continue to try and bypass the blacklist system, it could result in loss of access to our custom titles."
                     );
                   }
 
