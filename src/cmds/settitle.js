@@ -86,8 +86,7 @@ module.exports = {
         args[1].toLowerCase() === "color" ||
         args[1].toLowerCase() === "colour" ||
         args[1].toLowerCase() === "glow" ||
-        args[1].toLowerCase() === "alltitle" ||
-        args[1].toLowerCase() === "banner"
+        args[1].toLowerCase() === "alltitle"
       )
         sendEmbed(
           message.author,
@@ -161,7 +160,6 @@ module.exports = {
       // command, subcommand, color hex, glow hex, ...title
       let [, , color, glow] = args;
       let userTitle = createTitle(args, 4);
-      console.info(`TITLE: ${userTitle} | COLOR: ${color} | GLOW: ${glow}`);
       setUsersTitle(message.author.id, userTitle).then(title =>
         setUsersColor(message.author.id, color.replace(/ /g, "").toUpperCase()).then(color =>
           setUsersColor(message.author.id, glow.replace(/ /g, "").toUpperCase()).then(glow =>
