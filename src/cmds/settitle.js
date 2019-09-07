@@ -46,7 +46,7 @@ module.exports = {
   details: [
     {
       perms: "Everyone",
-      command: "!set Title <Title Name>",
+      command: "!set Title <Title Text>",
       description: "Use this to set your in game title"
     },
     {
@@ -58,6 +58,11 @@ module.exports = {
       perms: "Everyone",
       command: "!set glow <Hex code>",
       description: "Use this to set your in game title glow color"
+    },
+    {
+      perms: "Everyone",
+      command: "!set alltitle <Color Hex> <Glow Hex> <Title Text>",
+      description: "Use this to set all of your title options at once"
     }
   ],
 
@@ -79,7 +84,10 @@ module.exports = {
     ) {
       if (
         args[1].toLowerCase() === "title" ||
-        args[1].toLowerCase() === "color"
+        args[1].toLowerCase() === "color" ||
+        args[1].toLowerCase() === "colour" ||
+        args[1].toLowerCase() === "glow" ||
+        args[1].toLowerCase() === "alltitle"
       )
         sendEmbed(
           message.author,
@@ -103,6 +111,10 @@ module.exports = {
         args[0].toLowerCase() == "!set" ? setGlow() : overrideGlow();
         break;
 
+      case "alltitle":
+        setAllTitle();
+        break;
+
       case "special":
         setSpecialTitle();
         break;
@@ -119,13 +131,62 @@ module.exports = {
               sendEmbed
             })
           : require("./requestBanner").run(
-              { client, serverInfo, message, args, sql, config, sendEmbed },
+              {
+                client,
+                serverInfo,
+                message,
+                args,
+                sql,
+                config,
+                sendEmbed
+              },
               true
             );
         break;
 
       default:
         break;
+    }
+
+    /**
+     * ! Set alltitle
+     */
+    function setAllTitle() {
+      if (args.length < 5) {
+        return sendEmbed(
+          message.author,
+          "Usage: !set alltitle <Color Hex> <Glow Hex> <Title Text>"
+        );
+      }
+
+      // command, subcommand, color hex, glow hex, ...title
+      let [, , color, glow] = args;
+      let userTitle = createTitle(args, 4);
+      setUsersTitle(message.author.id, userTitle)
+        .then(title =>
+          setUsersColor(
+            message.author.id,
+            color.replace(/ /g, "").toUpperCase(),
+            false
+          )
+            .then(color =>
+              setUsersColor(
+                message.author.id,
+                glow.replace(/ /g, "").toUpperCase(),
+                true
+              )
+                .then(glow =>
+                  sendEmbed(
+                    message.author,
+                    "Title updated",
+                    `Your title has been set to **\`${title}\`**, color **\`${color}\`**, glow **\`${glow}\`**!`
+                  )
+                )
+                .catch(e => sendEmbed(message.author, "An error occurred", e))
+            )
+            .catch(e => sendEmbed(message.author, "An error occurred", e))
+        )
+        .catch(e => sendEmbed(message.author, "An error occurred", e));
     }
 
     /**
@@ -149,6 +210,7 @@ module.exports = {
         )
         .catch(e => sendEmbed(message.author, "An error occurred", e));
     }
+
     function overrideTitle() {
       if (
         !(message.member && message.member.isModerator) &&
@@ -220,6 +282,7 @@ module.exports = {
         )
         .catch(e => sendEmbed(message.author, "An error occurred", e));
     }
+
     function overrideColor() {
       if (
         !(message.member && message.member.isModerator) &&
@@ -270,6 +333,7 @@ module.exports = {
         )
         .catch(e => sendEmbed(message.author, "An error occurred", e));
     }
+
     function overrideGlow() {
       if (
         !(message.member && message.member.isModerator) &&
