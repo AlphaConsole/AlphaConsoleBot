@@ -43,7 +43,8 @@ const presets = {
 
 module.exports = {
   title: "Titles",
-  details: [{
+  details: [
+    {
       perms: "Everyone",
       command: "!set Title <Title Text>",
       description: "Use this to set your in game title"
@@ -119,17 +120,8 @@ module.exports = {
         break;
 
       case "banner":
-        args[0].toLowerCase() == "!set" ?
-          require("./requestBanner").run({
-            client,
-            serverInfo,
-            message,
-            args,
-            sql,
-            config,
-            sendEmbed
-          }) :
-          require("./requestBanner").run({
+        args[0].toLowerCase() == "!set"
+          ? require("./requestBanner").run({
               client,
               serverInfo,
               message,
@@ -137,9 +129,19 @@ module.exports = {
               sql,
               config,
               sendEmbed
-            },
-            true
-          );
+            })
+          : require("./requestBanner").run(
+              {
+                client,
+                serverInfo,
+                message,
+                args,
+                sql,
+                config,
+                sendEmbed
+              },
+              true
+            );
         break;
 
       default:
@@ -160,17 +162,31 @@ module.exports = {
       // command, subcommand, color hex, glow hex, ...title
       let [, , color, glow] = args;
       let userTitle = createTitle(args, 4);
-      setUsersTitle(message.author.id, userTitle).then(title =>
-        setUsersColor(message.author.id, color.replace(/ /g, "").toUpperCase()).then(color =>
-          setUsersColor(message.author.id, glow.replace(/ /g, "").toUpperCase()).then(glow =>
-            sendEmbed(
-              message.author,
-              "Title updated",
-              `Your title has been set to **\`${title}\`**, color **\`${color}\`**, glow **\`${glow}\`**!`
+      setUsersTitle(message.author.id, userTitle)
+        .then(title =>
+          setUsersColor(
+            message.author.id,
+            color.replace(/ /g, "").toUpperCase(),
+            false
+          )
+            .then(color =>
+              setUsersColor(
+                message.author.id,
+                glow.replace(/ /g, "").toUpperCase(),
+                true
+              )
+                .then(glow =>
+                  sendEmbed(
+                    message.author,
+                    "Title updated",
+                    `Your title has been set to **\`${title}\`**, color **\`${color}\`**, glow **\`${glow}\`**!`
+                  )
+                )
+                .catch(e => sendEmbed(message.author, "An error occurred", e))
             )
-          ).catch(e => sendEmbed(message.author, "An error occurred", e))
-        ).catch(e => sendEmbed(message.author, "An error occurred", e))
-      ).catch(e => sendEmbed(message.author, "An error occurred", e));
+            .catch(e => sendEmbed(message.author, "An error occurred", e))
+        )
+        .catch(e => sendEmbed(message.author, "An error occurred", e));
     }
 
     /**
@@ -208,9 +224,9 @@ module.exports = {
         );
       message.delete().catch(e => {});
 
-      let id = message.mentions.users.first() ?
-        message.mentions.users.first().id :
-        args[2];
+      let id = message.mentions.users.first()
+        ? message.mentions.users.first().id
+        : args[2];
       let title = createTitle(args, 3);
 
       sql.query(
@@ -280,9 +296,9 @@ module.exports = {
         );
       message.delete().catch(e => {});
 
-      let id = message.mentions.users.first() ?
-        message.mentions.users.first().id :
-        args[2];
+      let id = message.mentions.users.first()
+        ? message.mentions.users.first().id
+        : args[2];
       let color = createTitle(args, 3)
         .replace(/ /g, "")
         .toUpperCase();
@@ -326,9 +342,9 @@ module.exports = {
         return;
       message.delete().catch(e => {});
 
-      let id = message.mentions.users.first() ?
-        message.mentions.users.first().id :
-        args[2];
+      let id = message.mentions.users.first()
+        ? message.mentions.users.first().id
+        : args[2];
       let color = createTitle(args, 3)
         .replace(/ /g, "")
         .toUpperCase();
@@ -364,8 +380,8 @@ module.exports = {
             return sendEmbed(
               message.author,
               "🚫 An error occurred. Please contact Pollie#0001. Error code: `" +
-              errorCode +
-              "`"
+                errorCode +
+                "`"
             );
           }
 
@@ -495,7 +511,7 @@ module.exports = {
                     saveTitleToLog(id, title, true, sql);
                     return reject(
                       "Your custom title was not set because it contained a blacklisted phrase. \n" +
-                      "AlphaConsole does not allow faking of real titles. If you continue to try and bypass the blacklist system, it could result in loss of access to our custom titles."
+                        "AlphaConsole does not allow faking of real titles. If you continue to try and bypass the blacklist system, it could result in loss of access to our custom titles."
                     );
                   }
 
