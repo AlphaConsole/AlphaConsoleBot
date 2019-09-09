@@ -590,7 +590,8 @@ function inBlacklist(message, blackListedWords, userTitle, exemptWords) {
 	var userTitleBad = false;
 	blackListedWords.forEach(badWord => {
 		if (badWord != "" && !exemptWords.includes(badWord)) {
-			if (userTitle.toLowerCase().includes(badWord)) {
+			var regPattern = new RegExp(`/\b(${badWord})\b/g`)
+			if (userTitle.match(regPattern)) {
 				userTitleBad = true;
 			}
 		}
