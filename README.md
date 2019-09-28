@@ -10,7 +10,7 @@ This bot serves the over 200k members we currently have in our Discord.
 
 What is AlphaConsole?
 -------------
-AlphaConsole is the largest 3rd party mod for the popular PC game Rocket League with over 100k users.
+AlphaConsole is the largest 3rd party mod for the popular PC game Rocket League with over 200k users.
 
 You can check out our site [here.](http://www.alphaconsole.net)
 
