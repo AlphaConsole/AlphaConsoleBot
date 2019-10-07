@@ -25,7 +25,7 @@ module.exports = {
         sendEmbed
     }) => {
 
-        if (message.author.id === "136607366408962048" || message.author.id === "131926391909253120") {
+        if (message.author.id === "136607366408962048" || message.author.id === "131926391909253120" || message.author.id === "145904453487165440") {
             // <---   If you would like to change role perms. Change [BontControl] to your role name
             // client.guilds.get(serverInfo.guildId).channels.get(serverInfo.setTitleChannel).overwritePermissions(message.guild.id, {
             //     SEND_MESSAGES: false
