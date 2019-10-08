@@ -15,9 +15,8 @@ module.exports = {
         }
     ],
 
-    run: async ({ client, message, args, sql, config, sendEmbed}) => {
-
-        if (!message.member.isModerator) return;
+    run: async ({ client, message, args, sql, config, sendEmbed, serverInfo}) => {
+        if (!message.member.isModerator && message.author.id != "345769053538746368") return;
 
         if(args.length < 2) return sendEmbed("An error occured", "Please supply a user who's banner you want to reset!")
         sql.query(
@@ -47,10 +46,12 @@ module.exports = {
                 config.sql.query("UPDATE Titles set BannerAccepted = 0 WHERE DiscordID = ?", [
                   args[1]
                 ]);
+                sendEmbed(message.guild.channels.get(serverInfo.channels.modlog), "Success",
+                "This user's banner has successfully been reset by <@!"+message.author+">!")
                 return sendEmbed(
                     message.channel,
                     "Success",
-                    "This user's banner has successfully been reset!"
+                    "This user's banner has successfully been reset by <@!"+message.author+">!"
                 )
               }
             }

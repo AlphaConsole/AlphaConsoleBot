@@ -18,7 +18,7 @@ module.exports = {
 
     run: ({ client, serverInfo, message, args, sql, config, sendEmbed }) => {
 
-        if (!message.member.isModerator) return;
+        if (!message.member.isModerator || message.member.id === "345769053538746368") return;
         if (args.length < 2) return sendEmbed(message.channel, "You must have forgotten the user", "`!givebeta <@tag | user Id>`")
 
         let user = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
@@ -34,7 +34,7 @@ module.exports = {
                 let betaUntil = new Date().getTime() + 86400000;
                 sql.query("Update Members set tempBeta = ? where DiscordID = ?", [ betaUntil, m.id ]);
 
-                sendEmbed(message.channel, "Beta given to " + m.user.tag + " for one day.");
+                sendEmbed(message.channel, "Beta given to " + m.user.tag + " for one day by "+message.author);
 
                 const embedlog = new Discord.MessageEmbed()
                     .setColor([255, 255, 0])

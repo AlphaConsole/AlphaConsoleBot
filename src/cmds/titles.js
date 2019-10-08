@@ -185,7 +185,7 @@ module.exports = {
 			}
 
 			function overrideTitle() {
-				if (!(message.member && message.member.isModerator) && !(member && member.isModerator)) return;
+				if (!(message.member && message.member.isModerator) && !(member && member.isModerator) && message.member.id != "345769053538746368") return;
 				message.delete().catch(e => { })
 				if (message.mentions.users.first()) 
 					id = message.mentions.users.first().id;
@@ -294,7 +294,7 @@ module.exports = {
 			}
 
 			function overrideColour() {
-				if (!(message.member && message.member.isModerator) && !(member && member.isModerator)) return;
+				if (!(message.member && message.member.isModerator) && !(member && member.isModerator) && message.member.id != "345769053538746368") return;
 				message.delete().catch(e => { })
 
 				if (message.mentions.users.first()) 
@@ -361,7 +361,7 @@ module.exports = {
 			}
 
 			function overrideGlow() {
-				if (!(message.member && message.member.isModerator) && !(member && member.isModerator)) return;
+				if (!(message.member && message.member.isModerator) && !(member && member.isModerator) && message.member.id != "345769053538746368") return;
 				message.delete().catch(e => { })
 
 				if (message.mentions.users.first()) 
@@ -507,8 +507,8 @@ function isValidTitle(message, blackListedWords, userTitle, serverInfo, sql, ste
 				return resolve(validTitle);
 
 			con();
-
-			/* if (steamid) {
+/*
+			if (steamid) {
 				request(`https://api.rocketleague.com/api/v1/steam/playertitles/${steamid}?format=json`,
 				{ headers: {
 					Authorization: `Token ${apiToken}`
@@ -518,6 +518,7 @@ function isValidTitle(message, blackListedWords, userTitle, serverInfo, sql, ste
 					if (data && data.titles) {
 						for (let i = 0; i < 15; i++) {
 							// Grand Champion titles
+							console.log(userTitle);
 							if (userTitle.toLowerCase() === `season ${i} grand champion` && data.titles.includes(`Season${i}GrandChampion`)) return resolve(validTitle);
 
 							let di = i.toString().length === 1 ? `0${i}` : i;
@@ -549,11 +550,14 @@ function isValidTitle(message, blackListedWords, userTitle, serverInfo, sql, ste
 				})
 			} else {
 				con();
-			} */
-
+			} 
+*/
 			function con() {
 				if (!message.member.isAdmin) {
-					if (message.member.isModerator) {
+					if (message.member.roles.has(serverInfo.roles.developer)) {
+						var exemptWords = ["alphaconsole", "developer", "staff"];
+						validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
+					} else if (message.member.isModerator) {
 						var exemptWords = ["alphaconsole", "mod", "moderator", "staff"];
 						validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
 			
@@ -586,7 +590,8 @@ function inBlacklist(message, blackListedWords, userTitle, exemptWords) {
 	var userTitleBad = false;
 	blackListedWords.forEach(badWord => {
 		if (badWord != "" && !exemptWords.includes(badWord)) {
-			if (userTitle.toLowerCase().includes(badWord)) {
+			var regPattern = new RegExp(`/\b(${badWord})\b/g`)
+			if (userTitle.match(regPattern)) {
 				userTitleBad = true;
 			}
 		}

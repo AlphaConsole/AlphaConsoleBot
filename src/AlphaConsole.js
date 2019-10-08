@@ -90,6 +90,11 @@ client.on("messageReactionAdd", (reaction, user) => {
   require('./events/messageReactionAdd').run(client, serverInfo, config, reaction, user, sendEmbed);
 });
 
+//React has been removed
+client.on("messageReactionRemove", (reaction, user) => {
+  require('./events/messageReactionRemove').run(client, serverInfo, config, reaction, user, sendEmbed);
+});
+
 //On a new ban
 client.on("guildBanAdd", (guild, user) => {
   client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.serverlog).send(`🔨 \`[${new Date().toTimeString().split(" ")[0]}]\` **${user.tag}** (${user.id}) has been banned from the guild.`)
@@ -122,16 +127,20 @@ process.on("unhandledRejection", (reason, p) => {
 //* New message
 client.on("message", async message => {
   require('./events/message').botMessage(client, serverInfo, config.sql, message)
-  messageProcess(message);
+  messageProcess(message, false);
 });
 
 //* Message Updated
 client.on("messageUpdate", async (originalMessage, newMessage) => {
-  messageProcess(newMessage);
+  if(newMessage.channel.id === serverInfo.channels.suggestion) {
+    messageProcess(newMessage, true);
+  } else {
+    messageProcess(newMessage, false);
+  }
 });
 
 
-async function messageProcess(message) {
+async function messageProcess(message, obj) {
   if (message.author.bot) return;
   var args = message.content.split(/[ ]+/);
 
@@ -154,7 +163,8 @@ async function messageProcess(message) {
       sql        : sql,
       config     : config,
       sendEmbed  : sendEmbed,
-      checkStatus: checkStatus
+      checkStatus: checkStatus,
+      sug: obj
     }
 
 
@@ -241,7 +251,9 @@ async function messageProcess(message) {
             if (!denyCommands(message.channel.id, serverInfo.channels))
               require('./cmds/ping').run(data);
             break;
-
+	  case "getinfo":
+            require("./cmds/getinfo").run(data);
+            break;
           case "set":
           case "override":
             require('./cmds/settitle').run(data);

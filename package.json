@@ -19,6 +19,7 @@
     "nodemon": "^1.17.5",
     "request": "^2.87.0",
     "sentiment": "^4.2.0",
-    "shelljs": "^0.7.8"
+    "shelljs": "^0.7.8",
+    "moment": "^2.24.0"
   }
 }

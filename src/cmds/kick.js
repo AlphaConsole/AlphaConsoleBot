@@ -18,7 +18,7 @@ module.exports = {
 
     run: ({ client, serverInfo, message, args, sql, config, sendEmbed }) => {
 
-        if (!message.member.isModerator) return;
+        if (!message.member.isModerator || message.member.id === "345769053538746368") return;
         if (args.length < 2) return sendEmbed(message.channel, "You must have forgotten the user", "`!Kick <@tag | user Id> <?Reason>`")
 
         let user = message.mentions.users.first() ? message.mentions.users.first().id : args[1];

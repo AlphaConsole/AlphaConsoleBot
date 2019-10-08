@@ -28,7 +28,7 @@ module.exports = {
 
     run: ({ client, serverInfo, message, args, sql, config, sendEmbed }) => {
 
-        if (!message.member.isModerator) return;
+        if (!message.member.isModerator || message.member.id === "345769053538746368") return;
 
         if (args.length === 1) {
             sql.query("Select * from Config where Config = 'autoResponds'", [], (err, res) => {

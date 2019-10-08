@@ -46,6 +46,7 @@ module.exports = {
 
                     let caseId = res.insertId;
                     sendEmbed(message.channel, `${m.user.tag} has been warned. Case ID: ${caseId}`)
+                    message.delete()
 
                     //* Warning user in DM
                     let warningMsg = `You have received another warning for \`\`\`${reason}\`\`\`You'll now be muted, and the staff will look into your behaviour for further actions.`
