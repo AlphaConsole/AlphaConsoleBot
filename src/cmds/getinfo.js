@@ -23,6 +23,7 @@ module.exports = {
         sendEmbed
     }) => {
         var sinfo = require("../serverInfo.js")
+        if(!args[1]) return sendEmbed(message.channel, "An error occured", "Missing a user to pull from.\nComamnd format: !getinfo <userID>")
         try {
             client.users.fetch(args[1]).then(u => {
                 if(u === undefined) return;
@@ -30,7 +31,6 @@ module.exports = {
         } catch(err) {
             return;
         }
-        if(args.length < 1) return sendEmbed(message.channel, "An error occured", "Missing a user to pull from.\nComamnd format: !getinfo <userID>")
         client.guilds.get(sinfo.guildId).members.fetch(args[1]).then(tU => {
             sql.query("Select * from members where DiscordID = ?", [args[1]], (err, res) => {
                 if (err) return message.channel(err);
