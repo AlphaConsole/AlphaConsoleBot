@@ -23,7 +23,6 @@ module.exports = {
         config,
         sendEmbed
     }) => {
-        if (!message.member.isSupport) return;
         if(!args[1]) return sendEmbed(message.channel, "An error occured", "Missing a user to pull from.\nComamnd format: !getinfo <userID>")
         try {
             client.users.fetch(args[1]).then(u => {
