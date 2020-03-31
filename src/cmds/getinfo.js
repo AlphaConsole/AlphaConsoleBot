@@ -31,11 +31,11 @@ module.exports = {
         } catch(err) {
             return;
         }
-        client.guilds.get(sinfo.guildId).members.fetch(args[1]).then(tU => {
+        client.guilds.resolve(sinfo.guildId).members.fetch(args[1]).then(tU => {
             sql.query("Select * from members where DiscordID = ?", [args[1]], (err, res) => {
                 if (err) return message.channel(err);
                 let jDate = moment.unix(res[0].JoinedDate / 1000)
-                let r = tU.roles.array()
+                let r = tU.roles.cache
                 let sr = [];
                 for (let i = 0; i < r.length; i++) {
                     let n = r[i].name;

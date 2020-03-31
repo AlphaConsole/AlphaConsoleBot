@@ -10,7 +10,7 @@ module.exports.run = (client, serverInfo, config, oldMember, newMember) => {
       if (newMember.nickname == null)
         client.guilds
           .get(serverInfo.guildId)
-          .channels.get(serverInfo.channels.serverlog)
+          .channels.resolve(serverInfo.channels.serverlog)
           .send(
             `:spy: \`[${new Date().toTimeString().split(" ")[0]}]\` **\`${
               newMember.user.tag
@@ -21,7 +21,7 @@ module.exports.run = (client, serverInfo, config, oldMember, newMember) => {
       else
         client.guilds
           .get(serverInfo.guildId)
-          .channels.get(serverInfo.channels.serverlog)
+          .channels.resolve(serverInfo.channels.serverlog)
           .send(
             `:spy: \`[${new Date().toTimeString().split(" ")[0]}]\` **\`${
               newMember.user.tag
@@ -80,7 +80,7 @@ module.exports.run = (client, serverInfo, config, oldMember, newMember) => {
           .setTimestamp();
         client.guilds
           .get(serverInfo.guildId)
-          .channels.get(serverInfo.channels.aclog)
+          .channels.resolve(serverInfo.channels.aclog)
           .send(embedlog);
 
         newMember.roles.remove(serverInfo.roles.tempRole);
@@ -117,7 +117,7 @@ module.exports.run = (client, serverInfo, config, oldMember, newMember) => {
           .setTimestamp();
         client.guilds
           .get(serverInfo.guildId)
-          .channels.get(serverInfo.channels.aclog)
+          .channels.resolve(serverInfo.channels.aclog)
           .send(embedlog);
 
         require("../helpers/checkUser").run(config.sql, user.user, (err, u) => {
@@ -132,7 +132,7 @@ module.exports.run = (client, serverInfo, config, oldMember, newMember) => {
 
       client.guilds
         .get(serverInfo.guildId)
-        .channels.get(serverInfo.channels.serverlog)
+        .channels.resolve(serverInfo.channels.serverlog)
         .send(
           `:man_with_gua_pi_mao: \`[${
             new Date().toTimeString().split(" ")[0]
@@ -153,11 +153,11 @@ module.exports.run = (client, serverInfo, config, oldMember, newMember) => {
 };
 
 function canKeepTitle(m, serverInfo) {
-  if (m.roles.has(serverInfo.roles.partnerP)) return true;
-  if (m.roles.has(serverInfo.roles.orgPartner)) return true;
-  if (m.roles.has(serverInfo.roles.legacy)) return true;
-  if (m.roles.has(serverInfo.roles.support)) return true;
-  if (m.roles.has(serverInfo.roles.moderator)) return true;
-  if (m.roles.has(serverInfo.roles.admin)) return true;
+  if (m.roles.cache.has(serverInfo.roles.partnerP)) return true;
+  if (m.roles.cache.has(serverInfo.roles.orgPartner)) return true;
+  if (m.roles.cache.has(serverInfo.roles.legacy)) return true;
+  if (m.roles.cache.has(serverInfo.roles.support)) return true;
+  if (m.roles.cache.has(serverInfo.roles.moderator)) return true;
+  if (m.roles.cache.has(serverInfo.roles.admin)) return true;
   return false;
 }

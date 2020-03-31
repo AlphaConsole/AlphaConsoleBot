@@ -13,7 +13,7 @@ module.exports.run = (client, serverInfo, { sql, keys }, checkStatus) => {
 
             mutes.forEach(r => {
                 if (r.MutedUntil < new Date().getTime()) {
-                    client.guilds.get(serverInfo.guildId).members.fetch(r.DiscordID).then(m => {
+                    client.guilds.resolve(serverInfo.guildId).members.fetch(r.DiscordID).then(m => {
                         m.roles.remove(serverInfo.roles.muted);
                         sql.query('Update Members set MutedUntil = null where ID = ?', [ r.ID ]);
                     }).catch(e => { })
@@ -22,7 +22,7 @@ module.exports.run = (client, serverInfo, { sql, keys }, checkStatus) => {
 
             betas.forEach(r => {
                 if (r.tempBeta < new Date().getTime()) {
-                    client.guilds.get(serverInfo.guildId).members.fetch(r.DiscordID).then(m => {
+                    client.guilds.resolve(serverInfo.guildId).members.fetch(r.DiscordID).then(m => {
                         m.roles.remove(serverInfo.roles.beta);
                         m.roles.remove(serverInfo.roles.tempRole);
                         sql.query('Update Members set tempBeta = null where ID = ?', [ r.ID ]);
@@ -92,14 +92,14 @@ module.exports.run = (client, serverInfo, { sql, keys }, checkStatus) => {
     }
 
     function titleCleanUp() {
-        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.setTitle).messages.fetch()
+        client.guilds.resolve(serverInfo.guildId).channels.resolve(serverInfo.channels.setTitle).messages.fetch()
         .then(messages => {
             for (var message of messages.values()) {
                 if (
                     message.author.id !== client.user.id &&
                     message.author.id !== "345769053538746368" &&
                     message.author.id !== "181076473757696000" &&
-                    !message.member.roles.has(serverInfo.roles.admin)
+                    !message.member.roles.cache.has(serverInfo.roles.admin)
                 ) {
                     message.delete();
                 }

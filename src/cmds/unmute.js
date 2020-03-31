@@ -22,9 +22,9 @@ module.exports = {
         if (args.length < 2) return sendEmbed(message.channel, "You must have forgotten the user", "`!Unmute <@tag | user Id>`")
 
         let user = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
-            client.guilds.get(serverInfo.guildId).members.fetch(user).then(m => {
+            client.guilds.resolve(serverInfo.guildId).members.fetch(user).then(m => {
 
-            if (!m.roles.has(serverInfo.roles.muted))
+            if (!m.roles.cache.has(serverInfo.roles.muted))
                 return sendEmbed(message.channel, "Cannot unmute a user that isn't muted.");
 
             m.roles.remove(serverInfo.roles.muted);
@@ -45,7 +45,7 @@ module.exports = {
                 .setAuthor("No case created | User Unmuted", client.user.displayAvatarURL({ format: "png" }))
                 .setDescription(`${m} (${m.id}) has been unmuted by ${message.member}`)
                 .setTimestamp();
-            client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.modlog).send(embedlog);
+            client.guilds.resolve(serverInfo.guildId).channels.resolve(serverInfo.channels.modlog).send(embedlog);
 
         }).catch(e => {
             if (e.message == "Unknown Member")

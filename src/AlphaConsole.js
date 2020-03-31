@@ -58,13 +58,13 @@ client.on("ready", () => {
 
 //New member joins
 client.on("guildMemberAdd", member => {
-  client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.serverlog).send(`✅ \`[${new Date().toTimeString().split(" ")[0]}]\` **${member.user.tag}** (${member.id}) joined the guild. Total members: ${numberWithSpaces(client.guilds.get(serverInfo.guildId).memberCount)}`);
+  client.guilds.resolve(serverInfo.guildId).channels.resolve(serverInfo.channels.serverlog).send(`✅ \`[${new Date().toTimeString().split(" ")[0]}]\` **${member.user.tag}** (${member.id}) joined the guild. Total members: ${numberWithSpaces(client.guilds.resolve(serverInfo.guildId).memberCount)}`);
   require('./events/guildMemberAdd').run(client, serverInfo, config, member);
 });
 
 //User Left / kicked
 client.on("guildMemberRemove", member => {
-  client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.serverlog).send(`❌ \`[${new Date().toTimeString().split(" ")[0]}]\` **${member.user.tag}** (${member.id}) left the guild. Total members: ${numberWithSpaces(client.guilds.get(serverInfo.guildId).memberCount)}`);
+  client.guilds.resolve(serverInfo.guildId).channels.resolve(serverInfo.channels.serverlog).send(`❌ \`[${new Date().toTimeString().split(" ")[0]}]\` **${member.user.tag}** (${member.id}) left the guild. Total members: ${numberWithSpaces(client.guilds.resolve(serverInfo.guildId).memberCount)}`);
   require('./events/guildMemberRemove').run(client, serverInfo, config, member);
 });
 
@@ -76,7 +76,7 @@ client.on("guildMemberUpdate", (oldMember, newMember) => {
 //Personal Info changed
 client.on("userUpdate", (oldMember, newMember) => {
   if (oldMember.tag !== newMember.tag)
-  client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.serverlog).send(`:person_with_pouting_face: \`[${new Date().toTimeString().split(" ")[0]}]\` **\`${oldMember.tag}\`** (${oldMember.id}) changed their Discord name to **\`${newMember.tag}\`** (${newMember.id})`)
+  client.guilds.resolve(serverInfo.guildId).channels.resolve(serverInfo.channels.serverlog).send(`:person_with_pouting_face: \`[${new Date().toTimeString().split(" ")[0]}]\` **\`${oldMember.tag}\`** (${oldMember.id}) changed their Discord name to **\`${newMember.tag}\`** (${newMember.id})`)
   require('./events/userUpdate').run(client, serverInfo, config, newMember);
 });
 
@@ -97,7 +97,7 @@ client.on("messageReactionRemove", (reaction, user) => {
 
 //On a new ban
 client.on("guildBanAdd", (guild, user) => {
-  client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.serverlog).send(`🔨 \`[${new Date().toTimeString().split(" ")[0]}]\` **${user.tag}** (${user.id}) has been banned from the guild.`)
+  client.guilds.resolve(serverInfo.guildId).channels.resolve(serverInfo.channels.serverlog).send(`🔨 \`[${new Date().toTimeString().split(" ")[0]}]\` **${user.tag}** (${user.id}) has been banned from the guild.`)
 });
 
 //Voice users update
@@ -105,9 +105,9 @@ client.on("voiceStateUpdate", (oldMember, newMember) => {
   require('./events/voiceChannelUpdate').run(client, serverInfo, config, oldMember, newMember)
 });
 
-//Outputs unhandles promises
+//Outputs unhandled promises
 process.on("unhandledRejection", (reason, p) => {
-  console.log("Unhandled Rejection at: Promise", p, "reason:", reason);
+  console.error("Unhandled Rejection at: Promise", p, "reason:", reason);
 });
 
 
@@ -181,7 +181,7 @@ async function messageProcess(message, obj) {
        * ? from the cache anyway without extra effort. This is just to insure the user can always be used
        * ? in the command
        */
-      await client.guilds.get(serverInfo.guildId).members.fetch(message.author.id).then(m => {
+      await client.guilds.resolve(serverInfo.guildId).members.fetch(message.author.id).then(m => {
         message.member = m;
 
         /**
@@ -191,39 +191,39 @@ async function messageProcess(message, obj) {
          * ? we can request the information and detect if he is allowed to execute the command.
          */
         
-        if (message.member.roles.has(serverInfo.roles.admin))
+        if (message.member.roles.cache.has(serverInfo.roles.admin))
           message.member.isAdmin = true;
         else
           message.member.isAdmin = false;
 
-        if (message.member.roles.has(serverInfo.roles.moderator) || message.member.isAdmin)
+        if (message.member.roles.cache.has(serverInfo.roles.moderator) || message.member.isAdmin)
           message.member.isModerator = true;
         else
           message.member.isModerator = false;
 
-        if (message.member.roles.has(serverInfo.roles.support) || message.member.isModerator)
+        if (message.member.roles.cache.has(serverInfo.roles.support) || message.member.isModerator)
           message.member.isSupport = true;
         else
           message.member.isSupport = false;
 
-        if (message.member.roles.has(serverInfo.roles.staff) || message.member.isSupport)
+        if (message.member.roles.cache.has(serverInfo.roles.staff) || message.member.isSupport)
           message.member.isStaff = true;
         else
           message.member.isStaff = false;
 
-        if (message.member.roles.has(serverInfo.roles.ch) || message.member.isStaff)
+        if (message.member.roles.cache.has(serverInfo.roles.ch) || message.member.isStaff)
           message.member.isCH = true;
         else
           message.member.isCH = false;
 
         if (
-          message.member.roles.has(serverInfo.roles.legacy) || 
-          message.member.roles.has(serverInfo.roles.sub) || 
-          message.member.roles.has(serverInfo.roles.orgPartner) || 
-          message.member.roles.has(serverInfo.roles.partnerP) || 
-          message.member.roles.has(serverInfo.roles.donator) || 
-          message.member.roles.has(serverInfo.roles.beta) || 
-          message.member.roles.has(serverInfo.roles.tempRole) || 
+          message.member.roles.cache.has(serverInfo.roles.legacy) || 
+          message.member.roles.cache.has(serverInfo.roles.sub) || 
+          message.member.roles.cache.has(serverInfo.roles.orgPartner) || 
+          message.member.roles.cache.has(serverInfo.roles.partnerP) || 
+          message.member.roles.cache.has(serverInfo.roles.donator) || 
+          message.member.roles.cache.has(serverInfo.roles.beta) || 
+          message.member.roles.cache.has(serverInfo.roles.tempRole) || 
           message.member.isSupport
         )
           message.member.isBeta = true;
@@ -439,7 +439,7 @@ async function messageProcess(message, obj) {
        * ? from the cache anyway without extra effort. This is just to insure the user can always be used
        * ? in the command
        */
-      await client.guilds.get(serverInfo.guildId).members.fetch(message.author.id).then(m => {
+      await client.guilds.resolve(serverInfo.guildId).members.fetch(message.author.id).then(m => {
 
         /**
          * ! Assigning all positions to the member to easily detect if he is allowed to do certain commands
@@ -447,27 +447,27 @@ async function messageProcess(message, obj) {
          * ? We are saving these varibales in the message.member object. This way at any point of time
          * ? we can request the information and detect if he is allowed to execute the command.
          */
-        if (m.roles.has(serverInfo.roles.admin))
+        if (m.roles.cache.has(serverInfo.roles.admin))
           m.isAdmin = true;
         else
           m.isAdmin = false;
 
-        if (m.roles.has(serverInfo.roles.moderator) || m.isAdmin)
+        if (m.roles.cache.has(serverInfo.roles.moderator) || m.isAdmin)
           m.isModerator = true;
         else
           m.isModerator = false;
 
-        if (m.roles.has(serverInfo.roles.support) || m.isModerator)
+        if (m.roles.cache.has(serverInfo.roles.support) || m.isModerator)
           m.isSupport = true;
         else
           m.isSupport = false;
 
-        if (m.roles.has(serverInfo.roles.staff) || m.isSupport)
+        if (m.roles.cache.has(serverInfo.roles.staff) || m.isSupport)
           m.isStaff = true;
         else
           m.isStaff = false;
 
-        if (m.roles.has(serverInfo.roles.ch) || m.isStaff)
+        if (m.roles.cache.has(serverInfo.roles.ch) || m.isStaff)
           m.isCH = true;
         else
           m.isCH = false;
@@ -491,7 +491,7 @@ async function messageProcess(message, obj) {
 
 
 function processModMail(message, args, data) {
-  client.guilds.get(serverInfo.mm.guildId).members.fetch(message.author.id).then(m => {
+  client.guilds.resolve(serverInfo.mm.guildId).members.fetch(message.author.id).then(m => {
     message.member = m;
 
     /**
@@ -501,12 +501,12 @@ function processModMail(message, args, data) {
      * ? we can request the information and detect if he is allowed to execute the command.
      */
     
-    if (message.member.roles.has(serverInfo.mm.roles.admin))
+    if (message.member.roles.cache.has(serverInfo.mm.roles.admin))
       message.member.isAdmin = true;
     else
       message.member.isAdmin = false;
 
-    if (message.member.roles.has(serverInfo.mm.roles.moderator) || message.member.isAdmin)
+    if (message.member.roles.cache.has(serverInfo.mm.roles.moderator) || message.member.isAdmin)
       message.member.isModerator = true;
     else
       message.member.isModerator = false;
@@ -661,7 +661,7 @@ let sendEmbed = (channel, message, desc, timeout, image, embedimg) => {
   .catch(e => {
     console.log(e);
     if (channel.tag) 
-      client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.botSpam).send(`<@${channel.id}>, I could not DM you my message because you have your DM's disabled.`)
+      client.guilds.resolve(serverInfo.guildId).channels.resolve(serverInfo.channels.botSpam).send(`<@${channel.id}>, I could not DM you my message because you have your DM's disabled.`)
   });
 }
 
@@ -695,7 +695,7 @@ function setStatus(r) {
 
   //* All exceptions first
   if (r.StatusText.toLowerCase() === "counter") 
-    client.user.setActivity(`with ${client.guilds.get(serverInfo.guildId).memberCount} members`, { type: "PLAYING" });
+    client.user.setActivity(`with ${client.guilds.resolve(serverInfo.guildId).memberCount} members`, { type: "PLAYING" });
   else
     client.user.setActivity(r.StatusText, { type: r.StatusType });
 }

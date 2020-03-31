@@ -489,7 +489,7 @@ module.exports = {
                 exemptWords = ["alphaconsole", "support", "staff"];
               else if (message.member.isCH)
                 exemptWords = ["alphaconsole", "community helper"];
-              else if (message.member.roles.has(serverInfo.roles.legacy))
+              else if (message.member.roles.cache.has(serverInfo.roles.legacy))
                 exemptWords = ["alphaconsole", "legacy"];
 
               console.log();
@@ -559,7 +559,7 @@ module.exports = {
                       .setTimestamp();
                     client.guilds
                       .get(serverInfo.guildId)
-                      .channels.get(serverInfo.channels.aclog)
+                      .channels.resolve(serverInfo.channels.aclog)
                       .send(embedlog);
                     return resolve(
                       `Updated title of <@${id.trim()}> to \`${title.trim()}\`!`
@@ -648,7 +648,7 @@ module.exports = {
                       .setTimestamp();
                     client.guilds
                       .get(serverInfo.guildId)
-                      .channels.get(serverInfo.channels.aclog)
+                      .channels.resolve(serverInfo.channels.aclog)
                       .send(embedlog);
                     return resolve(
                       `Updated title color of <@${id.trim()}> to \`${color.trim()}\`!`
@@ -704,7 +704,7 @@ module.exports = {
                     .setTimestamp();
                   client.guilds
                     .get(serverInfo.guildId)
-                    .channels.get(serverInfo.channels.aclog)
+                    .channels.resolve(serverInfo.channels.aclog)
                     .send(embedlog);
                   return resolve(
                     `Updated title color of <@${id.trim()}> to \`${safeColor.trim()}\`!`
@@ -742,7 +742,7 @@ function userInOneOfRoles(member, roles) {
   if (member.isAdmin) return true;
 
   for (let i = 0; i < roles.length; i++) {
-    if (member.roles.has(roles[i])) inRole = true;
+    if (member.roles.cache.has(roles[i])) inRole = true;
   }
 
   return inRole;

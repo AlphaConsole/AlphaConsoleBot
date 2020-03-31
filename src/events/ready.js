@@ -65,10 +65,10 @@ module.exports.run = (client, serverInfo, config, checkStatus) => {
     
     setTimeout(() => {
         checkStatus();
-        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.showcase).messages.fetch();
-        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.suggestion).messages.fetch();
-        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.ingameReports).messages.fetch();
-        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.partners).messages.fetch();
-        client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.banners).messages.fetch();
+        client.guilds.resolve(serverInfo.guildId).channels.resolve(serverInfo.channels.showcase).messages.fetch();
+        client.guilds.resolve(serverInfo.guildId).channels.resolve(serverInfo.channels.suggestion).messages.fetch();
+        client.guilds.resolve(serverInfo.guildId).channels.resolve(serverInfo.channels.ingameReports).messages.fetch();
+        client.guilds.resolve(serverInfo.guildId).channels.resolve(serverInfo.channels.partners).messages.fetch();
+        client.guilds.resolve(serverInfo.guildId).channels.resolve(serverInfo.channels.banners).messages.fetch();
     }, 10000);
 }

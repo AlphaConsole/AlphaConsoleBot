@@ -34,7 +34,7 @@ module.exports = {
               .addField("by",`**${message.member.user.tag}** (${message.member})`)
               .setThumbnail(message.author.displayAvatarURL())
               .setTimestamp();
-            message.guild.channels.get(serverInfo.channels.aclog).send(embedlog);
+            message.guild.channels.resolve(serverInfo.channels.aclog).send(embedlog);
         } else {
             if (message.channel.id === "307052600061198337") console.log(">>>> SELF-PROMOTION LINKS ENABLED")
             config.whitelistedLinksChannel.push(message.channel.id);
@@ -49,7 +49,7 @@ module.exports = {
               .addField("by",`**${message.member.user.tag}** (${message.member})`)
               .setThumbnail(message.author.displayAvatarURL())
               .setTimestamp();
-            message.guild.channels.get(serverInfo.channels.aclog).send(embedlog);
+            message.guild.channels.resolve(serverInfo.channels.aclog).send(embedlog);
         }
     }
 }

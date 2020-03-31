@@ -23,7 +23,7 @@ module.exports = {
         let index = 0;
         rolesmsg[index] = "";
 
-        message.guild.roles.array().forEach(role => {
+        message.guild.roles.cache.forEach(role => {
             rolesmsg[index] += role.name;
             for (let i = role.name.length; i < 25; i++) {
             rolesmsg[index] += " ";

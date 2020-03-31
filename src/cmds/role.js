@@ -27,7 +27,7 @@ module.exports = {
             if (args.length === 2) {
 
                 if (args[1].toLowerCase() === "giveaways" || args[1].toLowerCase() === "ga") {
-                    if (message.member.roles.has(serverInfo.roles.events)) {
+                    if (message.member.roles.cache.has(serverInfo.roles.events)) {
                         message.member.roles.remove(serverInfo.roles.events);
                         sendEmbed(message.channel, "Role removed from your profile.")
                     } else {
@@ -37,7 +37,7 @@ module.exports = {
                 }
 
                 if (args[1].toLowerCase() === "minecraft" || args[1].toLowerCase() === "mc") {
-                    if (message.member.roles.has(serverInfo.roles.mc)) {
+                    if (message.member.roles.cache.has(serverInfo.roles.mc)) {
                         message.member.roles.remove(serverInfo.roles.mc);
                         sendEmbed(message.channel, "Role removed from your profile.")
                     } else {
@@ -63,7 +63,7 @@ module.exports = {
 
                     let addOrRemove;
 
-                    if (m.roles.has(role.id)) {
+                    if (m.roles.cache.has(role.id)) {
                         m.roles.remove(role.id);
                         sendEmbed(message.channel, `${role.name} removed from ${m.user.tag}`)
                         addOrRemove = "removed from"
@@ -79,7 +79,7 @@ module.exports = {
 						.addField("Info", `${role.name} ${addOrRemove} <@${m.id}> (${m.id})`)
 						.addField("Executed by", message.author.tag)
 						.setTimestamp();
-					message.guild.channels.get(serverInfo.channels.aclog).send(embedlog);
+					message.guild.channels.resolve(serverInfo.channels.aclog).send(embedlog);
 
                 }).catch(e => {
                     if (e.message == "Unknown Member")

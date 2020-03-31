@@ -26,7 +26,7 @@ module.exports = {
                 response += "`@everyone` ";
             } else if (args[i] == "@here") {
                 response += "`@here` ";
-            } else if (message.mentions.roles.has(args[i].replace(/[^0-9]/g, ""))) {
+            } else if (message.mentions.roles.cache.has(args[i].replace(/[^0-9]/g, ""))) {
                 response +="**" + message.mentions.roles.get(args[i].replace(/[^0-9]/g, "")).name + "** ";
             } else if (message.mentions.users.has(args[i].replace(/[^0-9]/g, ""))) {
                 response += "**" + message.mentions.users.get(args[i].replace(/[^0-9]/g, "")).tag + "** ";
@@ -54,7 +54,7 @@ module.exports = {
               .addField("Edited by", `**${message.author.tag}** (${message.member})`)
               .setThumbnail(message.author.displayAvatarURL())
               .setTimestamp();
-            message.guild.channels.get(serverInfo.channels.aclog).send(embedlog);
+            message.guild.channels.resolve(serverInfo.channels.aclog).send(embedlog);
         })
     }
 }

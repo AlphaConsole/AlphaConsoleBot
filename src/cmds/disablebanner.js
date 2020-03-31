@@ -46,7 +46,7 @@ module.exports = {
                 config.sql.query("UPDATE Titles set BannerAccepted = 0 WHERE DiscordID = ?", [
                   args[1]
                 ]);
-                sendEmbed(message.guild.channels.get(serverInfo.channels.modlog), "Success",
+                sendEmbed(message.guild.channels.resolve(serverInfo.channels.modlog), "Success",
                 "This user's banner has successfully been reset by <@!"+message.author+">!")
                 return sendEmbed(
                     message.channel,

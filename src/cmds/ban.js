@@ -26,7 +26,7 @@ module.exports = {
         if (reason === "") reason = "No reason provided";
                 
         let user = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
-        client.guilds.get(serverInfo.guildId).members.fetch(user).then(m => {
+        client.guilds.resolve(serverInfo.guildId).members.fetch(user).then(m => {
             require('../helpers/checkUser').run(sql, m.user, (err, user) => {
                 if (err) {
                     let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
@@ -56,7 +56,7 @@ module.exports = {
                         .setDescription(`**${m.user.tag}** (${ m.id }) has been banned by ${message.member}`)
                         .setTimestamp()
                         .addField("Reason", reason);
-                    client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.modlog).send(embedlog).then(msg => {
+                    client.guilds.resolve(serverInfo.guildId).channels.resolve(serverInfo.channels.modlog).send(embedlog).then(msg => {
                         sql.query(`update Logs set MessageID = ? where ID = ?`, [ msg.id, caseId ]);
                     });
 
@@ -87,7 +87,7 @@ module.exports = {
                                 .setDescription(`**${dbUser.Username}** (${ user }) has been banned by ${message.member}`)
                                 .setTimestamp()
                                 .addField("Reason", reason);
-                            client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.modlog).send(embedlog).then(msg => {
+                            client.guilds.resolve(serverInfo.guildId).channels.resolve(serverInfo.channels.modlog).send(embedlog).then(msg => {
                                 sql.query(`update Logs set MessageID = ? where ID = ?`, [ msg.id, caseId ]);
                             });
 
@@ -102,10 +102,10 @@ module.exports = {
 };
 
 function isStaff(m, serverInfo) {
-    if (m.roles.has(serverInfo.roles.staff)) return true;
-    if (m.roles.has(serverInfo.roles.support)) return true;
-    if (m.roles.has(serverInfo.roles.seniorS)) return true;
-    if (m.roles.has(serverInfo.roles.moderator)) return true;
-    if (m.roles.has(serverInfo.roles.admin)) return true;
+    if (m.roles.cache.has(serverInfo.roles.staff)) return true;
+    if (m.roles.cache.has(serverInfo.roles.support)) return true;
+    if (m.roles.cache.has(serverInfo.roles.seniorS)) return true;
+    if (m.roles.cache.has(serverInfo.roles.moderator)) return true;
+    if (m.roles.cache.has(serverInfo.roles.admin)) return true;
     return false;
 }

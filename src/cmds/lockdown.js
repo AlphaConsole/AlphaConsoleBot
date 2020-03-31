@@ -24,31 +24,31 @@ module.exports = {
             
             client.guilds
                 .get(serverInfo.guildId)
-                .channels.get(serverInfo.channels.setTitle)
+                .channels.resolve(serverInfo.channels.setTitle)
                 .updateOverwrite(message.guild.id, {
                     SEND_MESSAGES: false
                 });
             client.guilds
                 .get(serverInfo.guildId)
-                .channels.get(serverInfo.channels.showcase)
+                .channels.resolve(serverInfo.channels.showcase)
                 .updateOverwrite(message.guild.id, {
                     SEND_MESSAGES: false
                 });
             client.guilds
                 .get(serverInfo.guildId)
-                .channels.get(serverInfo.channels.suggestion)
+                .channels.resolve(serverInfo.channels.suggestion)
                 .updateOverwrite(message.guild.id, {
                     SEND_MESSAGES: false
                 });
             client.guilds
                 .get(serverInfo.guildId)
-                .channels.get(serverInfo.channels.setSpecialTitle)
+                .channels.resolve(serverInfo.channels.setSpecialTitle)
                 .updateOverwrite(message.guild.id, {
                     SEND_MESSAGES: false
                 });
             client.guilds
                 .get(serverInfo.guildId)
-                .channels.get(serverInfo.channels.betaSteamIDS)
+                .channels.resolve(serverInfo.channels.betaSteamIDS)
                 .updateOverwrite(message.guild.id, {
                     SEND_MESSAGES: false
                 });

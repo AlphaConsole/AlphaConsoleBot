@@ -94,12 +94,12 @@ module.exports.run = ({ client, serverInfo, message, args, sql, config, sendEmbe
         let m = message.member;
         let c = message.channel.id;
 
-        if (m.roles.has(serverInfo.roles.streamTeam)) return true;
-        if (m.roles.has(serverInfo.roles.ch)) return true;
-        if (m.roles.has(serverInfo.roles.staff)) return true;
-        if (m.roles.has(serverInfo.roles.support)) return true;
-        if (m.roles.has(serverInfo.roles.moderator)) return true;
-        if (m.roles.has(serverInfo.roles.admin)) return true;
+        if (m.roles.cache.has(serverInfo.roles.streamTeam)) return true;
+        if (m.roles.cache.has(serverInfo.roles.ch)) return true;
+        if (m.roles.cache.has(serverInfo.roles.staff)) return true;
+        if (m.roles.cache.has(serverInfo.roles.support)) return true;
+        if (m.roles.cache.has(serverInfo.roles.moderator)) return true;
+        if (m.roles.cache.has(serverInfo.roles.admin)) return true;
 
         if (c === serverInfo.channels.slaughter) return true;
         if (c === serverInfo.channels.staff) return true;

@@ -64,7 +64,7 @@ module.exports = {
         .setAuthor(`No case created | Purge`, client.user.displayAvatarURL({ format: "png" }))
         .setDescription(`${message.member} (${message.author.id}) has purged ${amount} messages in ${message.channel}`)
         .setTimestamp();
-        message.guild.channels.get(serverInfo.channels.modlog).send(embedlog);
+        message.guild.channels.resolve(serverInfo.channels.modlog).send(embedlog);
     }
 }
 

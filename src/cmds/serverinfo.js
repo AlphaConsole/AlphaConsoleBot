@@ -54,17 +54,17 @@ module.exports = {
           .addField("Region", guild.region, true)
           .addField(
             "Users",
-            `${guild.members.array().filter(m => m.presence.status.toLowerCase() !== "offline").length}/${guild.memberCount}`,
+            `${guild.members.cache.filter(m => m.presence.status.toLowerCase() !== "offline").length}/${guild.memberCount}`,
             true
           )
           .addField(
             "Text Channels",
-            guild.channels.array().filter(c => c.type.toLowerCase() == "text").length,
+            guild.channels.cache.filter(c => c.type.toLowerCase() == "text").length,
             true
           )
           .addField(
             "Voice Channels",
-            guild.channels.array().filter(c => c.type.toLowerCase() == "voice").length,
+            guild.channels.cache.filter(c => c.type.toLowerCase() == "voice").length,
             true
           )
           .addField("Roles", guild.roles.size, true)

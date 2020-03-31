@@ -22,17 +22,9 @@ module.exports = {
         if (args.length < 2) return sendEmbed(message.channel, "You must have forgotten the user", "`!Unban <@tag | user Id> <?Reason>`")
                 
         let id = args[1];
-        client.guilds.get(serverInfo.guildId).unban(id);
+        client.guilds.resolve(serverInfo.guildId).members.unban(id);
         sql.query("Update Members set Banned = null where DiscordID = ?", [ id ]);
 
         sendEmbed(message.channel, "The user has been unbanned!")
     }
 };
-
-function isStaff(m, serverInfo) {
-    if (m.roles.has(serverInfo.roles.staff)) return true;
-    if (m.roles.has(serverInfo.roles.support)) return true;
-    if (m.roles.has(serverInfo.roles.moderator)) return true;
-    if (m.roles.has(serverInfo.roles.admin)) return true;
-    return false;
-}

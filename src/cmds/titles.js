@@ -237,7 +237,7 @@ module.exports = {
 						.addField("Title of", `**<@${id}>** (${id})`)
 						.addField("Edited by", message.author.tag)
 						.setTimestamp();
-					client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.aclog).send(embedlog);
+					client.guilds.resolve(serverInfo.guildId).channels.resolve(serverInfo.channels.aclog).send(embedlog);
 				});
 			}
 
@@ -343,7 +343,7 @@ module.exports = {
 						.addField("Title of", `**<@${id}>** (${id})`)
 						.addField("Edited by", message.author.tag)
 						.setTimestamp();
-					client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.aclog).send(embedlog);
+					client.guilds.resolve(serverInfo.guildId).channels.resolve(serverInfo.channels.aclog).send(embedlog);
 				});
 			}
 
@@ -412,7 +412,7 @@ module.exports = {
 						.addField("Title of", `**<@${id}>** (${id})`)
 						.addField("Edited by", message.author.tag)
 						.setTimestamp();
-					client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.aclog).send(embedlog);
+					client.guilds.resolve(serverInfo.guildId).channels.resolve(serverInfo.channels.aclog).send(embedlog);
 				});
 			}
 
@@ -554,7 +554,7 @@ function isValidTitle(message, blackListedWords, userTitle, serverInfo, sql, ste
 */
 			function con() {
 				if (!message.member.isAdmin) {
-					if (message.member.roles.has(serverInfo.roles.developer)) {
+					if (message.member.roles.cache.has(serverInfo.roles.developer)) {
 						var exemptWords = ["alphaconsole", "developer", "staff"];
 						validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
 					} else if (message.member.isModerator) {
@@ -569,7 +569,7 @@ function isValidTitle(message, blackListedWords, userTitle, serverInfo, sql, ste
 						var exemptWords = ["alphaconsole", "community helper"];
 						validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
 			
-					} else if (message.member.roles.has(serverInfo.roles.legacy)) {
+					} else if (message.member.roles.cache.has(serverInfo.roles.legacy)) {
 						var exemptWords = ["alphaconsole", "legacy"];
 						validTitle = !inBlacklist(message, blackListedWords, userTitle, exemptWords);
 			
@@ -652,16 +652,16 @@ function isValidColor(message, colours, serverInfo, sendEmbed) {
 }
 
 function validUser(message, serverInfo) {
-	if (message.member.roles.has(serverInfo.roles.sub)) return true;
-	if (message.member.roles.has(serverInfo.roles.tempRole)) return true;
-	if (message.member.roles.has(serverInfo.roles.legacy)) return true;
-	if (message.member.roles.has(serverInfo.roles.orgPartner)) return true;
-	if (message.member.roles.has(serverInfo.roles.partnerP)) return true;
-	if (message.member.roles.has(serverInfo.roles.donator)) return true;
-	if (message.member.roles.has(serverInfo.roles.staff)) return true;
-    if (message.member.roles.has(serverInfo.roles.support)) return true;
-    if (message.member.roles.has(serverInfo.roles.moderator)) return true;
-    if (message.member.roles.has(serverInfo.roles.admin)) return true;
+	if (message.member.roles.cache.has(serverInfo.roles.sub)) return true;
+	if (message.member.roles.cache.has(serverInfo.roles.tempRole)) return true;
+	if (message.member.roles.cache.has(serverInfo.roles.legacy)) return true;
+	if (message.member.roles.cache.has(serverInfo.roles.orgPartner)) return true;
+	if (message.member.roles.cache.has(serverInfo.roles.partnerP)) return true;
+	if (message.member.roles.cache.has(serverInfo.roles.donator)) return true;
+	if (message.member.roles.cache.has(serverInfo.roles.staff)) return true;
+    if (message.member.roles.cache.has(serverInfo.roles.support)) return true;
+    if (message.member.roles.cache.has(serverInfo.roles.moderator)) return true;
+    if (message.member.roles.cache.has(serverInfo.roles.admin)) return true;
     return false;
 }
 
@@ -674,7 +674,7 @@ function userInOnOfRoles(member, roles) {
 	if (member.isAdmin) return true;
 
 	for (let i = 0; i < roles.length; i++) {
-		if (member.roles.has(roles[i])) inRole = true;
+		if (member.roles.cache.has(roles[i])) inRole = true;
 	}
 
 	return inRole;

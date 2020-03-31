@@ -5,7 +5,7 @@ module.exports.run = (client, serverInfo, config, member) => {
         if (err) return console.error(err);
 
         let roles = "";
-        member.roles.array().forEach(role => {
+        member.roles.cache.forEach(role => {
             if (role.name != "@everyone") roles += " " + role.id;
         });
 

@@ -21,7 +21,7 @@ module.exports = {
       if (!message.member.isAdmin) return;
       
       try {
-        let channels = client.guilds.get(serverInfo.guildId).channels.filter(c => c.parentID !== serverInfo.channels.staffChannelsCat && c.type === "text");
+        let channels = client.guilds.resolve(serverInfo.guildId).channels.filter(c => c.parentID !== serverInfo.channels.staffChannelsCat && c.type === "text");
 
         if (args[0].toLowerCase() === "!forcelock") {
           channels.forEach(c => {
@@ -34,8 +34,8 @@ module.exports = {
 
         if (args[0].toLowerCase() === "!forceunlock") {
           serverInfo.publicChannels.forEach(id => {
-            if (client.guilds.get(serverInfo.guildId) && client.guilds.get(serverInfo.guildId).channels.get(id)) {
-              client.guilds.get(serverInfo.guildId).channels.get(id)
+            if (client.guilds.resolve(serverInfo.guildId) && client.guilds.resolve(serverInfo.guildId).channels.resolve(id)) {
+              client.guilds.resolve(serverInfo.guildId).channels.resolve(id)
               .updateOverwrite(message.guild.id, {
                 SEND_MESSAGES: true
               });

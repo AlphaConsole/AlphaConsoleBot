@@ -2,11 +2,11 @@ module.exports.run = (client, serverInfo, config, oldMember, newMember) => {
 
     if (newMember.voiceChannel) {
         if (newMember.voiceChannel.parentID == serverInfo.DynamicCat) {
-            if (newMember.voiceChannel.members.array().length == 1) {
+            if (newMember.voiceChannel.members.cache.length == 1) {
                 Extra = 0;
-                client.guilds.get(serverInfo.guildId).channels.forEach(channel => {
+                client.guilds.resolve(serverInfo.guildId).channels.forEach(channel => {
                     if (channel.parentID == serverInfo.DynamicCat) {
-                        if (channel.members.array().length == 0) {
+                        if (channel.members.cache.length == 0) {
                             if (Extra == 1) {
                                 channel.delete();
                             } else {
@@ -22,11 +22,11 @@ module.exports.run = (client, serverInfo, config, oldMember, newMember) => {
 
     if (oldMember.voiceChannel) {
         if (oldMember.voiceChannel.parentID == serverInfo.DynamicCat) {
-            if (oldMember.voiceChannel.members.array().length == 0) {
+            if (oldMember.voiceChannel.members.cache.length == 0) {
                 Extra = 0;
-                client.guilds.get(serverInfo.guildId).channels.forEach(channel => {
+                client.guilds.resolve(serverInfo.guildId).channels.forEach(channel => {
                     if (channel.parentID == serverInfo.DynamicCat) {
-                        if (channel.members.array().length == 0) {
+                        if (channel.members.cache.length == 0) {
                             if (Extra == 1) {
                                 if (channel) {
                                     channel.delete();

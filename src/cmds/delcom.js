@@ -39,7 +39,7 @@ module.exports = {
               .addField("Deleted by", `**${message.author.tag}** (${message.member})`)
               .setThumbnail(message.author.displayAvatarURL())
               .setTimestamp();
-            message.guild.channels.get(serverInfo.channels.aclog).send(embedlog);
+            message.guild.channels.resolve(serverInfo.channels.aclog).send(embedlog);
         })
     }
 }

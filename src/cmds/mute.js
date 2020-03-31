@@ -190,7 +190,7 @@ module.exports = {
                 .addField("Reason", reason);
               client.guilds
                 .get(serverInfo.guildId)
-                .channels.get(serverInfo.channels.modlog)
+                .channels.resolve(serverInfo.channels.modlog)
                 .send(embedlog)
                 .then(msg => {
                   sql.query(`update \`Logs\` set MessageID = ? where ID = ?`, [
@@ -203,7 +203,7 @@ module.exports = {
               setTimeout(() => {
                 client.guilds
                   .get(serverInfo.guildId)
-                  .channels.get(serverInfo.channels.muted)
+                  .channels.resolve(serverInfo.channels.muted)
                   .send(embedlog);
               }, 2000);
             }

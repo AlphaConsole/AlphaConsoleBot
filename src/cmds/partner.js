@@ -489,14 +489,14 @@ async function parseChannelToObject(client, message) {
  * @param {*} message
  */
 async function updatePartnersChannel(client, sql, serverInfo, message) {
-  var partnerChannel = message.guild.channels.get(serverInfo.channels.partners);
+  var partnerChannel = message.guild.channels.resolve(serverInfo.channels.partners);
   allowMessages(message, serverInfo, false);
   return new Promise(function(resolve, reject) {
     // DELETE ALL MESSAGES
     partnerChannel.messages
       .fetch({ limit: 100 })
       .then(fetched => {
-        fetched.array().forEach(m => m.delete());
+        fetched.cache.forEach(m => m.delete());
         
         var update_messages_holder = {};
         update_messages_holder.messages = [];
@@ -684,7 +684,7 @@ function sendMessages(partnerChannel, data, serverInfo, sql) {
                   sql.query(`UPDATE partners SET id=? WHERE id=?`, [ "" + newMessage.id, "" + message.id], (err) => {
                         if (err) {
                             console.error(err)
-                            return sendEmbed(partnerChannel.guild.channels.get(serverInfo.channels.editPartners), "Something went wrong", `${err}`)
+                            return sendEmbed(partnerChannel.guild.channels.resolve(serverInfo.channels.editPartners), "Something went wrong", `${err}`)
                         }
 
                         newMessage.react(emoji);
@@ -693,7 +693,7 @@ function sendMessages(partnerChannel, data, serverInfo, sql) {
               })
               .catch(err => {
                 console.error(err);
-                return sendEmbed(partnerChannel.guild.channels.get(serverInfo.channels.editPartners), "Something went wrong", `${err}`)
+                return sendEmbed(partnerChannel.guild.channels.resolve(serverInfo.channels.editPartners), "Something went wrong", `${err}`)
               });
           case "file":
             return partnerChannel
@@ -703,7 +703,7 @@ function sendMessages(partnerChannel, data, serverInfo, sql) {
                     sql.query(`UPDATE partners SET id=? WHERE identifier=?`, [ "" + newMessage.id, message.identifier || message.id], (err) => {
                         if (err) {
                             console.error(err)
-                            return sendEmbed(partnerChannel.guild.channels.get(serverInfo.channels.editPartners), "Something went wrong", `${err}`)
+                            return sendEmbed(partnerChannel.guild.channels.resolve(serverInfo.channels.editPartners), "Something went wrong", `${err}`)
                         }
 
                         newMessage.react(emoji);
@@ -712,7 +712,7 @@ function sendMessages(partnerChannel, data, serverInfo, sql) {
               })
               .catch(err => {
                 console.error(err);
-                return sendEmbed(partnerChannel.guild.channels.get(serverInfo.channels.editPartners), "Something went wrong", `${err}`)
+                return sendEmbed(partnerChannel.guild.channels.resolve(serverInfo.channels.editPartners), "Something went wrong", `${err}`)
               });
           case "text":
             return partnerChannel
@@ -722,7 +722,7 @@ function sendMessages(partnerChannel, data, serverInfo, sql) {
                     sql.query(`UPDATE partners SET id=? WHERE id=?`, [ "" + newMessage.id, "" + message.id ], (err) => {
                         if (err) {
                             console.error(err)
-                            return sendEmbed(partnerChannel.guild.channels.get(serverInfo.channels.editPartners), "Something went wrong", `${err}`)
+                            return sendEmbed(partnerChannel.guild.channels.resolve(serverInfo.channels.editPartners), "Something went wrong", `${err}`)
                         }
 
                         newMessage.react(emoji); 
@@ -731,10 +731,10 @@ function sendMessages(partnerChannel, data, serverInfo, sql) {
               })
               .catch(err => {
                 console.error(err);
-                return sendEmbed(partnerChannel.guild.channels.get(serverInfo.channels.editPartners), "Something went wrong", `${err}`)
+                return sendEmbed(partnerChannel.guild.channels.resolve(serverInfo.channels.editPartners), "Something went wrong", `${err}`)
               });
           default:
-              return sendEmbed(partnerChannel.guild.channels.get(serverInfo.channels.editPartners), "Something went wrong", `The message type ${message.type} is invalid!`)
+              return sendEmbed(partnerChannel.guild.channels.resolve(serverInfo.channels.editPartners), "Something went wrong", `The message type ${message.type} is invalid!`)
         }
       });
     }

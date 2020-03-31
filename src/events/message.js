@@ -35,7 +35,7 @@ module.exports.run = async ({ client, serverInfo, message, args, sql, config, se
 
     //* Links filter
     if (message.channel.id !== serverInfo.channels.setBanner) {
-        if (!message.member.isCH && !message.member.roles.has(serverInfo.roles.linksFiles) && !message.member.roles.has(serverInfo.roles.designer)) {
+        if (!message.member.isCH && !message.member.roles.cache.has(serverInfo.roles.linksFiles) && !message.member.roles.cache.has(serverInfo.roles.designer)) {
             if (!(config.permits[message.author.id] && config.permits[message.author.id].channel === message.channel.id && config.permits[message.author.id].until > new Date().getTime())) {
                 if (!config.whitelistedLinksChannel.includes(message.channel.id)) {
                     let matches = message.content.match(new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,12}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/ig));
@@ -357,7 +357,7 @@ module.exports.botMessage = (client, serverInfo, sql, message, sendEmbed) => {
 
         if (data.Issuer.GoodReports) {
 
-            message.guild.channels.get(serverInfo.channels.ingameReports).send(
+            message.guild.channels.resolve(serverInfo.channels.ingameReports).send(
                 `**================================**\n` +
                 `Reports by <@${data.Issuer.DiscordID === null ? "Discord not linked" : data.Issuer.DiscordID}> (${data.Issuer.SteamID})\n` +
                 `\`👍 ${data.Issuer.GoodReports}\`\n` +
@@ -398,7 +398,7 @@ function reportTitle(client, serverInfo, sql, message, titleInfo, Reporter, send
             return;
         }
         
-		message.guild.channels.get(serverInfo.channels.ingameReports).send(`\`DiscordID: ${discordID} | SteamID: ${steamID} | title: ${title}\``).then(async m => {
+		message.guild.channels.resolve(serverInfo.channels.ingameReports).send(`\`DiscordID: ${discordID} | SteamID: ${steamID} | title: ${title}\``).then(async m => {
 			sql.query(`Insert into TitleReports(DiscordID, SteamID, Title, Color, MessageID, Reporter) VALUES (?, ?, ?, ?, ?, ?)`, [ discordID, steamID, title, color, m.id, Reporter ])
 			await m.react("🔨");
 			await m.react("✅");
@@ -439,13 +439,13 @@ function postPin(client, message, sql, serverInfo, something) {
 
 function handleNewContestEntry({ client, serverInfo, message, args, sql, config, sendEmbed }, cmd) {
     
-    let attachments = (message.attachments).array();
+    let attachments = message.attachments;
 
     if (attachments.length != 0 ) {
         attachments.forEach(function (item) {
             if (item.url.endsWith(".png")) {
                 if (item.width === 420 && item.height === 100) {
-                    return client.channels.get(serverInfo.channels.bannersSubmissions).send(`**New Banner Submission**\nUser:${message.author}`, {
+                    return client.channels.resolve(serverInfo.channels.bannersSubmissions).send(`**New Banner Submission**\nUser:${message.author}`, {
                         files: [ item.url ]
                     }).then(async m => {
                         message.delete().catch(e => {}) 

@@ -22,7 +22,7 @@ module.exports = {
         if (args.length < 2) return sendEmbed(message.channel, "You must have forgotten the user", "`!Warn <@tag | user Id> <?Reason>`")
 
         let user = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
-        client.guilds.get(serverInfo.guildId).members.fetch(user).then(m => {
+        client.guilds.resolve(serverInfo.guildId).members.fetch(user).then(m => {
             require('../helpers/checkUser').run(sql, m.user, (err, user) => {
                 if (err) {
                     let errorCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
@@ -61,7 +61,7 @@ module.exports = {
                         .setTitle("==> WARNING " + newWarnings)
                         .setDescription(`New warning of <@${m.id}> (${m.id}) by <@${message.author.id}>`)
                         .addField("Reason", reason);
-                    client.guilds.get(serverInfo.guildId).channels.get(serverInfo.channels.modlog).send(embedLog).then(msg => {
+                    client.guilds.resolve(serverInfo.guildId).channels.resolve(serverInfo.channels.modlog).send(embedLog).then(msg => {
                         sql.query(`update Logs set MessageID = ? where ID = ?`, [ msg.id, caseId ]);
                     });
 

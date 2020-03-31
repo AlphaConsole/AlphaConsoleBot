@@ -58,22 +58,22 @@ function getRoles(user, serverInfo, client, callback) {
     .members.fetch(user.id)
     .then(m => {
 
-      if (m.roles.has(serverInfo.roles.admin))
+      if (m.roles.cache.has(serverInfo.roles.admin))
         m.isAdmin = true;
       else m.isAdmin = false;
 
-      if (m.roles.has(serverInfo.roles.moderator) || m.isAdmin)
+      if (m.roles.cache.has(serverInfo.roles.moderator) || m.isAdmin)
         m.isModerator = true;
       else m.isModerator = false;
 
-      if (m.roles.has(serverInfo.roles.support) || m.isModerator)
+      if (m.roles.cache.has(serverInfo.roles.support) || m.isModerator)
         m.isSupport = true;
       else m.isSupport = false;
 
-      if (m.roles.has(serverInfo.roles.staff) || m.isSupport) m.isStaff = true;
+      if (m.roles.cache.has(serverInfo.roles.staff) || m.isSupport) m.isStaff = true;
       else m.isStaff = false;
 
-      if (m.roles.has(serverInfo.roles.ch) || m.isStaff) m.isCH = true;
+      if (m.roles.cache.has(serverInfo.roles.ch) || m.isStaff) m.isCH = true;
       else m.isCH = false;
 
       callback(m);
