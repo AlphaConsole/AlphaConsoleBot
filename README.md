@@ -2,19 +2,17 @@ AlphaConsole Discord Bot
 ===================
 
 
-This is the official Discord bot for the [AlphaConsole Discord Server](https://discordapp.com/invite/alphaconsole). 
-This bot serves the over 200k members we currently have in our Discord.
+This was the official Discord bot for the [AlphaConsole Discord Server](https://discordapp.com/invite/alphaconsole). 
+This bot served the over 200k members we had at our peak.
 
 ----------
 
 
-What is AlphaConsole?
+What was AlphaConsole?
 -------------
-AlphaConsole is the largest 3rd party mod for the popular PC game Rocket League with over 200k users.
+AlphaConsole was the largest 3rd party mod for the popular PC game Rocket League with over 200k users.
 
-You can check out our site [here.](http://www.alphaconsole.net)
-
-Unfortunately due to the nature of the program, most of AlphaConsole cannot be open source excluding the Discord bot in this repo.
+Unfortunately due to the nature of the program, most of AlphaConsole cannot be open source, excluding the Discord bot in this repo.
 
 
 ----------
